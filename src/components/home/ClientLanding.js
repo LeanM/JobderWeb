@@ -1,7 +1,7 @@
 import { createUseStyles } from "react-jss";
 import { colors } from "../../assets/colors";
 import { useEffect, useState } from "react";
-import WorkerCard from "./WorkerCard";
+import WorkerCard from "./worker-card/WorkerCard";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function ClientLanding(props) {

@@ -4,7 +4,7 @@ import Layout from "./pagewrappers/Layout";
 import Missing from "./Missing";
 import RequireAuth from "./auth/RequireAuth";
 import ClientLanding from "./home/ClientLanding";
-import DetailedWorkerView from "./home/DetailedWorkerView";
+import ChatView from "./chat-components/ChatView";
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
         {/* Public routes */}
         <Route path="/" element={<Home />} />
         <Route path="/clientLanding" element={<ClientLanding />} />
-        <Route path="/detailedWorker" element={<DetailedWorkerView />} />
+        <Route path="/chat" element={<ChatView />} />
 
         {/* Want to protect these routes */}
         <Route element={<RequireAuth />}></Route>

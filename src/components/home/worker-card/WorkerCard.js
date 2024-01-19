@@ -1,9 +1,7 @@
 import { createUseStyles } from "react-jss";
-import { colors } from "../../assets/colors";
+import { colors } from "../../../assets/colors";
 import ReactCardFlip from "react-card-flip";
 import { useState } from "react";
-import { Button } from "@mui/material";
-import { MDBIcon } from "mdb-react-ui-kit";
 import FrontWorkerCard from "./FrontWorkerCard";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -41,7 +39,7 @@ export default function WorkerCard(props) {
 const useStyles = createUseStyles({
   container: {
     width: "20rem",
-    height: "25rem",
+    height: "30rem",
     borderRadius: "10px",
   },
 });

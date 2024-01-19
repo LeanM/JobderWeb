@@ -1,6 +1,6 @@
 import { createUseStyles } from "react-jss";
 import { MDBIcon } from "mdb-react-ui-kit";
-import { colors } from "../../assets/colors";
+import { colors } from "../../../assets/colors";
 
 export default function FrontWorkerCard(props) {
   const { workerData } = props;

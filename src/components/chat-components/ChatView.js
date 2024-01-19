@@ -3,17 +3,13 @@ import { colors } from "../../assets/colors";
 import useAuth from "../../hooks/useAuth";
 import { Button } from "@mui/material";
 import { MDBIcon } from "mdb-react-ui-kit";
-import FrontWorkerCard from "./FrontWorkerCard";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Reveal from "../animations/Reveal";
 
-export default function DetailedWorkerView(props) {
+export default function ChatView(props) {
   const { auth } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const classes = useStyles();
-
-  const workerData = location.state && location.state.workerData;
 
   return (
     <div className={classes.container}>
@@ -26,9 +22,7 @@ export default function DetailedWorkerView(props) {
         <Reveal
           animationVariant="left"
           styles={classes.workerBasicDataContainer}
-        >
-          <FrontWorkerCard workerData={workerData} />
-        </Reveal>
+        ></Reveal>
         <Reveal
           animationVariant="right"
           styles={classes.workerAdvancedDataContainer}
