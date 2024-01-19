@@ -2,6 +2,7 @@ import { createUseStyles } from "react-jss";
 import { colors } from "../../assets/colors";
 import { useEffect, useState } from "react";
 import WorkerCard from "./WorkerCard";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ClientLanding(props) {
   const classes = useStyles();
@@ -79,11 +80,11 @@ export default function ClientLanding(props) {
           Ten en cuenta que solo puedes comunicarte con 3 trabajadores al mismo
           tiempo.
         </span>
-        <div className={classes.resultsContainer}>
+        <motion.div layout className={classes.resultsContainer}>
           {workers.map((worker) => {
-            return <WorkerCard workerData={worker} />;
+            return <WorkerCard key={worker.nombre} workerData={worker} />;
           })}
-        </div>
+        </motion.div>
       </div>
     </div>
   );
