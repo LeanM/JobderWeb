@@ -22,18 +22,24 @@ export default function ClientLanding(props) {
       descripcion: "Experto en construcción",
       distancia: 10,
       rating: 4.5,
+      trabajos: 264,
+      status: "active",
     },
     {
       nombre: "María",
       descripcion: "Diseñadora de interiores",
       distancia: 20,
       rating: 3.8,
+      trabajos: 12,
+      status: "ocuppied",
     },
     {
       nombre: "Carlos",
       descripcion: "Fontanero certificado",
       distancia: 15,
       rating: 4.0,
+      trabajos: 516,
+      status: "moderated",
     },
     // Agrega más trabajadores según tus necesidades
     {
@@ -41,39 +47,9 @@ export default function ClientLanding(props) {
       descripcion: "Electricista profesional",
       distancia: 12,
       rating: 4.2,
+      trabajos: 56,
+      status: "active",
     },
-    {
-      nombre: "Pedro",
-      descripcion: "Pintor especializado",
-      distancia: 25,
-      rating: 3.5,
-    },
-    {
-      nombre: "Laura",
-      descripcion: "Carpintera experta",
-      distancia: 18,
-      rating: 4.1,
-    },
-    // ... Agrega más trabajadores
-    {
-      nombre: "José",
-      descripcion: "Plomero con experiencia",
-      distancia: 8,
-      rating: 4.8,
-    },
-    {
-      nombre: "Sofía",
-      descripcion: "Arquitecta de renombre",
-      distancia: 30,
-      rating: 4.7,
-    },
-    {
-      nombre: "Miguel",
-      descripcion: "Ingeniero civil",
-      distancia: 22,
-      rating: 3.9,
-    },
-    // ... Continúa agregando trabajadores
   ];
 
   useEffect(() => {

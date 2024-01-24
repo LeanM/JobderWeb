@@ -59,17 +59,9 @@ export default function BackWorkerCard(props) {
         <span className={classes.reviewTitle}>Opiniones del trabajador</span>
         <div className={classes.reviewCarousel}>
           <ReviewCarousel />
-          <p
-            style={{
-              color: colors.primary,
-              fontWeight: "200",
-              fontSize: "0.9rem",
-              textAlign: "center",
-              cursor: "pointer",
-            }}
-          >
+          <button className={classes.opinionButton}>
             Ver todas las opiniones!
-          </p>
+          </button>
         </div>
       </div>
       <div className={classes.buttonContainer}>
@@ -99,7 +91,7 @@ const useStyles = createUseStyles({
     borderRadius: "10px",
   },
   backInfoContainer: {
-    height: "50%",
+    height: "45%",
     width: "100%",
     display: "flex",
     justifyContent: "flex-start",
@@ -121,12 +113,11 @@ const useStyles = createUseStyles({
   },
   reviewContainer: {
     width: "100%",
-    height: "35%",
+    height: "40%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    gap: "0",
   },
   reviewTitle: {
     color: colors.primary,
@@ -134,15 +125,32 @@ const useStyles = createUseStyles({
   },
   reviewCarousel: {
     height: "80%",
-    width: "95%",
+    width: "97%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    gap: "0.2rem",
+  },
+  opinionButton: {
+    color: colors.primary,
+    backgroundColor: colors.transparent,
+    fontWeight: "400",
+    fontSize: "0.9rem",
+    textAlign: "center",
+    border: "none",
+    borderBottom: "solid 1px " + colors.transparent,
+
+    transition: "border 0.5s, text-shadow 0.5s",
+
+    "&:hover": {
+      //borderBottom: "solid 1px " + colors.white,
+      textShadow: "0 0 5px white",
+    },
   },
   buttonContainer: {
     width: "100%",
-    height: "14%",
+    height: "13%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

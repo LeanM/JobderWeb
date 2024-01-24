@@ -12,29 +12,61 @@ export default function FrontWorkerCard(props) {
       </div>
       <div className={classes.dataContainer}>
         <span
-          className={classes.dataText}
+          className={classes.dataItem}
           style={{ fontWeight: "800", fontSize: "2rem" }}
         >
           {workerData.nombre}
         </span>
-        <div className={classes.dataText}>
-          <MDBIcon icon="info" style={{}}></MDBIcon>
-          <p>{workerData.distancia}Km de distancia</p>
+        <div className={classes.dataItem}>
+          <div className={classes.dataItemIconContainer}>
+            <MDBIcon icon="info" style={{}}></MDBIcon>
+          </div>
+          <span className={classes.dataItemTextContainer}>
+            {workerData.distancia}Km de distancia
+          </span>
         </div>
-        <div className={classes.dataText}>
-          <MDBIcon style={{ color: "yellow" }} icon="star"></MDBIcon>
-          <p>{workerData.rating}</p>
+        <div className={classes.dataItem}>
+          <div className={classes.dataItemIconContainer}>
+            <MDBIcon style={{ color: "yellow" }} icon="star"></MDBIcon>
+          </div>
+          <span className={classes.dataItemTextContainer}>
+            {workerData.rating}
+          </span>
         </div>
-        <div className={classes.dataText}>
-          <MDBIcon style={{ color: "orange" }} icon="medal"></MDBIcon>
-          <p>100+ trabajos realizados</p>
+        <div className={classes.dataItem}>
+          <div className={classes.dataItemIconContainer}>
+            <MDBIcon style={{ color: "orange" }} icon="medal"></MDBIcon>
+          </div>
+          <span className={classes.dataItemTextContainer}>
+            {workerData.trabajos}+ trabajos realizados
+          </span>
         </div>
         <div className={classes.statusContainer}>
-          <div
-            className={classes.statusIcon}
-            style={{ backgroundColor: colors.price }}
-          ></div>
-          <span className={classes.statusText}>Activo</span>
+          {workerData.status === "active" ? (
+            <>
+              <div
+                className={classes.statusIcon}
+                style={{ backgroundColor: colors.price }}
+              ></div>
+              <span className={classes.statusText}>Hoy disponible!</span>
+            </>
+          ) : workerData.status === "moderated" ? (
+            <>
+              <div
+                className={classes.statusIcon}
+                style={{ backgroundColor: "orange" }}
+              ></div>
+              <span className={classes.statusText}>Algo ocupado!</span>
+            </>
+          ) : (
+            <>
+              <div
+                className={classes.statusIcon}
+                style={{ backgroundColor: colors.notification }}
+              ></div>
+              <span className={classes.statusText}>Hoy no disponible!</span>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -73,15 +105,24 @@ const useStyles = createUseStyles({
     flexDirection: "column",
     gap: "0.2rem",
   },
-  dataText: {
+  dataItem: {
     color: colors.white,
-    marginLeft: "1.5rem",
+    width: "100%",
+    paddingLeft: "1.5rem",
     fontWeight: "100",
     fontSize: "1rem",
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
-    gap: "0.5rem",
+  },
+  dataItemIconContainer: {
+    width: "7%",
+    height: "100%",
+    textAlign: "center",
+  },
+  dataItemTextContainer: {
+    height: "100%",
+    width: "90%",
   },
   statusContainer: {
     width: "100%",

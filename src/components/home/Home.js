@@ -51,7 +51,7 @@ export default function Home() {
             className={classes.searchButton}
             onClick={() => {
               if (actualImportance === "" || actualWorkerCategory === "") {
-                toast.error("Selecciona las opciones!");
+                toast.error("Seleccione todas las opciones!");
               } else
                 navigate("/clientLanding", {
                   state: {
@@ -113,10 +113,17 @@ const useStyles = createUseStyles({
   },
   searchButton: {
     fontWeight: "600",
-    borderRadius: "20px",
+    borderRadius: "10px",
     width: "8rem",
     height: "3rem",
     color: colors.primary,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.white,
+
+    transition: "background 0.3s, color 0.3s",
+
+    "&:hover": {
+      backgroundColor: colors.secondary,
+      color: colors.white,
+    },
   },
 });

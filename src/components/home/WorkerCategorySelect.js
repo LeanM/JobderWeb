@@ -63,7 +63,6 @@ export default function WorkerCategorySelect(props) {
         }),
         container: (baseStyles, state) => ({
           ...baseStyles,
-          borderRadius: "30px",
         }),
         option: (baseStyles, state) => ({
           ...baseStyles,
@@ -88,6 +87,7 @@ export default function WorkerCategorySelect(props) {
         input: (baseStyles, state) => ({
           ...baseStyles,
           color: colors.primary,
+
           margin: "auto",
         }),
       }}

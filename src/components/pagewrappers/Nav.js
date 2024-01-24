@@ -114,7 +114,7 @@ export default function Nav(props) {
             }}
           >
             <div className={classes.navBarListItemTextContainer}>
-              <p className={classes.navBarListItemText}>Inicio</p>
+              <p className={classes.navBarListItemText}>Busqueda</p>
             </div>
           </div>
           <div
@@ -125,7 +125,7 @@ export default function Nav(props) {
             style={navButtonStyle}
           >
             <div className={classes.navBarListItemTextContainer}>
-              <p className={classes.navBarListItemText}>Mi cuenta</p>
+              <p className={classes.navBarListItemText}>Chats</p>
             </div>
           </div>
           <div
@@ -136,7 +136,7 @@ export default function Nav(props) {
             }}
           >
             <div className={classes.navBarListItemTextContainer}>
-              <p className={classes.navBarListItemText}>Chats</p>
+              <p className={classes.navBarListItemText}>Mi cuenta</p>
             </div>
           </div>
         </div>
@@ -262,7 +262,7 @@ const useStyles = createUseStyles({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    width: "5rem",
+    width: "4.6rem",
     height: "6rem",
     marginTop: "auto",
     marginBottom: "auto",
