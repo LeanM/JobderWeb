@@ -8,7 +8,7 @@ export default function FrontWorkerCard(props) {
   return (
     <div className={classes.frontContainer}>
       <div className={classes.imageContainer}>
-        <img className={classes.image} src="./logo512.png"></img>
+        <img className={classes.image} src="./worker.jpg"></img>
       </div>
       <div className={classes.dataContainer}>
         <span className={classes.dataText} style={{ fontWeight: "600" }}>
@@ -46,15 +46,15 @@ const useStyles = createUseStyles({
     flexDirection: "column",
   },
   imageContainer: {
-    width: "100%",
+    width: "95%",
     height: "60%",
     padding: "10px",
-    borderRadius: "10px",
   },
   image: {
     width: "100%",
     height: "100%",
     objectFit: "cover",
+    borderRadius: "10px",
   },
   dataContainer: {
     width: "100%",

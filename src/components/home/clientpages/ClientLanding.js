@@ -1,12 +1,20 @@
 import { createUseStyles } from "react-jss";
-import { colors } from "../../assets/colors";
+import { colors } from "../../../assets/colors";
 import { useEffect, useState } from "react";
-import WorkerCard from "./worker-card/WorkerCard";
+import WorkerCard from "../worker-card/WorkerCard";
 import { motion, AnimatePresence } from "framer-motion";
+import Nav from "../../pagewrappers/Nav";
+import ClientSearchLoader from "../search-loaders/ClientSearchLoader";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function ClientLanding(props) {
   const classes = useStyles();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const workerCategory = location.state?.workerCategory;
+  const importance = location.state?.importance;
   const [workers, setWorkers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const mock = [
     {
@@ -69,24 +77,38 @@ export default function ClientLanding(props) {
   ];
 
   useEffect(() => {
-    setWorkers(mock);
+    if (workerCategory && importance) {
+      searchWorkers();
+    } else navigate("/");
   }, []);
 
-  return (
-    <div className={classes.container}>
-      <div className={classes.subContainer}>
-        <span className={classes.title}>¡Trabajadores para ti!</span>
-        <span className={classes.subTitle}>
-          Ten en cuenta que solo puedes comunicarte con 3 trabajadores al mismo
-          tiempo.
-        </span>
-        <motion.div layout className={classes.resultsContainer}>
-          {workers.map((worker) => {
-            return <WorkerCard key={worker.nombre} workerData={worker} />;
-          })}
-        </motion.div>
+  const searchWorkers = () => {
+    setWorkers(mock);
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  };
+
+  return loading ? (
+    <ClientSearchLoader />
+  ) : (
+    <>
+      <Nav />
+      <div className={classes.container}>
+        <div className={classes.subContainer}>
+          <span className={classes.title}>¡Trabajadores para ti!</span>
+          <span className={classes.subTitle}>
+            Ten en cuenta que solo puedes comunicarte con 3 trabajadores al
+            mismo tiempo.
+          </span>
+          <motion.div layout className={classes.resultsContainer}>
+            {workers.map((worker) => {
+              return <WorkerCard key={worker.nombre} workerData={worker} />;
+            })}
+          </motion.div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -94,6 +116,7 @@ const useStyles = createUseStyles({
   container: {
     width: "100%",
     height: "100%",
+    paddingTop: "12rem",
     background: `linear-gradient(${colors.primary},${colors.primary})`,
     fontFamily: "Poppins",
     display: "flex",
