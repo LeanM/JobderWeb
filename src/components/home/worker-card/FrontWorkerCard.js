@@ -11,17 +11,24 @@ export default function FrontWorkerCard(props) {
         <img className={classes.image} src="./worker.jpg"></img>
       </div>
       <div className={classes.dataContainer}>
-        <span className={classes.dataText} style={{ fontWeight: "600" }}>
+        <span
+          className={classes.dataText}
+          style={{ fontWeight: "800", fontSize: "2rem" }}
+        >
           {workerData.nombre}
         </span>
-        <span className={classes.dataText}>
-          <MDBIcon icon="info"></MDBIcon>
-          {workerData.distancia}Km de distancia
-        </span>
-        <span className={classes.dataText}>
+        <div className={classes.dataText}>
+          <MDBIcon icon="info" style={{}}></MDBIcon>
+          <p>{workerData.distancia}Km de distancia</p>
+        </div>
+        <div className={classes.dataText}>
           <MDBIcon style={{ color: "yellow" }} icon="star"></MDBIcon>
-          {workerData.rating}
-        </span>
+          <p>{workerData.rating}</p>
+        </div>
+        <div className={classes.dataText}>
+          <MDBIcon style={{ color: "orange" }} icon="medal"></MDBIcon>
+          <p>100+ trabajos realizados</p>
+        </div>
         <div className={classes.statusContainer}>
           <div
             className={classes.statusIcon}
@@ -60,21 +67,27 @@ const useStyles = createUseStyles({
     width: "100%",
     height: "40%",
     display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-start",
+    alignItems: "start",
     paddingLeft: "0",
     flexDirection: "column",
     gap: "0.2rem",
   },
   dataText: {
     color: colors.white,
-    fontWeight: "300",
+    marginLeft: "1.5rem",
+    fontWeight: "100",
     fontSize: "1rem",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "0.5rem",
   },
   statusContainer: {
     width: "100%",
     height: "2rem",
     display: "flex",
+    marginTop: "auto",
     justifyContent: "center",
     alignItems: "center",
     gap: "0.3rem",

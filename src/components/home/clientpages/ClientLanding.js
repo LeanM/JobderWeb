@@ -118,7 +118,7 @@ const useStyles = createUseStyles({
     height: "100%",
     paddingTop: "12rem",
     background: `linear-gradient(${colors.primary},${colors.primary})`,
-    fontFamily: "Poppins",
+    fontFamily: "Montserrat",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",

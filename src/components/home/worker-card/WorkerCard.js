@@ -39,7 +39,7 @@ export default function WorkerCard(props) {
 const useStyles = createUseStyles({
   container: {
     width: "20rem",
-    height: "30rem",
+    height: "32rem",
     borderRadius: "10px",
   },
 });

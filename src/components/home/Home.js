@@ -75,7 +75,7 @@ const useStyles = createUseStyles({
     height: "100vh",
     paddingTop: "12rem",
     background: `linear-gradient(${colors.primary},${colors.primary})`,
-    fontFamily: "Poppins",
+    fontFamily: "Montserrat",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -112,7 +112,6 @@ const useStyles = createUseStyles({
     color: colors.textSecondary,
   },
   searchButton: {
-    fontFamily: "Poppins",
     fontWeight: "600",
     borderRadius: "20px",
     width: "8rem",

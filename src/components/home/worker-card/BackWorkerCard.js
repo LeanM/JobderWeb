@@ -54,12 +54,6 @@ export default function BackWorkerCard(props) {
           <p className={classes.infoLabel}>Horarios</p>
           <span className={classes.infoText}>De corrido</span>
         </div>
-        <div className={classes.infoBlock}>
-          <p className={classes.infoLabel}>Trabajos</p>
-          <span className={classes.infoText}>
-            100 trabajos realizados con exito!
-          </span>
-        </div>
       </div>
       <div className={classes.reviewContainer}>
         <span className={classes.reviewTitle}>Opiniones del trabajador</span>
@@ -86,10 +80,10 @@ export default function BackWorkerCard(props) {
             <p className={classes.loginInfoText}>
               Para comunicarte debes iniciar sesion!
             </p>
-            <Button onClick={() => login()} className={classes.loginButton}>
+            <button onClick={() => login()} className={classes.loginButton}>
               <MDBIcon fab icon="google"></MDBIcon>
               <p>Inicia sesion!</p>
-            </Button>
+            </button>
           </div>
         )}
       </div>
@@ -105,7 +99,7 @@ const useStyles = createUseStyles({
     borderRadius: "10px",
   },
   backInfoContainer: {
-    height: "45%",
+    height: "50%",
     width: "100%",
     display: "flex",
     justifyContent: "flex-start",
@@ -127,19 +121,19 @@ const useStyles = createUseStyles({
   },
   reviewContainer: {
     width: "100%",
-    height: "40%",
+    height: "35%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    gap: "0.5rem",
+    gap: "0",
   },
   reviewTitle: {
     color: colors.primary,
     fontWeight: "700",
   },
   reviewCarousel: {
-    height: "90%",
+    height: "80%",
     width: "95%",
     display: "flex",
     flexDirection: "column",
@@ -148,7 +142,7 @@ const useStyles = createUseStyles({
   },
   buttonContainer: {
     width: "100%",
-    height: "10%",
+    height: "14%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -168,6 +162,9 @@ const useStyles = createUseStyles({
   },
   loginButton: {
     display: "flex",
+    width: "60%",
+    height: "60%",
+    borderRadius: "20px",
     justifyContent: "center",
     alignItems: "center",
     gap: "1rem",
@@ -175,8 +172,11 @@ const useStyles = createUseStyles({
     backgroundColor: colors.notificationLight,
     color: colors.notification,
 
+    transition: "background 0.5s",
+
     "&:hover": {
-      backgroundColor: colors.notificationLight,
+      backgroundColor: colors.white,
+      color: colors.notification,
     },
   },
 });
