@@ -1,8 +1,6 @@
-import "../../css/login-register.css";
-import { React, ReactDOM } from "react";
-import axios from "axios";
+import { React } from "react";
 import { toast } from "react-hot-toast";
-import { useState, useRef, useEffect, useContext } from "react";
+import { useState, useRef, useEffect } from "react";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";

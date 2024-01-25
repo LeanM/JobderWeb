@@ -5,6 +5,9 @@ import Missing from "./Missing";
 import RequireAuth from "./auth/RequireAuth";
 import ClientLanding from "./home/clientpages/ClientLanding";
 import ChatView from "./chat-components/ChatView";
+import Profile from "./profile/Profile";
+import LogIn from "./auth/Login";
+import Register from "./auth/Register";
 
 function App() {
   return (
@@ -14,6 +17,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/clientLanding" element={<ClientLanding />} />
         <Route path="/chat" element={<ChatView />} />
+        <Route path="/login" element={<LogIn />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
 
         {/* Want to protect these routes */}
         <Route element={<RequireAuth />}></Route>

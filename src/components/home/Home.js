@@ -14,6 +14,11 @@ export default function Home() {
 
   const [actualWorkerCategory, setActualWorkerCategory] = useState("");
   const [actualImportance, setActualImportance] = useState("");
+  const [selectionItemsArray, setSelectionItemsArray] = useState([
+    { id: 1, itemName: "Urgente", itemCode: "urgent" },
+    { id: 2, itemName: "Moderado", itemCode: "moderated" },
+    { id: 3, itemName: "Poco Urgente", itemCode: "less urgent" },
+  ]);
 
   const handleSelectWorkerCategory = (selection) => {
     setActualWorkerCategory(selection);
@@ -44,6 +49,7 @@ export default function Home() {
               Que tan urgente es tu problema?
             </span>
             <RadioSelection
+              selectionItemsArray={selectionItemsArray}
               onSelect={(selection) => handleSelectImportance(selection)}
             />
           </div>

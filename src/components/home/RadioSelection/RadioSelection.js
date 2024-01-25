@@ -5,22 +5,8 @@ import RadioSelectionItem from "./RadioSelectionItem";
 
 export default function RadioSelection(props) {
   const [actualSelectionId, setActualSelectionId] = useState(0);
-  const [selectionItems, setSelectionItems] = useState([]);
   const classes = useStyles();
-
-  useEffect(() => {
-    fillSelectionItems();
-  }, []);
-
-  const fillSelectionItems = () => {
-    let selectionItemsArray = [
-      { id: 1, itemName: "Urgente" },
-      { id: 2, itemName: "Moderado" },
-      { id: 3, itemName: "Poco Urgente" },
-    ];
-
-    setSelectionItems(selectionItemsArray);
-  };
+  const { selectionItemsArray } = props;
 
   const onSelectItem = (selectedItemId, selectedItemName) => {
     setActualSelectionId(selectedItemId);
@@ -29,7 +15,7 @@ export default function RadioSelection(props) {
 
   return (
     <div className={classes.container}>
-      {selectionItems.map((item) => {
+      {selectionItemsArray.map((item) => {
         return (
           <RadioSelectionItem
             actualSelection={actualSelectionId}
