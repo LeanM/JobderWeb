@@ -6,16 +6,21 @@ import RadioSelectionItem from "./RadioSelectionItem";
 export default function RadioSelection(props) {
   const [actualSelectionId, setActualSelectionId] = useState(0);
   const classes = useStyles();
-  const { selectionItemsArray } = props;
+  const { selectionItemsArray, startSelection } = props;
 
   const onSelectItem = (selectedItemId, selectedItemName) => {
-    setActualSelectionId(selectedItemId);
-    props.onSelect(selectedItemName);
+    if (actualSelectionId !== selectedItemId) {
+      setActualSelectionId(selectedItemId);
+      props.onSelect(selectedItemName);
+    }
   };
 
   return (
     <div className={classes.container}>
       {selectionItemsArray.map((item) => {
+        if (startSelection === item.id) {
+          setActualSelectionId(item.id);
+        }
         return (
           <RadioSelectionItem
             actualSelection={actualSelectionId}

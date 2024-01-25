@@ -12,15 +12,36 @@ export default function Profile() {
     { id: 2, itemName: "Moderado", itemCode: "moderated" },
     { id: 3, itemName: "No Disponible", itemCode: "notavailable" },
   ]);
+  const [startSelection, setStartSelection] = useState(0);
 
   useEffect(() => {
-    setUserData({
+    initializeUser();
+  }, []);
+
+  const initializeUser = () => {
+    let userData = {
       role: "worker",
       name: "Leandro Moran",
       phoneNumber: "29312931",
       status: "moderated",
-    });
-  }, []);
+    };
+    setUserData(userData);
+
+    initializeSelectionStatus(userData.status);
+  };
+
+  const initializeSelectionStatus = (status) => {
+    if (status === "available") {
+      setStartSelection(1);
+    }
+    if (status === "moderated") {
+      setStartSelection(2);
+    }
+    if (status === "notavailable") {
+      setStartSelection(3);
+    }
+  };
+
   return (
     <>
       <Nav />
