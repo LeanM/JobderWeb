@@ -4,7 +4,6 @@ import { colors } from "../../assets/colors";
 export default function Message(props) {
   const { type, messageData } = props;
   const classes = useStyles();
-  console.log(type);
 
   return (
     <div

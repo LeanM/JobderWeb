@@ -3,23 +3,34 @@ import { createUseStyles } from "react-jss";
 import Message from "./Message";
 import axios from "axios";
 import { colors } from "../../assets/colors";
+import React, { forwardRef, useImperativeHandle } from "react";
 
-export default function ChatBox(props) {
+const ChatBox = forwardRef((props, ref) => {
   const { actualRecipientId, userData, onSendMessage } = props;
   const [messageList, setMessageList] = useState([]);
   const [inputText, setInputText] = useState("");
+
+  const messageContainerRef = useRef(null);
+
   const classes = useStyles();
+
+  useImperativeHandle(ref, () => ({
+    addMessageToList,
+  }));
 
   useEffect(() => {
     if (actualRecipientId !== "") loadMessages();
     else setMessageList([]);
   }, [actualRecipientId]);
 
+  useEffect(() => {
+    scrollDown();
+  }, [messageList]);
+
   const loadMessages = async () => {
     let response = await axios(
       `http://localhost:8088/messages/${userData.email}/${actualRecipientId}`
     );
-    console.log(response);
 
     setMessageList(response.data);
   };
@@ -30,19 +41,28 @@ export default function ChatBox(props) {
 
   const handleMessage = () => {
     let newMessage = onSendMessage(inputText);
-    if (newMessage) {
-      setMessageList([...messageList, newMessage]);
-    }
+    addMessageToList(newMessage);
 
     setInputText("");
   };
 
+  const addMessageToList = (newMessage) => {
+    if (newMessage) {
+      setMessageList([...messageList, newMessage]);
+    }
+  };
+
+  const scrollDown = () => {
+    if (messageContainerRef.current) {
+      const scrollHeight = messageContainerRef.current.scrollHeight;
+      messageContainerRef.current.scrollTop += scrollHeight; // Puedes ajustar el valor según tus necesidades
+    }
+  };
+
   return (
     <div className={classes.container}>
-      <div className={classes.messagesContainer}>
+      <div className={classes.messagesContainer} ref={messageContainerRef}>
         {messageList.map((message) => {
-          console.log(message);
-          console.log(actualRecipientId);
           if (message.recipientId === actualRecipientId)
             return <Message type="sender" messageData={message} />;
           else return <Message type="receiver" messageData={message} />;
@@ -61,7 +81,9 @@ export default function ChatBox(props) {
       </div>
     </div>
   );
-}
+});
+
+export default ChatBox;
 
 const useStyles = createUseStyles({
   container: {

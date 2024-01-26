@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { colors } from "../../assets/colors";
 import Nav from "../pagewrappers/Nav";
@@ -9,18 +9,18 @@ import ChatBox from "./ChatBox";
 
 var stompClient = null;
 export default function ChatScreen() {
-  const [userData, setUserData] = useState({
-    email: "ddd@ddd.com",
-    name: "asd",
-    status: "ONLINE",
-  });
+  const [userData, setUserData] = useState(null);
   const [chatUsers, setChatUsers] = useState([]);
   const [actualRecipientId, setActualRecipientId] = useState("");
+  const [logged, setLogged] = useState(false);
+  const chatBoxRef = useRef(null);
   const classes = useStyles();
 
   useEffect(() => {
-    connect();
-  }, []);
+    if (userData !== null) {
+      connect();
+    }
+  }, [userData]);
 
   const connect = () => {
     let Sock = new SockJS("http://localhost:8088/ws");
@@ -30,6 +30,7 @@ export default function ChatScreen() {
 
   const onConnected = () => {
     getChatUsers();
+
     stompClient.subscribe(
       `/user/${userData.email}/queue/messages`,
       onMessageReceived
@@ -44,7 +45,14 @@ export default function ChatScreen() {
     setChatUsers(response.data);
   };
 
-  const onMessageReceived = (payload) => {};
+  const onMessageReceived = (payload) => {
+    getChatUsers();
+
+    const message = JSON.parse(payload.body);
+    if (actualRecipientId === message.senderId) {
+      chatBoxRef.current.addMessageToList(message);
+    }
+  };
 
   const sendMessage = (messageContent) => {
     if (stompClient) {
@@ -64,7 +72,34 @@ export default function ChatScreen() {
     console.log(err);
   };
 
-  return (
+  return !logged ? (
+    <div>
+      <button
+        onClick={() => {
+          setLogged(true);
+          setUserData({
+            email: "ddd@ddd.com",
+            name: "asd",
+            status: "ONLINE",
+          });
+        }}
+      >
+        Log on ddd
+      </button>
+      <button
+        onClick={() => {
+          setLogged(true);
+          setUserData({
+            email: "asd@asd.com",
+            name: "asd",
+            status: "ONLINE",
+          });
+        }}
+      >
+        Log on asd
+      </button>
+    </div>
+  ) : (
     <>
       <Nav />
       <div className={classes.container}>
@@ -88,6 +123,7 @@ export default function ChatScreen() {
             </div>
           </div>
           <ChatBox
+            ref={chatBoxRef}
             onSendMessage={(messageContent) => sendMessage(messageContent)}
             actualRecipientId={actualRecipientId}
             userData={userData}
