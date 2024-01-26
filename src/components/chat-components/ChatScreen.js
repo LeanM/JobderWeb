@@ -7,11 +7,13 @@ import { over } from "stompjs";
 import SockJS from "sockjs-client";
 import ChatBox from "./ChatBox";
 import ChatUserItem from "./ChatUserItem";
+import { format } from "date-fns";
+import toast from "react-hot-toast";
 
 var stompClient = null;
 export default function ChatScreen() {
   const [userData, setUserData] = useState(null);
-  const [chatUsers, setChatUsers] = useState([]);
+  const [chatRoomUsers, setChatRoomUsers] = useState([]);
   const [actualRecipientId, setActualRecipientId] = useState("");
   const [logged, setLogged] = useState(false);
   const chatBoxRef = useRef(null);
@@ -30,7 +32,7 @@ export default function ChatScreen() {
   };
 
   const onConnected = () => {
-    getChatUsers();
+    getChatRoomUsers();
 
     stompClient.subscribe(
       `/user/${userData.email}/queue/messages`,
@@ -38,30 +40,40 @@ export default function ChatScreen() {
     );
   };
 
-  const getChatUsers = async () => {
+  const getChatRoomUsers = async () => {
     let response = await axios.get(
       "http://localhost:8088/chatusers/" + userData.email
     );
 
-    setChatUsers(response.data);
+    setChatRoomUsers(response.data);
   };
 
   const onMessageReceived = (payload) => {
-    getChatUsers();
-
     const message = JSON.parse(payload.body);
+
     if (actualRecipientId === message.senderId) {
+      const timestamp = format(
+        message.timestamp,
+        "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+      );
+      console.log("................");
+      console.log(timestamp);
       chatBoxRef.current.addMessageToList(message);
+    } else {
+      toast.success("Recibiste un mensaje!");
+      getChatRoomUsers();
     }
   };
 
   const sendMessage = (messageContent) => {
     if (stompClient) {
+      const actualDate = new Date();
+      const timestamp = format(actualDate, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
       var chatMessage = {
         senderId: userData.email,
         recipientId: actualRecipientId,
         content: messageContent,
-        timestamp: new Date(),
+        timestamp: timestamp,
       };
       stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
 
@@ -106,11 +118,11 @@ export default function ChatScreen() {
       <div className={classes.container}>
         <div className={classes.subContainer}>
           <div className={classes.chatUsersContainer}>
-            {chatUsers.map((user) => {
+            {chatRoomUsers.map((chatroomUser) => {
               return (
                 <ChatUserItem
                   onSelect={(userId) => setActualRecipientId(userId)}
-                  userData={user}
+                  chatroomUserData={chatroomUser}
                   actualRecipientId={actualRecipientId}
                 />
               );

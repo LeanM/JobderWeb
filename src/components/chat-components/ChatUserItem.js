@@ -3,12 +3,20 @@ import { colors } from "../../assets/colors";
 import { useEffect, useState } from "react";
 
 export default function ChatUserItem(props) {
-  const { actualRecipientId, userData, onSelect } = props;
+  const { actualRecipientId, chatroomUserData, onSelect } = props;
   const [style, setStyle] = useState({});
   const classes = useStyles();
 
+  useEffect(() => {
+    if (chatroomUserData.chatRoomState === "unseen") setStyle(notifiedStyle);
+  }, [chatroomUserData]);
+
   const nonSelectedStyle = {
     borderBottom: `solid 1px ${colors.primary}`,
+  };
+
+  const notifiedStyle = {
+    border: `solid 1px ${colors.notification}`,
   };
 
   const selectedStyle = {
@@ -17,18 +25,21 @@ export default function ChatUserItem(props) {
   };
 
   useEffect(() => {
-    if (actualRecipientId === userData.email) setStyle(selectedStyle);
+    if (actualRecipientId === chatroomUserData.user.email)
+      setStyle(selectedStyle);
     else setStyle(nonSelectedStyle);
   }, [actualRecipientId]);
 
   return (
     <div
-      onClick={() => onSelect(userData.email)}
+      onClick={() => onSelect(chatroomUserData.user.email)}
       style={style}
       className={classes.chatUserItem}
     >
       <img className={classes.chatUserItemImage} src="./worker.jpg"></img>
-      <span className={classes.chatUserItemText}>{userData.name}</span>
+      <span className={classes.chatUserItemText}>
+        {chatroomUserData.user.name + chatroomUserData.chatRoomState}
+      </span>
     </div>
   );
 }
