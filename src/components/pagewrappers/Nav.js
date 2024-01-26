@@ -120,7 +120,7 @@ export default function Nav(props) {
           <div
             className={classes.navBarListItem}
             onClick={() => {
-              navigate("/contact");
+              navigate("/chat");
             }}
             style={navButtonStyle}
           >

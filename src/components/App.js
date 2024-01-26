@@ -8,6 +8,7 @@ import ChatView from "./chat-components/ChatView";
 import Profile from "./profile/Profile";
 import LogIn from "./auth/Login";
 import Register from "./auth/Register";
+import ChatScreen from "./chat-components/ChatScreen";
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
         {/* Public routes */}
         <Route path="/" element={<Home />} />
         <Route path="/clientLanding" element={<ClientLanding />} />
-        <Route path="/chat" element={<ChatView />} />
+        <Route path="/chat" element={<ChatScreen />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
