@@ -6,6 +6,7 @@ import axios from "axios";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
 import ChatBox from "./ChatBox";
+import ChatUserItem from "./ChatUserItem";
 
 var stompClient = null;
 export default function ChatScreen() {
@@ -107,12 +108,11 @@ export default function ChatScreen() {
           <div className={classes.chatUsersContainer}>
             {chatUsers.map((user) => {
               return (
-                <div
-                  onClick={() => setActualRecipientId(user.email)}
-                  className={classes.chatUserItem}
-                >
-                  {user.email}
-                </div>
+                <ChatUserItem
+                  onSelect={(userId) => setActualRecipientId(userId)}
+                  userData={user}
+                  actualRecipientId={actualRecipientId}
+                />
               );
             })}
             <div
@@ -143,6 +143,7 @@ const useStyles = createUseStyles({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    fontFamily: "Montserrat",
   },
   subContainer: {
     width: "90%",
@@ -160,10 +161,8 @@ const useStyles = createUseStyles({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
-  },
-  chatUserItem: {
-    width: "90%",
-    height: "4rem",
-    backgroundColor: colors.hover,
+    borderRight: `solid 1px ${colors.primary}`,
+    gap: "1rem",
+    paddingTop: "2rem",
   },
 });

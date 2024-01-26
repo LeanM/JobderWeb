@@ -91,12 +91,12 @@ const useStyles = createUseStyles({
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     alignItems: "center",
   },
   messagesContainer: {
     width: "100%",
-    height: "90%",
+    height: "85%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",
@@ -110,7 +110,7 @@ const useStyles = createUseStyles({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "blue",
+    borderTop: `solid 1px ${colors.primary}`,
     gap: "1rem",
   },
   input: {
