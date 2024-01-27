@@ -39,7 +39,7 @@ export default function ChatUserItem(props) {
     >
       <img className={classes.chatUserItemImage} src="./worker.jpg"></img>
       <span className={classes.chatUserItemText}>
-        {chatroomUserData.user.name + chatroomUserData.chatRoomState}
+        {chatroomUserData.user.name}
       </span>
       {notificationShow ? (
         <div className={classes.chatUserItemNotification}></div>
