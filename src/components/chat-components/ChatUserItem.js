@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 export default function ChatUserItem(props) {
   const { actualRecipientId, chatroomUserData, onSelect } = props;
   const [style, setStyle] = useState({});
+  const [notificationShow, setNotificationShow] = useState(false);
   const classes = useStyles();
 
   useEffect(() => {
@@ -12,26 +13,22 @@ export default function ChatUserItem(props) {
       chatroomUserData.chatRoomState === "unseen" &&
       actualRecipientId !== chatroomUserData.user.email
     )
-      setStyle(notifiedStyle);
+      setNotificationShow(true);
   }, [chatroomUserData]);
 
   const nonSelectedStyle = {
     borderBottom: `solid 1px ${colors.primary}`,
   };
-
-  const notifiedStyle = {
-    border: `solid 1px ${colors.notification}`,
-  };
-
   const selectedStyle = {
     borderBottom: `solid 1px ${colors.white}`,
     backgroundColor: colors.primary,
   };
 
   useEffect(() => {
-    if (actualRecipientId === chatroomUserData.user.email)
+    if (actualRecipientId === chatroomUserData.user.email) {
+      setNotificationShow(false);
       setStyle(selectedStyle);
-    else setStyle(nonSelectedStyle);
+    } else setStyle(nonSelectedStyle);
   }, [actualRecipientId]);
 
   return (
@@ -44,6 +41,11 @@ export default function ChatUserItem(props) {
       <span className={classes.chatUserItemText}>
         {chatroomUserData.user.name + chatroomUserData.chatRoomState}
       </span>
+      {notificationShow ? (
+        <div className={classes.chatUserItemNotification}></div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
@@ -52,6 +54,7 @@ const useStyles = createUseStyles({
   chatUserItem: {
     width: "90%",
     height: "4rem",
+    position: "relative",
     paddingLeft: "0.5rem",
     borderTopLeftRadius: "5px",
     borderTopRightRadius: "5px",
@@ -78,5 +81,14 @@ const useStyles = createUseStyles({
     color: colors.white,
     fontWeight: "500",
     fontSize: "1.1rem",
+  },
+  chatUserItemNotification: {
+    position: "absolute",
+    display: "none",
+    right: "5%",
+    borderRadius: "100%",
+    width: "1rem",
+    height: "1rem",
+    backgroundColor: colors.notificationLight,
   },
 });
