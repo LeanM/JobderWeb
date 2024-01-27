@@ -1,9 +1,13 @@
 import { createUseStyles } from "react-jss";
 import { colors } from "../../assets/colors";
+import { useEffect } from "react";
+import { format } from "date-fns";
 
 export default function Message(props) {
   const { type, messageData } = props;
   const classes = useStyles();
+
+  useEffect(() => {}, []);
 
   return (
     <div

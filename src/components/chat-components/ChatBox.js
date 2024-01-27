@@ -4,11 +4,15 @@ import Message from "./Message";
 import axios from "axios";
 import { colors } from "../../assets/colors";
 import React, { forwardRef, useImperativeHandle } from "react";
+import { format } from "date-fns";
 
 const ChatBox = forwardRef((props, ref) => {
   const { actualRecipientId, userData, onSendMessage } = props;
   const [messageList, setMessageList] = useState([]);
   const [inputText, setInputText] = useState("");
+  const [actualDate, setActualDate] = useState("");
+
+  const [messageDisplay, setMessageDisplay] = useState([]);
 
   const messageContainerRef = useRef(null);
 
@@ -24,6 +28,7 @@ const ChatBox = forwardRef((props, ref) => {
   }, [actualRecipientId]);
 
   useEffect(() => {
+    fillMessageDisplay();
     scrollDown();
   }, [messageList]);
 
@@ -59,14 +64,52 @@ const ChatBox = forwardRef((props, ref) => {
     }
   };
 
+  const fillMessageDisplay = () => {
+    let display = [];
+    let previousDate = "";
+    messageList.map((message) => {
+      const messageTimestamp = new Date(
+        format(message.timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+      );
+      const year = messageTimestamp.getFullYear();
+      const month = ("0" + (messageTimestamp.getMonth() + 1)).slice(-2); // Suma 1 ya que los meses van de 0 a 11
+      const day = ("0" + messageTimestamp.getDate()).slice(-2);
+      const formattedDate = `${year}-${month}-${day}`;
+      if (formattedDate !== previousDate) {
+        previousDate = formattedDate;
+        display.push(
+          <div className={classes.timeContainer}>
+            <span style={{ color: colors.white }}>{formattedDate}</span>
+            <div
+              style={{
+                width: "100%",
+                height: "1px",
+                backgroundColor: colors.primary,
+              }}
+            ></div>
+          </div>
+        );
+        if (message.recipientId === actualRecipientId) {
+          display.push(<Message type="sender" messageData={message} />);
+        } else {
+          display.push(<Message type="receiver" messageData={message} />);
+        }
+      } else {
+        if (message.recipientId === actualRecipientId) {
+          display.push(<Message type="sender" messageData={message} />);
+        } else {
+          display.push(<Message type="receiver" messageData={message} />);
+        }
+      }
+    });
+
+    setMessageDisplay(display);
+  };
+
   return (
     <div className={classes.container}>
       <div className={classes.messagesContainer} ref={messageContainerRef}>
-        {messageList.map((message) => {
-          if (message.recipientId === actualRecipientId)
-            return <Message type="sender" messageData={message} />;
-          else return <Message type="receiver" messageData={message} />;
-        })}
+        {messageDisplay}
       </div>
       <div className={classes.inputContainer}>
         <input
@@ -103,6 +146,15 @@ const useStyles = createUseStyles({
     alignItems: "center",
     overflowY: "scroll",
     overflowX: "none",
+  },
+  timeContainer: {
+    width: "80%",
+    height: "3rem",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "0.5rem",
   },
   inputContainer: {
     width: "100%",

@@ -52,17 +52,29 @@ export default function ChatScreen() {
     const message = JSON.parse(payload.body);
 
     if (actualRecipientId === message.senderId) {
-      const timestamp = format(
-        message.timestamp,
-        "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
-      );
-      console.log("................");
-      console.log(timestamp);
       chatBoxRef.current.addMessageToList(message);
     } else {
       toast.success("Recibiste un mensaje!");
       getChatRoomUsers();
     }
+  };
+
+  const calculateTime = (messageData) => {
+    const actualDate = new Date();
+    const actualTimestamp = new Date(
+      format(actualDate, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    );
+    const messageTimestamp = new Date(
+      format(messageData.timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    );
+    const tiempoPasado = actualTimestamp - messageTimestamp;
+
+    const horasTranscurridas = (tiempoPasado / (1000 * 60 * 60)).toFixed(2);
+
+    if (horasTranscurridas < 1) {
+      return toString(horasTranscurridas * 60) + "mins";
+    }
+    console.log(horasTranscurridas);
   };
 
   const sendMessage = (messageContent) => {
