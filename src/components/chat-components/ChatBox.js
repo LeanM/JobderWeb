@@ -29,8 +29,11 @@ const ChatBox = forwardRef((props, ref) => {
 
   useEffect(() => {
     fillMessageDisplay();
-    scrollDown();
   }, [messageList]);
+
+  useEffect(() => {
+    scrollDown();
+  }, [messageDisplay]);
 
   const loadMessages = async () => {
     let response = await axios(
@@ -53,7 +56,14 @@ const ChatBox = forwardRef((props, ref) => {
 
   const addMessageToList = (newMessage) => {
     if (newMessage) {
-      setMessageList([...messageList, newMessage]);
+      let newMessageDisplay =
+        newMessage.recipientId === actualRecipientId ? (
+          <Message type="sender" messageData={newMessage} />
+        ) : (
+          <Message type="receiver" messageData={newMessage} />
+        );
+
+      setMessageDisplay([...messageDisplay, newMessageDisplay]);
     }
   };
 
@@ -104,6 +114,7 @@ const ChatBox = forwardRef((props, ref) => {
     });
 
     setMessageDisplay(display);
+    scrollDown();
   };
 
   return (
@@ -148,9 +159,10 @@ const useStyles = createUseStyles({
     overflowX: "none",
   },
   timeContainer: {
-    width: "80%",
+    width: "65%",
     height: "3rem",
     display: "flex",
+    marginBottom: "1rem",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",

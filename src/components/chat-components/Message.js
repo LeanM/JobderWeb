@@ -63,7 +63,7 @@ const useStyles = createUseStyles({
   bubbleContainer: {
     minWidth: "10rem",
     minHeight: "80%",
-    borderRadius: "20px",
+    borderRadius: "7px",
     backgroundColor: colors.white,
     boxShadow: `0 0 5px ${colors.black}`,
     display: "flex",

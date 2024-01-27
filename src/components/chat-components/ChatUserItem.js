@@ -8,7 +8,11 @@ export default function ChatUserItem(props) {
   const classes = useStyles();
 
   useEffect(() => {
-    if (chatroomUserData.chatRoomState === "unseen") setStyle(notifiedStyle);
+    if (
+      chatroomUserData.chatRoomState === "unseen" &&
+      actualRecipientId !== chatroomUserData.user.email
+    )
+      setStyle(notifiedStyle);
   }, [chatroomUserData]);
 
   const nonSelectedStyle = {
