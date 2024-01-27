@@ -84,7 +84,7 @@ const useStyles = createUseStyles({
   },
   chatUserItemNotification: {
     position: "absolute",
-    display: "none",
+
     right: "5%",
     borderRadius: "100%",
     width: "1rem",
