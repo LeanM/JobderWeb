@@ -40,6 +40,11 @@ export default function Home() {
     { id: 2, itemName: "Moderado", itemCode: "moderated" },
     { id: 3, itemName: "Poco Urgente", itemCode: "less urgent" },
   ]);
+  const [inputProblemText, setInputProblemText] = useState("");
+
+  useEffect(() => {
+    console.log(inputProblemText);
+  }, [inputProblemText]);
 
   const handleSelectWorkerCategory = (selection) => {
     setActualWorkerCategory(selection);
@@ -67,6 +72,17 @@ export default function Home() {
           </div>
           <div className={classes.selectionContainer}>
             <span className={classes.selectionLabel}>
+              Si quieres, describe en breves palabras tu problema
+            </span>
+            <input
+              className={classes.inputText}
+              type="text"
+              value={inputProblemText}
+              onChange={(e) => setInputProblemText(e.target.value)}
+            />
+          </div>
+          <div className={classes.selectionContainer}>
+            <span className={classes.selectionLabel}>
               Que tan urgente es tu problema?
             </span>
             <RadioSelection
@@ -88,6 +104,7 @@ export default function Home() {
                   state: {
                     workerCategory: actualWorkerCategory,
                     importance: actualImportance,
+                    problemDescription: inputProblemText,
                   },
                 });
             }}
@@ -141,6 +158,12 @@ const useStyles = createUseStyles({
     fontSize: "1rem",
     textAlign: "center",
     color: colors.textSecondary,
+  },
+  inputText: {
+    width: "15rem",
+    border: "none",
+    color: colors.primary,
+    backgroundColor: colors.secondary,
   },
   searchButton: {
     fontWeight: "600",

@@ -12,7 +12,7 @@ function LogIn() {
   const { logInAuth, setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from || "/";
 
   const userRef = useRef();
   const errorRef = useRef();
@@ -78,7 +78,7 @@ function LogIn() {
             {errMsg}
           </p>
           <h1>Log In</h1>
-          <btn
+          <button
             onClick={() => login()}
             style={{
               display: "flex",
@@ -96,7 +96,7 @@ function LogIn() {
             <p style={{ color: "red", fontWeight: "600" }}>
               Sign In With Google
             </p>
-          </btn>
+          </button>
           <form className="login-register__form" onSubmit={handleSubmit}>
             <label className="login-register__label" htmlFor="email">
               Email

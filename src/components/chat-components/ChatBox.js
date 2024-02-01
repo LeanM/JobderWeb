@@ -5,8 +5,11 @@ import axios from "axios";
 import { colors } from "../../assets/colors";
 import React, { forwardRef, useImperativeHandle } from "react";
 import { format } from "date-fns";
+import { getMessages } from "../../connection/requests";
+import useAuth from "../../hooks/useAuth";
 
 const ChatBox = forwardRef((props, ref) => {
+  const { auth } = useAuth();
   const { actualRecipientId, userData, onSendMessage } = props;
   const [messageList, setMessageList] = useState([]);
   const [inputText, setInputText] = useState("");
@@ -35,12 +38,10 @@ const ChatBox = forwardRef((props, ref) => {
     scrollDown();
   }, [messageDisplay]);
 
-  const loadMessages = async () => {
-    let response = await axios(
-      `http://localhost:8080/messages/${userData.id}/${actualRecipientId}`
-    );
-
-    setMessageList(response.data);
+  const loadMessages = () => {
+    getMessages(auth?.accessToken, actualRecipientId)
+      .then((response) => setMessageList(response.data))
+      .catch((error) => console.log(error));
   };
 
   const handleInputChange = (e) => {

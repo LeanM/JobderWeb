@@ -7,11 +7,7 @@ import { MDBIcon } from "mdb-react-ui-kit";
 import useAuth from "../../../hooks/useAuth";
 import { useGoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
-import {
-  interactWithWorker,
-  socialLogIn,
-  startChat,
-} from "../../../connection/requests";
+import { socialLogIn } from "../../../connection/requests";
 import useGeoLocation from "../../../hooks/useGeoLocation";
 
 export default function BackWorkerCard(props) {
@@ -53,17 +49,6 @@ export default function BackWorkerCard(props) {
     },
   });
 
-  const handleStartChat = () => {
-    let interactionInfo = {
-      workerId: workerData.worker.id,
-      interactionType: "CLIENT_LIKE",
-      clientProblemDescription: "ASD",
-    };
-    interactWithWorker(auth.accessToken, interactionInfo)
-      .then((response) => navigate("/chat"))
-      .catch((error) => console.log(error));
-  };
-
   return (
     <div className={classes.backContainer}>
       <div className={classes.backInfoContainer}>
@@ -94,7 +79,7 @@ export default function BackWorkerCard(props) {
           <div className={classes.loginContainer}>
             <button
               onClick={() => {
-                handleStartChat();
+                props.onInteract(workerData.worker.id, "CLIENT_LIKE");
               }}
               className={classes.contactButton}
             >

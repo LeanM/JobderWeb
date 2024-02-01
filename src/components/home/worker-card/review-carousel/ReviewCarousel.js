@@ -42,9 +42,9 @@ export default function ReviewCarousel() {
 
   const getReviews = () => {
     setReviews([
-      { description: "asda", rating: 3 },
-      { description: "dddd", rating: 3 },
-      { description: "cccc", rating: 3 },
+      { id: 1, description: "asda", rating: 3 },
+      { id: 2, description: "dddd", rating: 3 },
+      { id: 3, description: "cccc", rating: 3 },
     ]);
   };
 
@@ -73,7 +73,7 @@ export default function ReviewCarousel() {
         draggable={draggable}
       >
         {reviews.map((review) => {
-          return <Review reviewData={review} />;
+          return <Review key={review.id} reviewData={review} />;
         })}
       </Slider>
       <button

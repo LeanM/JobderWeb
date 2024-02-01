@@ -23,6 +23,7 @@ export default function RadioSelection(props) {
         }
         return (
           <RadioSelectionItem
+            key={item.id}
             actualSelection={actualSelectionId}
             itemData={item}
             onSelect={(id, name) => onSelectItem(id, name)}

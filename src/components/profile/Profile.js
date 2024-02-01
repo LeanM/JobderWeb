@@ -5,10 +5,12 @@ import { useEffect, useState } from "react";
 import RadioSelection from "../home/RadioSelection/RadioSelection";
 import { getProfile } from "../../connection/requests";
 import useAuth from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const { auth } = useAuth();
   const classes = useStyles();
+  const navigate = useNavigate();
   const [userData, setUserData] = useState({});
   const [selectionItemsArray, setSelectionItemsArray] = useState([
     { id: 1, itemName: "Disponible", itemCode: "available" },
@@ -18,7 +20,8 @@ export default function Profile() {
   const [startSelection, setStartSelection] = useState(0);
 
   useEffect(() => {
-    initializeUser();
+    if (auth?.accessToken) initializeUser();
+    else navigate("/login", { state: { from: "/profile" } });
   }, []);
 
   const initializeUser = () => {

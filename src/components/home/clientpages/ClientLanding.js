@@ -8,52 +8,20 @@ import ClientSearchLoader from "../search-loaders/ClientSearchLoader";
 import { useNavigate, useLocation } from "react-router-dom";
 import useGeoLocation from "../../../hooks/useGeoLocation";
 import { searchWorkersUnlogged } from "../../../connection/requests";
+import useAuth from "../../../hooks/useAuth";
+import { interactWithWorker } from "../../../connection/requests";
 
 export default function ClientLanding(props) {
+  const { auth } = useAuth();
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
   const { geoLocation, setGeoLocation } = useGeoLocation();
   const workerCategory = location.state?.workerCategory;
   const importance = location.state?.importance;
+  const problemDescription = location.state?.problemDescription;
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const mock = [
-    {
-      nombre: "Juan",
-      descripcion: "Experto en construcción",
-      distancia: 10,
-      rating: 4.5,
-      trabajos: 264,
-      status: "active",
-    },
-    {
-      nombre: "María",
-      descripcion: "Diseñadora de interiores",
-      distancia: 20,
-      rating: 3.8,
-      trabajos: 12,
-      status: "ocuppied",
-    },
-    {
-      nombre: "Carlos",
-      descripcion: "Fontanero certificado",
-      distancia: 15,
-      rating: 4.0,
-      trabajos: 516,
-      status: "moderated",
-    },
-    // Agrega más trabajadores según tus necesidades
-    {
-      nombre: "Ana",
-      descripcion: "Electricista profesional",
-      distancia: 12,
-      rating: 4.2,
-      trabajos: 56,
-      status: "active",
-    },
-  ];
 
   useEffect(() => {
     if (workerCategory && importance) {
@@ -76,6 +44,17 @@ export default function ClientLanding(props) {
       .catch((error) => console.log(error));
   };
 
+  const handleInteraction = (workerId, interactionType) => {
+    let interactionInfo = {
+      workerId: workerId,
+      interactionType: interactionType,
+      clientProblemDescription: problemDescription,
+    };
+    interactWithWorker(auth.accessToken, interactionInfo)
+      .then((response) => navigate("/chat"))
+      .catch((error) => console.log(error));
+  };
+
   return loading ? (
     <ClientSearchLoader />
   ) : (
@@ -90,7 +69,15 @@ export default function ClientLanding(props) {
           </span>
           <motion.div layout className={classes.resultsContainer}>
             {workers.map((worker) => {
-              return <WorkerCard key={worker.nombre} workerData={worker} />;
+              return (
+                <WorkerCard
+                  key={worker.worker.id}
+                  workerData={worker}
+                  onInteract={(workerId, interactionType) => {
+                    handleInteraction(workerId, interactionType);
+                  }}
+                />
+              );
             })}
           </motion.div>
         </div>

@@ -143,17 +143,22 @@ export default function Nav(props) {
           <SideNav />
         </div>
         <div className={classes.navBarLowList}>
-          <div
-            className={classes.navBarListItem}
-            style={navButtonStyle}
-            onClick={() => {
-              navigate("/");
-            }}
-          >
-            <div className={classes.navBarListItemTextContainer}>
-              <p className={classes.navBarListItemText}>Busqueda</p>
+          {auth?.role === "WORKER" ? (
+            <></>
+          ) : (
+            <div
+              className={classes.navBarListItem}
+              style={navButtonStyle}
+              onClick={() => {
+                navigate("/");
+              }}
+            >
+              <div className={classes.navBarListItemTextContainer}>
+                <p className={classes.navBarListItemText}>Busqueda</p>
+              </div>
             </div>
-          </div>
+          )}
+
           <div
             className={classes.navBarListItem}
             onClick={() => {
@@ -169,10 +174,7 @@ export default function Nav(props) {
             style={navButtonStyle}
             className={classes.navBarListItem}
             onClick={() => {
-              if (auth?.accessToken) navigate("/profile");
-              else {
-                login();
-              }
+              navigate("/profile");
             }}
           >
             <div className={classes.navBarListItemTextContainer}>

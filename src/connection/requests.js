@@ -35,6 +35,10 @@ export const startChat = async (accessToken, otherUserId) => {
   );
 };
 
+export const getMessages = async (accessToken, recipientId) => {
+  return axiosAuth(accessToken).get(`/chat/messages/${recipientId}`);
+};
+
 export const searchWorkersUnlogged = async (searchInfo) => {
   return axios.post(
     "/search/unlogged/searchWorkers",

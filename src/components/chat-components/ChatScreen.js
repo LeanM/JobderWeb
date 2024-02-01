@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { colors } from "../../assets/colors";
 import Nav from "../pagewrappers/Nav";
-import axios from "axios";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
 import ChatBox from "./ChatBox";
@@ -14,9 +13,12 @@ import {
   getProfile,
 } from "../../connection/requests";
 import useAuth from "../../hooks/useAuth";
+import LogIn from "../auth/Login";
+import { useNavigate } from "react-router-dom";
 
 var stompClient = null;
 export default function ChatScreen() {
+  const navigate = useNavigate();
   const { auth } = useAuth();
   const [userData, setUserData] = useState(null);
   const [chatRoomUsers, setChatRoomUsers] = useState([]);
@@ -26,7 +28,9 @@ export default function ChatScreen() {
   const classes = useStyles();
 
   useEffect(() => {
-    getUserData();
+    window.scrollTo(0, 0);
+    if (auth?.accessToken) getUserData();
+    else navigate("/login", { state: { from: "/chat" } });
   }, []);
 
   useEffect(() => {
@@ -115,34 +119,7 @@ export default function ChatScreen() {
     console.log(err);
   };
 
-  return !logged ? (
-    <div>
-      <button
-        onClick={() => {
-          setLogged(true);
-          setUserData({
-            email: "ddd@ddd.com",
-            name: "asd",
-            status: "ONLINE",
-          });
-        }}
-      >
-        Log on ddd
-      </button>
-      <button
-        onClick={() => {
-          setLogged(true);
-          setUserData({
-            email: "asd@asd.com",
-            name: "asd",
-            status: "ONLINE",
-          });
-        }}
-      >
-        Log on asd
-      </button>
-    </div>
-  ) : (
+  return (
     <>
       <Nav />
       <div className={classes.container}>
@@ -151,6 +128,7 @@ export default function ChatScreen() {
             {chatRoomUsers.map((chatroomUser) => {
               return (
                 <ChatUserItem
+                  key={chatroomUser.interaction.id}
                   onSelect={(userId) => setActualRecipientId(userId)}
                   chatroomUserData={chatroomUser}
                   actualRecipientId={actualRecipientId}

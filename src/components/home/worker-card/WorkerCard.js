@@ -9,7 +9,7 @@ import BackWorkerCard from "./BackWorkerCard";
 
 export default function WorkerCard(props) {
   const navigate = useNavigate();
-  const { workerData } = props;
+  const { workerData, onInteract } = props;
   const classes = useStyles();
   const [isFlipped, setIsFlipped] = useState(false);
   return (
@@ -30,7 +30,12 @@ export default function WorkerCard(props) {
         isFlipped={isFlipped}
       >
         <FrontWorkerCard workerData={workerData} />
-        <BackWorkerCard workerData={workerData} />
+        <BackWorkerCard
+          workerData={workerData}
+          onInteract={(workerId, interactionType) =>
+            onInteract(workerId, interactionType)
+          }
+        />
       </ReactCardFlip>
     </motion.div>
   );
