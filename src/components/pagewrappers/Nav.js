@@ -5,10 +5,15 @@ import { colors } from "../../assets/colors";
 import { useNavigate } from "react-router-dom";
 import SideNav from "./SideNav";
 import Reveal from "../animations/Reveal";
+import { useGoogleLogin } from "@react-oauth/google";
+import toast from "react-hot-toast";
+import useGeoLocation from "../../hooks/useGeoLocation";
+import { socialLogIn } from "../../connection/requests";
 
 export default function Nav(props) {
   const navigate = useNavigate();
-  const { auth, logOutAuth } = useAuth();
+  const { geoLocation } = useGeoLocation();
+  const { auth, setAuth, logOutAuth } = useAuth();
   const [navStyle, setNavStyle] = useState({});
   const [navButtonStyle, setNavButtonStyle] = useState({});
   const [logoStyle, setLogoStyle] = useState({});
@@ -84,6 +89,38 @@ export default function Nav(props) {
     height: "90%",
   };
 
+  const login = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess: (response) => {
+      let authCode = response.code;
+      let socialCredentials = {
+        value: authCode,
+        accountRole: "CLIENT",
+        latitude: geoLocation?.latitude,
+        longitude: geoLocation?.longitude,
+      };
+
+      toast.promise(socialLogIn(socialCredentials), {
+        loading: "Logging In...",
+        success: (response) => {
+          const accessToken = response.data.accessToken;
+          console.log(accessToken);
+          setAuth({ accessToken: accessToken, role: response.data?.role });
+
+          return <b>Successfuly logged in!</b>;
+        },
+        error: (error) => {
+          return (
+            <span>
+              The next error happened while making loggin :{" "}
+              {error?.response?.data?.errors}
+            </span>
+          );
+        },
+      });
+    },
+  });
+
   return (
     <Reveal
       style={navStyle}
@@ -132,7 +169,10 @@ export default function Nav(props) {
             style={navButtonStyle}
             className={classes.navBarListItem}
             onClick={() => {
-              navigate("/profile");
+              if (auth?.accessToken) navigate("/profile");
+              else {
+                login();
+              }
             }}
           >
             <div className={classes.navBarListItemTextContainer}>
