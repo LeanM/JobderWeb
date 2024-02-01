@@ -37,7 +37,7 @@ const ChatBox = forwardRef((props, ref) => {
 
   const loadMessages = async () => {
     let response = await axios(
-      `http://localhost:8088/messages/${userData.email}/${actualRecipientId}`
+      `http://localhost:8080/messages/${userData.id}/${actualRecipientId}`
     );
 
     setMessageList(response.data);

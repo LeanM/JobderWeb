@@ -7,11 +7,17 @@ import { MDBIcon } from "mdb-react-ui-kit";
 import useAuth from "../../../hooks/useAuth";
 import { useGoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
-import { socialLogIn } from "../../../connection/requests";
+import {
+  interactWithWorker,
+  socialLogIn,
+  startChat,
+} from "../../../connection/requests";
+import useGeoLocation from "../../../hooks/useGeoLocation";
 
 export default function BackWorkerCard(props) {
   const { auth, setAuth } = useAuth();
   const classes = useStyles();
+  const { geoLocation } = useGeoLocation();
   const navigate = useNavigate();
   const { workerData } = props;
 
@@ -21,13 +27,17 @@ export default function BackWorkerCard(props) {
       let authCode = response.code;
       let socialCredentials = {
         value: authCode,
+        accountRole: "CLIENT",
+        latitude: geoLocation?.latitude,
+        longitude: geoLocation?.longitude,
       };
 
       toast.promise(socialLogIn(socialCredentials), {
         loading: "Logging In...",
         success: (response) => {
           const accessToken = response.data.accessToken;
-          setAuth({ accessToken });
+          console.log(accessToken);
+          setAuth({ accessToken: accessToken, role: response.data?.role });
 
           return <b>Successfuly logged in!</b>;
         },
@@ -43,16 +53,31 @@ export default function BackWorkerCard(props) {
     },
   });
 
+  const handleStartChat = () => {
+    let interactionInfo = {
+      workerId: workerData.worker.id,
+      interactionType: "CLIENT_LIKE",
+      clientProblemDescription: "ASD",
+    };
+    interactWithWorker(auth.accessToken, interactionInfo)
+      .then((response) => navigate("/chat"))
+      .catch((error) => console.log(error));
+  };
+
   return (
     <div className={classes.backContainer}>
       <div className={classes.backInfoContainer}>
         <div className={classes.infoBlock}>
           <p className={classes.infoLabel}>Descripcion</p>
-          <span className={classes.infoText}>"{workerData.descripcion}"</span>
+          <span className={classes.infoText}>
+            "{workerData.worker.description}"
+          </span>
         </div>
         <div className={classes.infoBlock}>
           <p className={classes.infoLabel}>Horarios</p>
-          <span className={classes.infoText}>De corrido</span>
+          <span className={classes.infoText}>
+            {workerData.worker.workingHours}
+          </span>
         </div>
       </div>
       <div className={classes.reviewContainer}>
@@ -66,7 +91,16 @@ export default function BackWorkerCard(props) {
       </div>
       <div className={classes.buttonContainer}>
         {auth?.accessToken ? (
-          <Button>Comunicate!</Button>
+          <div className={classes.loginContainer}>
+            <button
+              onClick={() => {
+                handleStartChat();
+              }}
+              className={classes.contactButton}
+            >
+              Contactalo!
+            </button>
+          </div>
         ) : (
           <div className={classes.loginContainer}>
             <p className={classes.loginInfoText}>
@@ -186,5 +220,12 @@ const useStyles = createUseStyles({
       backgroundColor: colors.white,
       color: colors.notification,
     },
+  },
+  contactButton: {
+    width: "60%",
+    height: "60%",
+    borderRadius: "10px",
+    backgroundColor: colors.primary,
+    color: colors.white,
   },
 });

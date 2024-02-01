@@ -59,8 +59,8 @@ const useStyles = createUseStyles({
     width: "3rem",
     height: "3rem",
 
-    backgroundColor: colors.nav,
-    color: colors.textNav,
+    backgroundColor: colors.secondary,
+    color: colors.textSecondary,
     right: "20px",
     borderRadius: "100%",
     zIndex: 150,

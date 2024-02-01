@@ -3,8 +3,11 @@ import Nav from "../pagewrappers/Nav";
 import { colors } from "../../assets/colors";
 import { useEffect, useState } from "react";
 import RadioSelection from "../home/RadioSelection/RadioSelection";
+import { getProfile } from "../../connection/requests";
+import useAuth from "../../hooks/useAuth";
 
 export default function Profile() {
+  const { auth } = useAuth();
   const classes = useStyles();
   const [userData, setUserData] = useState({});
   const [selectionItemsArray, setSelectionItemsArray] = useState([
@@ -19,15 +22,13 @@ export default function Profile() {
   }, []);
 
   const initializeUser = () => {
-    let userData = {
-      role: "worker",
-      name: "Leandro Moran",
-      phoneNumber: "29312931",
-      status: "moderated",
-    };
-    setUserData(userData);
+    getProfile(auth?.accessToken)
+      .then((response) => setUserData(response.data))
+      .catch((error) => {
+        console.log(error);
+      });
 
-    initializeSelectionStatus(userData.status);
+    //initializeSelectionStatus(userData.status);
   };
 
   const initializeSelectionStatus = (status) => {
@@ -48,7 +49,7 @@ export default function Profile() {
       <div className={classes.container}>
         <div className={classes.subContainer}>
           <div className={classes.topSection}>
-            <img className={classes.userImage} src="./worker.jpg"></img>
+            <img className={classes.userImage} src={userData.picture}></img>
             <span
               style={{
                 fontWeight: "800",
@@ -60,7 +61,9 @@ export default function Profile() {
             </span>
           </div>
           <div className={classes.bodySection}>
-            {userData.role === "worker" ? (
+            <span>{userData.email}</span>
+            <span>{userData.phoneNumber}</span>
+            {auth.role === "WORKER" ? (
               <div className={classes.statusSelectionContainer}>
                 <span style={{ color: colors.white }}>
                   Cual es tu grado de disponibilidad hoy?

@@ -15,14 +15,14 @@ export default function FrontWorkerCard(props) {
           className={classes.dataItem}
           style={{ fontWeight: "800", fontSize: "2rem" }}
         >
-          {workerData.nombre}
+          {workerData.worker.name}
         </span>
         <div className={classes.dataItem}>
           <div className={classes.dataItemIconContainer}>
             <MDBIcon icon="info" style={{}}></MDBIcon>
           </div>
           <span className={classes.dataItemTextContainer}>
-            {workerData.distancia}Km de distancia
+            {workerData.distanceInKm}Km de distancia
           </span>
         </div>
         <div className={classes.dataItem}>
@@ -30,7 +30,7 @@ export default function FrontWorkerCard(props) {
             <MDBIcon style={{ color: "yellow" }} icon="star"></MDBIcon>
           </div>
           <span className={classes.dataItemTextContainer}>
-            {workerData.rating}
+            {workerData.worker.averageRating}
           </span>
         </div>
         <div className={classes.dataItem}>
@@ -38,11 +38,11 @@ export default function FrontWorkerCard(props) {
             <MDBIcon style={{ color: "orange" }} icon="medal"></MDBIcon>
           </div>
           <span className={classes.dataItemTextContainer}>
-            {workerData.trabajos}+ trabajos realizados
+            {workerData.worker.worksFinished}+ trabajos realizados
           </span>
         </div>
         <div className={classes.statusContainer}>
-          {workerData.status === "active" ? (
+          {workerData.worker.availabilityStatus === "AVAILABLE" ? (
             <>
               <div
                 className={classes.statusIcon}
@@ -50,7 +50,7 @@ export default function FrontWorkerCard(props) {
               ></div>
               <span className={classes.statusText}>Hoy disponible!</span>
             </>
-          ) : workerData.status === "moderated" ? (
+          ) : workerData.worker.availabilityStatus === "MODERATED" ? (
             <>
               <div
                 className={classes.statusIcon}

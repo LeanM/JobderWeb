@@ -9,24 +9,41 @@ import ChatBox from "./ChatBox";
 import ChatUserItem from "./ChatUserItem";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
+import {
+  getLikedOrMatchedWorkers,
+  getProfile,
+} from "../../connection/requests";
+import useAuth from "../../hooks/useAuth";
 
 var stompClient = null;
 export default function ChatScreen() {
+  const { auth } = useAuth();
   const [userData, setUserData] = useState(null);
   const [chatRoomUsers, setChatRoomUsers] = useState([]);
   const [actualRecipientId, setActualRecipientId] = useState("");
-  const [logged, setLogged] = useState(false);
+  const [logged, setLogged] = useState(true);
   const chatBoxRef = useRef(null);
   const classes = useStyles();
 
   useEffect(() => {
+    getUserData();
+  }, []);
+
+  useEffect(() => {
     if (userData !== null) {
+      console.log(userData);
       connect();
     }
   }, [userData]);
 
+  const getUserData = () => {
+    getProfile(auth?.accessToken)
+      .then((response) => setUserData(response.data))
+      .catch((err) => console.log(err));
+  };
+
   const connect = () => {
-    let Sock = new SockJS("http://localhost:8088/ws");
+    let Sock = new SockJS("http://localhost:8080/ws");
     stompClient = over(Sock);
     stompClient.connect({}, onConnected, onError);
   };
@@ -35,17 +52,18 @@ export default function ChatScreen() {
     getChatRoomUsers();
 
     stompClient.subscribe(
-      `/user/${userData.email}/queue/messages`,
+      `/user/${userData.id}/queue/messages`,
       onMessageReceived
     );
   };
 
-  const getChatRoomUsers = async () => {
-    let response = await axios.get(
-      "http://localhost:8088/chatusers/" + userData.email
-    );
-
-    setChatRoomUsers(response.data);
+  const getChatRoomUsers = () => {
+    getLikedOrMatchedWorkers(auth.accessToken)
+      .then((response) => {
+        setChatRoomUsers(response.data);
+        console.log(response.data);
+      })
+      .catch((error) => console.log(error));
   };
 
   const onMessageReceived = (payload) => {
@@ -82,7 +100,7 @@ export default function ChatScreen() {
       const actualDate = new Date();
       const timestamp = format(actualDate, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
       var chatMessage = {
-        senderId: userData.email,
+        senderId: userData.id,
         recipientId: actualRecipientId,
         content: messageContent,
         timestamp: timestamp,

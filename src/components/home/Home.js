@@ -5,12 +5,33 @@ import { Button } from "@mui/material";
 import Nav from "../pagewrappers/Nav.js";
 import WorkerCategorySelect from "./WorkerCategorySelect.js";
 import RadioSelection from "./RadioSelection/RadioSelection.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useGeolocated } from "react-geolocated";
+import useGeoLocation from "../../hooks/useGeoLocation.js";
 
 export default function Home() {
   const navigate = useNavigate();
   const classes = useStyles();
+  const { geoLocation, setGeoLocation } = useGeoLocation();
+
+  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+    useGeolocated({
+      positionOptions: {
+        enableHighAccuracy: false,
+      },
+      userDecisionTimeout: 5000,
+    });
+
+  useEffect(() => {
+    if (coords?.latitude && coords?.longitude) {
+      setGeoLocation({
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+      });
+      console.log(coords);
+    }
+  }, [coords]);
 
   const [actualWorkerCategory, setActualWorkerCategory] = useState("");
   const [actualImportance, setActualImportance] = useState("");
@@ -58,6 +79,10 @@ export default function Home() {
             onClick={() => {
               if (actualImportance === "" || actualWorkerCategory === "") {
                 toast.error("Seleccione todas las opciones!");
+              } else if (!geoLocation?.latitude) {
+                toast.error(
+                  "Debes brindar tu ubicacion para obtener trabajadores cercanos!"
+                );
               } else
                 navigate("/clientLanding", {
                   state: {

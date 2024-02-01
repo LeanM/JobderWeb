@@ -6,11 +6,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import Nav from "../../pagewrappers/Nav";
 import ClientSearchLoader from "../search-loaders/ClientSearchLoader";
 import { useNavigate, useLocation } from "react-router-dom";
+import useGeoLocation from "../../../hooks/useGeoLocation";
+import { searchWorkersUnlogged } from "../../../connection/requests";
 
 export default function ClientLanding(props) {
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
+  const { geoLocation, setGeoLocation } = useGeoLocation();
   const workerCategory = location.state?.workerCategory;
   const importance = location.state?.importance;
   const [workers, setWorkers] = useState([]);
@@ -59,10 +62,18 @@ export default function ClientLanding(props) {
   }, []);
 
   const searchWorkers = () => {
-    setWorkers(mock);
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
+    let searchInfo = {
+      professionName: workerCategory,
+      latitude: geoLocation.latitude,
+      longitude: geoLocation.longitude,
+    };
+    searchWorkersUnlogged(searchInfo)
+      .then((response) => {
+        console.log(response.data);
+        setWorkers(response.data);
+        setLoading(false);
+      })
+      .catch((error) => console.log(error));
   };
 
   return loading ? (
