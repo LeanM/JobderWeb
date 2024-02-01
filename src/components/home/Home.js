@@ -120,7 +120,7 @@ export default function Home() {
 const useStyles = createUseStyles({
   container: {
     width: "100%",
-    height: "100vh",
+    height: "120vh",
     paddingTop: "12rem",
     background: `linear-gradient(${colors.primary},${colors.primary})`,
     fontFamily: "Montserrat",
@@ -160,7 +160,9 @@ const useStyles = createUseStyles({
     color: colors.textSecondary,
   },
   inputText: {
-    width: "15rem",
+    width: "20rem",
+    height: "3rem",
+    outline: "none",
     border: "none",
     color: colors.primary,
     backgroundColor: colors.secondary,
