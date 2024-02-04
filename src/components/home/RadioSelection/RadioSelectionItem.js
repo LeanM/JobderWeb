@@ -25,7 +25,7 @@ export default function RadioSelectionItem(props) {
     <div
       className={classes.selectionItemContainer}
       style={itemStyle}
-      onClick={() => props.onSelect(itemData.id, itemData.itemName)}
+      onClick={() => props.onSelect(itemData.id, itemData.itemCode)}
     >
       <span className={classes.selectionItemText}>{itemData.itemName}</span>
     </div>

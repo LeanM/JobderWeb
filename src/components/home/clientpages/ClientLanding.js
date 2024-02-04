@@ -10,9 +10,10 @@ import useGeoLocation from "../../../hooks/useGeoLocation";
 import { searchWorkersUnlogged } from "../../../connection/requests";
 import useAuth from "../../../hooks/useAuth";
 import { interactWithWorker } from "../../../connection/requests";
+import { useGoogleLogin } from "@react-oauth/google";
 
 export default function ClientLanding(props) {
-  const { auth } = useAuth();
+  const { auth, loginGoogle } = useAuth();
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,19 +26,37 @@ export default function ClientLanding(props) {
 
   useEffect(() => {
     if (workerCategory && importance) {
-      searchWorkers();
+      if (auth?.accessToken) searchWorkersLogged();
+      else searchWorkersNotLogged();
     } else navigate("/");
   }, []);
 
-  const searchWorkers = () => {
+  const searchWorkersNotLogged = () => {
     let searchInfo = {
-      professionName: workerCategory,
+      workSpecialization: workerCategory,
       latitude: geoLocation.latitude,
       longitude: geoLocation.longitude,
+      availabilityStatus: importance,
+      minimumDistanceInKm: 50,
     };
+    console.log(searchInfo);
     searchWorkersUnlogged(searchInfo)
       .then((response) => {
-        console.log(response.data);
+        setWorkers(response.data);
+        setLoading(false);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const searchWorkersLogged = () => {
+    let searchInfo = {
+      workSpecialization: workerCategory,
+      clientProblemDescription: problemDescription,
+      availabilityStatus: importance,
+      minimumDistanceInKm: 50,
+    };
+    searchWorkersLogged(auth?.accessToken, searchInfo)
+      .then((response) => {
         setWorkers(response.data);
         setLoading(false);
       })
@@ -54,6 +73,27 @@ export default function ClientLanding(props) {
       .then((response) => navigate("/chat"))
       .catch((error) => console.log(error));
   };
+
+  const onGoogleLogin = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess: (response) => {
+      let authCode = response.code;
+      let searchParameters = {
+        workSpecialization: workerCategory,
+        clientProblemDescription: problemDescription,
+        availabilityStatus: importance,
+      };
+      let socialCredentials = {
+        value: authCode,
+        accountRole: "CLIENT",
+        latitude: geoLocation?.latitude,
+        longitude: geoLocation?.longitude,
+        searchParameters: searchParameters,
+      };
+
+      loginGoogle(socialCredentials);
+    },
+  });
 
   return loading ? (
     <ClientSearchLoader />
@@ -76,6 +116,7 @@ export default function ClientLanding(props) {
                   onInteract={(workerId, interactionType) => {
                     handleInteraction(workerId, interactionType);
                   }}
+                  onGoogleLogin={() => onGoogleLogin()}
                 />
               );
             })}

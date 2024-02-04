@@ -1,53 +1,13 @@
 import { createUseStyles } from "react-jss";
-import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { colors } from "../../../assets/colors";
 import ReviewCarousel from "./review-carousel/ReviewCarousel";
 import { MDBIcon } from "mdb-react-ui-kit";
 import useAuth from "../../../hooks/useAuth";
-import { useGoogleLogin } from "@react-oauth/google";
-import toast from "react-hot-toast";
-import { socialLogIn } from "../../../connection/requests";
-import useGeoLocation from "../../../hooks/useGeoLocation";
 
 export default function BackWorkerCard(props) {
-  const { auth, setAuth } = useAuth();
+  const { auth } = useAuth();
   const classes = useStyles();
-  const { geoLocation } = useGeoLocation();
-  const navigate = useNavigate();
-  const { workerData } = props;
-
-  const login = useGoogleLogin({
-    flow: "auth-code",
-    onSuccess: (response) => {
-      let authCode = response.code;
-      let socialCredentials = {
-        value: authCode,
-        accountRole: "CLIENT",
-        latitude: geoLocation?.latitude,
-        longitude: geoLocation?.longitude,
-      };
-
-      toast.promise(socialLogIn(socialCredentials), {
-        loading: "Logging In...",
-        success: (response) => {
-          const accessToken = response.data.accessToken;
-          console.log(accessToken);
-          setAuth({ accessToken: accessToken, role: response.data?.role });
-
-          return <b>Successfuly logged in!</b>;
-        },
-        error: (error) => {
-          return (
-            <span>
-              The next error happened while making loggin :{" "}
-              {error?.response?.data?.errors}
-            </span>
-          );
-        },
-      });
-    },
-  });
+  const { workerData, onGoogleLogin } = props;
 
   return (
     <div className={classes.backContainer}>
@@ -91,7 +51,10 @@ export default function BackWorkerCard(props) {
             <p className={classes.loginInfoText}>
               Para comunicarte debes iniciar sesion!
             </p>
-            <button onClick={() => login()} className={classes.loginButton}>
+            <button
+              onClick={() => onGoogleLogin()}
+              className={classes.loginButton}
+            >
               <MDBIcon fab icon="google"></MDBIcon>
               <p>Inicia sesion!</p>
             </button>

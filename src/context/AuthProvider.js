@@ -1,7 +1,13 @@
 import { createContext, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { logInSubmission, logoutSubmission } from "../connection/requests";
+import {
+  logInSubmission,
+  logoutSubmission,
+  socialLogIn,
+} from "../connection/requests";
+import useGeoLocation from "../hooks/useGeoLocation";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const AuthContext = createContext({});
 
@@ -9,8 +15,29 @@ export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({});
 
   const navigate = useNavigate();
+  const { geoLocation } = useGeoLocation();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
+
+  const loginGoogle = (socialCredentials) => {
+    toast.promise(socialLogIn(socialCredentials), {
+      loading: "Logging In...",
+      success: (response) => {
+        const accessToken = response.data.accessToken;
+        setAuth({ accessToken: accessToken, role: response.data?.role });
+
+        return <b>Successfuly logged in!</b>;
+      },
+      error: (error) => {
+        return (
+          <span>
+            The next error happened while making loggin :{" "}
+            {error?.response?.data?.errors}
+          </span>
+        );
+      },
+    });
+  };
 
   const logInAuth = async (email, pwd) => {
     toast.promise(logInSubmission({ email: email, password: pwd }), {
@@ -52,7 +79,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth, logInAuth, logOutAuth }}>
+    <AuthContext.Provider
+      value={{ auth, setAuth, logInAuth, logOutAuth, loginGoogle }}
+    >
       {children}
     </AuthContext.Provider>
   );

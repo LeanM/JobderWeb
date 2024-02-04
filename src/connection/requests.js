@@ -46,6 +46,13 @@ export const searchWorkersUnlogged = async (searchInfo) => {
   );
 };
 
+export const searchWorkersLogged = async (accessToken, searchInfo) => {
+  return axiosAuth(accessToken).post(
+    "/search/client/searchWorkers",
+    JSON.stringify(searchInfo)
+  );
+};
+
 export const searchWorkers = async (accessToken, searchInfo) => {
   return axiosAuth(accessToken).post(
     "/search/client/searchWorkers",

@@ -8,10 +8,10 @@ export default function RadioSelection(props) {
   const classes = useStyles();
   const { selectionItemsArray, startSelection } = props;
 
-  const onSelectItem = (selectedItemId, selectedItemName) => {
+  const onSelectItem = (selectedItemId, selectedItemCode) => {
     if (actualSelectionId !== selectedItemId) {
       setActualSelectionId(selectedItemId);
-      props.onSelect(selectedItemName);
+      props.onSelect(selectedItemCode);
     }
   };
 
@@ -26,7 +26,7 @@ export default function RadioSelection(props) {
             key={item.id}
             actualSelection={actualSelectionId}
             itemData={item}
-            onSelect={(id, name) => onSelectItem(id, name)}
+            onSelect={(id, code) => onSelectItem(id, code)}
           />
         );
       })}

@@ -36,9 +36,9 @@ export default function Home() {
   const [actualWorkerCategory, setActualWorkerCategory] = useState("");
   const [actualImportance, setActualImportance] = useState("");
   const [selectionItemsArray, setSelectionItemsArray] = useState([
-    { id: 1, itemName: "Urgente", itemCode: "urgent" },
-    { id: 2, itemName: "Moderado", itemCode: "moderated" },
-    { id: 3, itemName: "Poco Urgente", itemCode: "less urgent" },
+    { id: 1, itemName: "Urgente", itemCode: "AVAILABLE" },
+    { id: 2, itemName: "Moderado", itemCode: "MODERATED" },
+    { id: 3, itemName: "Poco Urgente", itemCode: "NOT_AVAILABLE" },
   ]);
   const [inputProblemText, setInputProblemText] = useState("");
 
@@ -77,6 +77,7 @@ export default function Home() {
             <input
               className={classes.inputText}
               type="text"
+              placeholder="Tengo un problema con..."
               value={inputProblemText}
               onChange={(e) => setInputProblemText(e.target.value)}
             />

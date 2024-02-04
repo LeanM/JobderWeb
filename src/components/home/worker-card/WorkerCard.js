@@ -9,7 +9,7 @@ import BackWorkerCard from "./BackWorkerCard";
 
 export default function WorkerCard(props) {
   const navigate = useNavigate();
-  const { workerData, onInteract } = props;
+  const { workerData, onInteract, onGoogleLogin } = props;
   const classes = useStyles();
   const [isFlipped, setIsFlipped] = useState(false);
   return (
@@ -35,6 +35,7 @@ export default function WorkerCard(props) {
           onInteract={(workerId, interactionType) =>
             onInteract(workerId, interactionType)
           }
+          onGoogleLogin={() => onGoogleLogin()}
         />
       </ReactCardFlip>
     </motion.div>
