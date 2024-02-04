@@ -24,7 +24,12 @@ export const AuthProvider = ({ children }) => {
       loading: "Logging In...",
       success: (response) => {
         const accessToken = response.data.accessToken;
-        setAuth({ accessToken: accessToken, role: response.data?.role });
+        console.log(response.data);
+        setAuth({
+          accessToken: accessToken,
+          userData: response.data.userData,
+          role: response.data?.role,
+        });
 
         return <b>Successfuly logged in!</b>;
       },

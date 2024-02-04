@@ -9,8 +9,10 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useGeolocated } from "react-geolocated";
 import useGeoLocation from "../../hooks/useGeoLocation.js";
+import useAuth from "../../hooks/useAuth.js";
 
 export default function Home() {
+  const { auth } = useAuth();
   const navigate = useNavigate();
   const classes = useStyles();
   const { geoLocation, setGeoLocation } = useGeoLocation();
@@ -41,6 +43,12 @@ export default function Home() {
     { id: 3, itemName: "Poco Urgente", itemCode: "NOT_AVAILABLE" },
   ]);
   const [inputProblemText, setInputProblemText] = useState("");
+
+  useEffect(() => {
+    if (auth?.accessToken) {
+      //chequear si el cliente posee parametros de busqueda
+    }
+  }, []);
 
   useEffect(() => {
     console.log(inputProblemText);
