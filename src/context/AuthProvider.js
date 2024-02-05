@@ -16,11 +16,12 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const { geoLocation } = useGeoLocation();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from || false;
 
   const resetSearchParameters = () => {
     let updatedAuth = {
       accessToken: auth?.accessToken,
+      refreshToken: auth?.refreshToken,
       role: auth?.role,
       userSearchParameters: null,
     };
@@ -34,15 +35,13 @@ export const AuthProvider = ({ children }) => {
         const accessToken = response.data?.accessToken;
         const authentication = {
           accessToken: accessToken,
+          refreshToken: response.data?.refreshToken,
           userSearchParameters: response.data?.searchParameters,
           role: response.data?.role,
         };
-        setAuth(authentication);
 
-        const authenticationJSON = JSON.stringify(authentication);
-        document.cookie = `auth=${encodeURIComponent(
-          authenticationJSON
-        )}; HttpOnly; path=/;`;
+        setAuth(authentication);
+        if (from) navigate(from, { replace: true });
 
         return <b>Successfuly logged in!</b>;
       },

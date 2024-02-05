@@ -9,7 +9,7 @@ import { socialLogIn } from "../../connection/requests";
 import { MDBIcon } from "mdb-react-ui-kit";
 
 function LogIn() {
-  const { logInAuth, setAuth } = useAuth();
+  const { logInAuth, loginGoogle } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "/";
@@ -43,26 +43,7 @@ function LogIn() {
       let socialCredentials = {
         value: authCode,
       };
-
-      toast.promise(socialLogIn(socialCredentials), {
-        loading: "Logging In...",
-        success: (response) => {
-          console.log(response.data);
-          const accessToken = response.data.accessToken;
-          navigate(from, { replace: true });
-          setAuth({ accessToken });
-
-          return <b>Successfuly logged in!</b>;
-        },
-        error: (error) => {
-          return (
-            <span>
-              The next error happened while making loggin :{" "}
-              {error?.response?.data?.errors}
-            </span>
-          );
-        },
-      });
+      loginGoogle(socialCredentials);
     },
   });
 

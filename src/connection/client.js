@@ -15,3 +15,9 @@ export const axiosAuth = (accessToken) =>
       Authorization: "Bearer " + accessToken,
     },
   });
+
+export const axiosPrivate = axios.create({
+  baseURL: server_path,
+  headers: { "Content-Type": "application/json" },
+  //withCredentials: true,
+});

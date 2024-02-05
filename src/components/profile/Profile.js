@@ -6,8 +6,10 @@ import RadioSelection from "../home/RadioSelection/RadioSelection";
 import { getProfile } from "../../connection/requests";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 export default function Profile() {
+  const axiosPrivate = useAxiosPrivate();
   const { auth } = useAuth();
   const classes = useStyles();
   const navigate = useNavigate();
@@ -24,12 +26,22 @@ export default function Profile() {
     else navigate("/login", { state: { from: "/profile" } });
   }, []);
 
-  const initializeUser = () => {
+  const initializeUser = async () => {
+    try {
+      const response = await axiosPrivate.get("/profile/user", {});
+      console.log(response.data);
+      setUserData(response.data);
+    } catch (err) {
+      console.error(err);
+      navigate("/login", { state: { from: "/profile" }, replace: true });
+    }
+    /*
     getProfile(auth?.accessToken)
       .then((response) => setUserData(response.data))
       .catch((error) => {
         console.log(error);
       });
+      */
 
     //initializeSelectionStatus(userData.status);
   };
