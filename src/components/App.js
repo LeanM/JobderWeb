@@ -8,8 +8,25 @@ import Profile from "./profile/Profile";
 import LogIn from "./auth/Login";
 import Register from "./auth/Register";
 import ChatScreen from "./chat-components/ChatScreen";
+import { useEffect } from "react";
+import useAuth from "../hooks/useAuth";
 
 function App() {
+  const { setAuth } = useAuth();
+
+  useEffect(() => {
+    const cookieValue = document.cookie.replace(
+      /(?:(?:^|.*;\s*)auth\s*=\s*([^;]*).*$)|^.*$/,
+      "$1"
+    );
+    const decodedAuthJSON = decodeURIComponent(cookieValue);
+    if (decodedAuthJSON) {
+      const decodedAuth = JSON.parse(decodedAuthJSON);
+      console.log(decodedAuth);
+      setAuth(decodedAuth);
+    }
+  }, []);
+
   return (
     <Routes>
       <Route path="/" element={<Layout />}>

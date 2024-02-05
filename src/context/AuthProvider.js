@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import {
@@ -7,7 +7,6 @@ import {
   socialLogIn,
 } from "../connection/requests";
 import useGeoLocation from "../hooks/useGeoLocation";
-import { useGoogleLogin } from "@react-oauth/google";
 
 const AuthContext = createContext({});
 
@@ -19,17 +18,31 @@ export const AuthProvider = ({ children }) => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
+  const resetSearchParameters = () => {
+    let updatedAuth = {
+      accessToken: auth?.accessToken,
+      role: auth?.role,
+      userSearchParameters: null,
+    };
+    setAuth(updatedAuth);
+  };
+
   const loginGoogle = (socialCredentials) => {
     toast.promise(socialLogIn(socialCredentials), {
       loading: "Logging In...",
       success: (response) => {
-        const accessToken = response.data.accessToken;
-        console.log(response.data);
-        setAuth({
+        const accessToken = response.data?.accessToken;
+        const authentication = {
           accessToken: accessToken,
-          userData: response.data.userData,
+          userSearchParameters: response.data?.searchParameters,
           role: response.data?.role,
-        });
+        };
+        setAuth(authentication);
+
+        const authenticationJSON = JSON.stringify(authentication);
+        document.cookie = `auth=${encodeURIComponent(
+          authenticationJSON
+        )}; HttpOnly; path=/;`;
 
         return <b>Successfuly logged in!</b>;
       },
@@ -85,7 +98,14 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ auth, setAuth, logInAuth, logOutAuth, loginGoogle }}
+      value={{
+        auth,
+        setAuth,
+        logInAuth,
+        logOutAuth,
+        loginGoogle,
+        resetSearchParameters,
+      }}
     >
       {children}
     </AuthContext.Provider>

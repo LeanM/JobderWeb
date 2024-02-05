@@ -39,14 +39,14 @@ export const getMessages = async (accessToken, recipientId) => {
   return axiosAuth(accessToken).get(`/chat/messages/${recipientId}`);
 };
 
-export const searchWorkersUnlogged = async (searchInfo) => {
+export const fetchWorkersUnlogged = async (searchInfo) => {
   return axios.post(
     "/search/unlogged/searchWorkers",
     JSON.stringify(searchInfo)
   );
 };
 
-export const searchWorkersLogged = async (accessToken, searchInfo) => {
+export const fetchWorkersLogged = async (accessToken, searchInfo) => {
   return axiosAuth(accessToken).post(
     "/search/client/searchWorkers",
     JSON.stringify(searchInfo)

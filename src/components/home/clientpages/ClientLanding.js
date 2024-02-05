@@ -7,13 +7,16 @@ import Nav from "../../pagewrappers/Nav";
 import ClientSearchLoader from "../search-loaders/ClientSearchLoader";
 import { useNavigate, useLocation } from "react-router-dom";
 import useGeoLocation from "../../../hooks/useGeoLocation";
-import { searchWorkersUnlogged } from "../../../connection/requests";
+import {
+  fetchWorkersUnlogged,
+  fetchWorkersLogged,
+} from "../../../connection/requests";
 import useAuth from "../../../hooks/useAuth";
 import { interactWithWorker } from "../../../connection/requests";
 import { useGoogleLogin } from "@react-oauth/google";
 
 export default function ClientLanding(props) {
-  const { auth, loginGoogle } = useAuth();
+  const { auth, resetSearchParameters, loginGoogle } = useAuth();
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,8 +42,7 @@ export default function ClientLanding(props) {
       availabilityStatus: importance,
       minimumDistanceInKm: 50,
     };
-    console.log(searchInfo);
-    searchWorkersUnlogged(searchInfo)
+    fetchWorkersUnlogged(searchInfo)
       .then((response) => {
         setWorkers(response.data);
         setLoading(false);
@@ -55,7 +57,8 @@ export default function ClientLanding(props) {
       availabilityStatus: importance,
       minimumDistanceInKm: 50,
     };
-    searchWorkersLogged(auth?.accessToken, searchInfo)
+
+    fetchWorkersLogged(auth?.accessToken, searchInfo)
       .then((response) => {
         setWorkers(response.data);
         setLoading(false);
@@ -101,6 +104,14 @@ export default function ClientLanding(props) {
     <>
       <Nav />
       <div className={classes.container}>
+        <button
+          onClick={() => {
+            resetSearchParameters();
+            navigate("/");
+          }}
+        >
+          Realizar busqueda diferente
+        </button>
         <div className={classes.subContainer}>
           <span className={classes.title}>¡Trabajadores para ti!</span>
           <span className={classes.subTitle}>

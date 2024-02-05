@@ -31,7 +31,6 @@ export default function Home() {
         latitude: coords.latitude,
         longitude: coords.longitude,
       });
-      console.log(coords);
     }
   }, [coords]);
 
@@ -47,12 +46,17 @@ export default function Home() {
   useEffect(() => {
     if (auth?.accessToken) {
       //chequear si el cliente posee parametros de busqueda
+      if (auth?.userSearchParameters)
+        navigate("/clientLanding", {
+          state: {
+            workerCategory: auth.userSearchParameters.workSpecialization,
+            importance: auth.userSearchParameters.availabilityStatus,
+            problemDescription:
+              auth.userSearchParameters.clientProblemDescription,
+          },
+        });
     }
   }, []);
-
-  useEffect(() => {
-    console.log(inputProblemText);
-  }, [inputProblemText]);
 
   const handleSelectWorkerCategory = (selection) => {
     setActualWorkerCategory(selection);
