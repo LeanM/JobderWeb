@@ -10,12 +10,14 @@ import toast from "react-hot-toast";
 import { useGeolocated } from "react-geolocated";
 import useGeoLocation from "../../hooks/useGeoLocation.js";
 import useAuth from "../../hooks/useAuth.js";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
 
 export default function Home() {
   const { auth } = useAuth();
   const navigate = useNavigate();
   const classes = useStyles();
   const { geoLocation, setGeoLocation } = useGeoLocation();
+  const axiosPrivate = useAxiosPrivate();
 
   const { coords, isGeolocationAvailable, isGeolocationEnabled } =
     useGeolocated({
@@ -39,24 +41,32 @@ export default function Home() {
   const [selectionItemsArray, setSelectionItemsArray] = useState([
     { id: 1, itemName: "Urgente", itemCode: "AVAILABLE" },
     { id: 2, itemName: "Moderado", itemCode: "MODERATED" },
-    { id: 3, itemName: "Poco Urgente", itemCode: "NOT_AVAILABLE" },
   ]);
   const [inputProblemText, setInputProblemText] = useState("");
 
   useEffect(() => {
     if (auth?.accessToken) {
-      //chequear si el cliente posee parametros de busqueda
-      if (auth?.userSearchParameters)
-        navigate("/clientLanding", {
-          state: {
-            workerCategory: auth.userSearchParameters.workSpecialization,
-            importance: auth.userSearchParameters.availabilityStatus,
-            problemDescription:
-              auth.userSearchParameters.clientProblemDescription,
-          },
-        });
+      getUserSearchParametersIfLogged();
     }
   }, []);
+
+  const getUserSearchParametersIfLogged = () => {
+    fetchUserSearchParameters()
+      .then((response) => {
+        navigate("/clientLanding", {
+          state: {
+            workerCategory: response.data?.workSpecialization,
+            importance: response.data?.availabilityStatus,
+            problemDescription: response.data?.clientProblemDescription,
+          },
+        });
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const fetchUserSearchParameters = async () => {
+    return axiosPrivate.get("/profile/userSearchParameters");
+  };
 
   const handleSelectWorkerCategory = (selection) => {
     setActualWorkerCategory(selection);

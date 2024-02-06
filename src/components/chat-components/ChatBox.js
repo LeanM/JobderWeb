@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { createUseStyles } from "react-jss";
 import Message from "./Message";
-import axios from "axios";
 import { colors } from "../../assets/colors";
 import React, { forwardRef, useImperativeHandle } from "react";
 import { format } from "date-fns";
-import { getMessages } from "../../connection/requests";
 import useAuth from "../../hooks/useAuth";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { useNavigate } from "react-router-dom";
 
 const ChatBox = forwardRef((props, ref) => {
   const { auth } = useAuth();
@@ -14,6 +14,8 @@ const ChatBox = forwardRef((props, ref) => {
   const [messageList, setMessageList] = useState([]);
   const [inputText, setInputText] = useState("");
   const [actualDate, setActualDate] = useState("");
+  const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
 
   const [messageDisplay, setMessageDisplay] = useState([]);
 
@@ -39,9 +41,16 @@ const ChatBox = forwardRef((props, ref) => {
   }, [messageDisplay]);
 
   const loadMessages = () => {
-    getMessages(auth?.accessToken, actualRecipientId)
+    getMessages()
       .then((response) => setMessageList(response.data))
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        if (error?.response?.status === 401)
+          navigate("/login", { state: { from: "/chat" } });
+      });
+  };
+
+  const getMessages = async () => {
+    return axiosPrivate.get(`/chat/messages/${actualRecipientId}`);
   };
 
   const handleInputChange = (e) => {

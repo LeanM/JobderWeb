@@ -1,5 +1,6 @@
 import axios from "./client";
 import { axiosAuth } from "./client";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 export const logInSubmission = async (userData) => {
   return axios.post("/auth/login", JSON.stringify(userData));
@@ -24,49 +25,9 @@ export const getProfile = async (accessToken) => {
   return axiosAuth(accessToken).get("/profile/user");
 };
 
-export const startChat = async (accessToken, otherUserId) => {
-  let info = {
-    recipientId: otherUserId,
-  };
-
-  return axiosAuth(accessToken).post(
-    "/chatroom/startChat",
-    JSON.stringify(info)
-  );
-};
-
-export const getMessages = async (accessToken, recipientId) => {
-  return axiosAuth(accessToken).get(`/chat/messages/${recipientId}`);
-};
-
 export const fetchWorkersUnlogged = async (searchInfo) => {
   return axios.post(
     "/search/unlogged/searchWorkers",
     JSON.stringify(searchInfo)
   );
-};
-
-export const fetchWorkersLogged = async (accessToken, searchInfo) => {
-  return axiosAuth(accessToken).post(
-    "/search/client/searchWorkers",
-    JSON.stringify(searchInfo)
-  );
-};
-
-export const searchWorkers = async (accessToken, searchInfo) => {
-  return axiosAuth(accessToken).post(
-    "/search/client/searchWorkers",
-    JSON.stringify(searchInfo)
-  );
-};
-
-export const interactWithWorker = async (accessToken, interactionInfo) => {
-  return axiosAuth(accessToken).post(
-    "matching/client/interaction",
-    JSON.stringify(interactionInfo)
-  );
-};
-
-export const getLikedOrMatchedWorkers = async (accessToken) => {
-  return axiosAuth(accessToken).post("matching/client/likedOrMatchedWorkers");
 };

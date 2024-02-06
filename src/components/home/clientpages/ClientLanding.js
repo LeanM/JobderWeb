@@ -7,13 +7,10 @@ import Nav from "../../pagewrappers/Nav";
 import ClientSearchLoader from "../search-loaders/ClientSearchLoader";
 import { useNavigate, useLocation } from "react-router-dom";
 import useGeoLocation from "../../../hooks/useGeoLocation";
-import {
-  fetchWorkersUnlogged,
-  fetchWorkersLogged,
-} from "../../../connection/requests";
+import { fetchWorkersUnlogged } from "../../../connection/requests";
 import useAuth from "../../../hooks/useAuth";
-import { interactWithWorker } from "../../../connection/requests";
 import { useGoogleLogin } from "@react-oauth/google";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 
 export default function ClientLanding(props) {
   const { auth, resetSearchParameters, loginGoogle } = useAuth();
@@ -26,6 +23,7 @@ export default function ClientLanding(props) {
   const problemDescription = location.state?.problemDescription;
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     if (workerCategory && importance) {
@@ -58,12 +56,25 @@ export default function ClientLanding(props) {
       minimumDistanceInKm: 50,
     };
 
-    fetchWorkersLogged(auth?.accessToken, searchInfo)
+    fetchWorkersLogged(searchInfo)
       .then((response) => {
         setWorkers(response.data);
         setLoading(false);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        if (error?.response?.status === 401)
+          navigate("/login", {
+            state: { from: "/clientLanding" },
+            replace: true,
+          });
+      });
+  };
+
+  const fetchWorkersLogged = async (searchInfo) => {
+    return axiosPrivate.post(
+      "/search/client/searchWorkers",
+      JSON.stringify(searchInfo)
+    );
   };
 
   const handleInteraction = (workerId, interactionType) => {
@@ -72,9 +83,23 @@ export default function ClientLanding(props) {
       interactionType: interactionType,
       clientProblemDescription: problemDescription,
     };
-    interactWithWorker(auth.accessToken, interactionInfo)
+
+    interactWithWorker(interactionInfo)
       .then((response) => navigate("/chat"))
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        if (error?.response?.status === 401)
+          navigate("/login", {
+            state: { from: "/clientLanding" },
+            replace: true,
+          });
+      });
+  };
+
+  const interactWithWorker = async (interactionInfo) => {
+    return axiosPrivate.post(
+      "matching/client/interaction",
+      JSON.stringify(interactionInfo)
+    );
   };
 
   const onGoogleLogin = useGoogleLogin({

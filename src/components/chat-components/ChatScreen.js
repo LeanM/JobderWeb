@@ -8,13 +8,9 @@ import ChatBox from "./ChatBox";
 import ChatUserItem from "./ChatUserItem";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
-import {
-  getLikedOrMatchedWorkers,
-  getProfile,
-} from "../../connection/requests";
 import useAuth from "../../hooks/useAuth";
-import LogIn from "../auth/Login";
 import { useNavigate } from "react-router-dom";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 var stompClient = null;
 export default function ChatScreen() {
@@ -26,25 +22,13 @@ export default function ChatScreen() {
   const [logged, setLogged] = useState(true);
   const chatBoxRef = useRef(null);
   const classes = useStyles();
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (auth?.accessToken) getUserData();
+    if (auth?.accessToken) connect();
     else navigate("/login", { state: { from: "/chat" } });
   }, []);
-
-  useEffect(() => {
-    if (userData !== null) {
-      console.log(userData);
-      connect();
-    }
-  }, [userData]);
-
-  const getUserData = () => {
-    getProfile(auth?.accessToken)
-      .then((response) => setUserData(response.data))
-      .catch((err) => console.log(err));
-  };
 
   const connect = () => {
     let Sock = new SockJS("http://localhost:8080/ws");
@@ -56,18 +40,24 @@ export default function ChatScreen() {
     getChatRoomUsers();
 
     stompClient.subscribe(
-      `/user/${userData.id}/queue/messages`,
+      `/user/${auth.userId}/queue/messages`,
       onMessageReceived
     );
   };
 
   const getChatRoomUsers = () => {
-    getLikedOrMatchedWorkers(auth.accessToken)
+    getLikedOrMatchedWorkers()
       .then((response) => {
         setChatRoomUsers(response.data);
-        console.log(response.data);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        if (error?.response?.status === 401)
+          navigate("/login", { state: { from: "/chat" } });
+      });
+  };
+
+  const getLikedOrMatchedWorkers = async () => {
+    return axiosPrivate.post("matching/client/likedOrMatchedWorkers");
   };
 
   const onMessageReceived = (payload) => {
@@ -104,7 +94,7 @@ export default function ChatScreen() {
       const actualDate = new Date();
       const timestamp = format(actualDate, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
       var chatMessage = {
-        senderId: userData.id,
+        senderId: auth.userId,
         recipientId: actualRecipientId,
         content: messageContent,
         timestamp: timestamp,

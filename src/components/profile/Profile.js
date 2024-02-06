@@ -15,9 +15,9 @@ export default function Profile() {
   const navigate = useNavigate();
   const [userData, setUserData] = useState({});
   const [selectionItemsArray, setSelectionItemsArray] = useState([
-    { id: 1, itemName: "Disponible", itemCode: "available" },
-    { id: 2, itemName: "Moderado", itemCode: "moderated" },
-    { id: 3, itemName: "No Disponible", itemCode: "notavailable" },
+    { id: 1, itemName: "Disponible", itemCode: "AVAILABLE" },
+    { id: 2, itemName: "Moderado", itemCode: "MODERATED" },
+    { id: 3, itemName: "No Disponible", itemCode: "NOT_AVAILABLE" },
   ]);
   const [startSelection, setStartSelection] = useState(0);
 
@@ -29,11 +29,10 @@ export default function Profile() {
   const initializeUser = async () => {
     try {
       const response = await axiosPrivate.get("/profile/user", {});
-      console.log(response.data);
       setUserData(response.data);
     } catch (err) {
-      console.error(err);
-      navigate("/login", { state: { from: "/profile" }, replace: true });
+      if (err?.response?.status === 401)
+        navigate("/login", { state: { from: "/profile" }, replace: true });
     }
     /*
     getProfile(auth?.accessToken)

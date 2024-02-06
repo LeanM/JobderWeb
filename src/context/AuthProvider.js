@@ -18,16 +18,6 @@ export const AuthProvider = ({ children }) => {
   const location = useLocation();
   const from = location.state?.from || false;
 
-  const resetSearchParameters = () => {
-    let updatedAuth = {
-      accessToken: auth?.accessToken,
-      refreshToken: auth?.refreshToken,
-      role: auth?.role,
-      userSearchParameters: null,
-    };
-    setAuth(updatedAuth);
-  };
-
   const loginGoogle = (socialCredentials) => {
     toast.promise(socialLogIn(socialCredentials), {
       loading: "Logging In...",
@@ -36,8 +26,8 @@ export const AuthProvider = ({ children }) => {
         const authentication = {
           accessToken: accessToken,
           refreshToken: response.data?.refreshToken,
-          userSearchParameters: response.data?.searchParameters,
           role: response.data?.role,
+          userId: response.data?.userId,
         };
 
         setAuth(authentication);
@@ -103,7 +93,6 @@ export const AuthProvider = ({ children }) => {
         logInAuth,
         logOutAuth,
         loginGoogle,
-        resetSearchParameters,
       }}
     >
       {children}
