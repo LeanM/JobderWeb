@@ -123,22 +123,41 @@ export default function ClientLanding(props) {
     },
   });
 
+  const handleResetUserSearch = () => {
+    fetchResetUserSearch()
+      .then((response) => navigate("/"))
+      .catch((error) => {
+        if (error?.response?.status === 401)
+          navigate("/login", {
+            state: { from: "/clientLanding" },
+            replace: true,
+          });
+      });
+  };
+
+  const fetchResetUserSearch = async () => {
+    return axiosPrivate.get("/profile/resetUserSearchParameters");
+  };
+
   return loading ? (
     <ClientSearchLoader />
   ) : (
     <>
       <Nav />
       <div className={classes.container}>
-        <button
-          onClick={() => {
-            resetSearchParameters();
-            navigate("/");
-          }}
-        >
-          Realizar busqueda diferente
-        </button>
         <div className={classes.subContainer}>
           <span className={classes.title}>¡Trabajadores para ti!</span>
+          <span className={classes.subTitle}>
+            Tu busqueda actual esta conformada por trabadores de tipo{" "}
+            {workerCategory} para el siguiente problema: "{problemDescription}"
+          </span>
+          <button
+            onClick={() => {
+              handleResetUserSearch();
+            }}
+          >
+            Realizar busqueda diferente
+          </button>
           <span className={classes.subTitle}>
             Ten en cuenta que solo puedes comunicarte con 3 trabajadores al
             mismo tiempo.

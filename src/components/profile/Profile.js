@@ -34,13 +34,6 @@ export default function Profile() {
       if (err?.response?.status === 401)
         navigate("/login", { state: { from: "/profile" }, replace: true });
     }
-    /*
-    getProfile(auth?.accessToken)
-      .then((response) => setUserData(response.data))
-      .catch((error) => {
-        console.log(error);
-      });
-      */
 
     //initializeSelectionStatus(userData.status);
   };

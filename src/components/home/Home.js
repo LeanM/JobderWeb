@@ -53,13 +53,19 @@ export default function Home() {
   const getUserSearchParametersIfLogged = () => {
     fetchUserSearchParameters()
       .then((response) => {
-        navigate("/clientLanding", {
-          state: {
-            workerCategory: response.data?.workSpecialization,
-            importance: response.data?.availabilityStatus,
-            problemDescription: response.data?.clientProblemDescription,
-          },
-        });
+        const workerCategory = response.data?.workSpecialization;
+        const importance = response.data?.availabilityStatus;
+        const problemDescription = response.data?.clientProblemDescription;
+
+        if (workerCategory && importance && problemDescription) {
+          navigate("/clientLanding", {
+            state: {
+              workerCategory: workerCategory,
+              importance: importance,
+              problemDescription: problemDescription,
+            },
+          });
+        }
       })
       .catch((error) => console.log(error));
   };
