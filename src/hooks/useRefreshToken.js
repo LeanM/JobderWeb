@@ -8,13 +8,20 @@ const useRefreshToken = () => {
     const data = {
       refreshToken: auth?.refreshToken,
     };
-    const response = await axios.post(
-      "/oauth/refreshToken",
-      JSON.stringify(data)
-    );
+    const response = await axios.get("/oauth/refreshToken", {
+      withCredentials: true,
+      credentials: "cross-origin",
+    });
+
+    console.log(response?.request?.headers);
 
     setAuth((prev) => {
-      return { ...prev, accessToken: response.data.accessToken };
+      return {
+        ...prev,
+        accessToken: response.data?.accessToken,
+        userId: response.data?.userId,
+        role: response.data?.role,
+      };
     });
     return response.data.accessToken;
   };

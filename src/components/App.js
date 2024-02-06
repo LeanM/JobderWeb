@@ -8,25 +8,26 @@ import Profile from "./profile/Profile";
 import LogIn from "./auth/Login";
 import Register from "./auth/Register";
 import ChatScreen from "./chat-components/ChatScreen";
-import { useEffect } from "react";
-import useAuth from "../hooks/useAuth";
+import PersistLogin from "./PersistLogin";
 
 function App() {
-  const { setAuth } = useAuth();
-
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
         {/* Public routes */}
         <Route path="/" element={<Home />} />
         <Route path="/clientLanding" element={<ClientLanding />} />
-        <Route path="/chat" element={<ChatScreen />} />
+
         <Route path="/login" element={<LogIn />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<Profile />} />
 
         {/* Want to protect these routes */}
-        <Route element={<RequireAuth />}></Route>
+        <Route element={<PersistLogin />}>
+          <Route element={<RequireAuth />}>
+            <Route path="/chat" element={<ChatScreen />} />
+            <Route path="/profile" element={<Profile />} />
+          </Route>
+        </Route>
 
         {/* Catch all (pages that doesnt exists) */}
         <Route path="*" element={<Missing />} />

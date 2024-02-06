@@ -4,7 +4,12 @@ const server_path = "http://localhost:8080";
 
 export default axios.create({
   baseURL: server_path,
-  headers: { "Content-Type": "application/json" },
+  headers: {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Credentials": true,
+    "Access-Control-Allow-Origin": true,
+    Accept: "application/json",
+  },
 });
 
 export const axiosAuth = (accessToken) =>

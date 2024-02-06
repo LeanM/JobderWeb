@@ -3,11 +3,14 @@ import { axiosAuth } from "./client";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 export const logInSubmission = async (userData) => {
-  return axios.post("/auth/login", JSON.stringify(userData));
+  return axios.post("/oauth/login/credentials", JSON.stringify(userData));
 };
 
 export const registerSubmission = async (userData) => {
-  return axios.post("/auth/register", JSON.stringify(userData));
+  return axios.post(
+    "/oauth/register/client/credentials",
+    JSON.stringify(userData)
+  );
 };
 
 export const logoutSubmission = async (accessToken) => {

@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
           role: response.data?.role,
           userId: response.data?.userId,
         };
-
+        console.log(authentication);
         setAuth(authentication);
         if (from) navigate(from, { replace: true });
 
@@ -47,13 +47,20 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logInAuth = async (email, pwd) => {
-    toast.promise(logInSubmission({ email: email, password: pwd }), {
+    toast.promise(logInSubmission({ username: email, password: pwd }), {
       loading: "Logging in...",
       success: (response) => {
-        const accessToken = response.data.access_token;
+        const accessToken = response.data?.accessToken;
+        const authentication = {
+          accessToken: accessToken,
+          refreshToken: response.data?.refreshToken,
+          role: response.data?.role,
+          userId: response.data?.userId,
+        };
+        console.log(authentication);
+        setAuth(authentication);
 
-        setAuth({ email, pwd, accessToken });
-        navigate(from, { replace: true });
+        if (from) navigate(from, { replace: true });
 
         return <b>Successfuly logged in!</b>;
       },
