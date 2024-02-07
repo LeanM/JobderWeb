@@ -152,6 +152,7 @@ export default function ClientLanding(props) {
             {workerCategory} para el siguiente problema: "{problemDescription}"
           </span>
           <button
+            className={classes.resetSearchButton}
             onClick={() => {
               handleResetUserSearch();
             }}
@@ -223,5 +224,20 @@ const useStyles = createUseStyles({
     alignItems: "center",
     flexWrap: "wrap",
     gap: "1rem",
+  },
+  resetSearchButton: {
+    width: "15rem",
+    height: "3rem",
+    borderRadius: "10px",
+    border: `1px solid ${colors.transparent}`,
+    backgroundColor: colors.secondary,
+    color: colors.white,
+
+    transition: "color 0.3s, background 0.3s",
+
+    "&:hover": {
+      backgroundColor: colors.primary,
+      borderColor: colors.secondary,
+    },
   },
 });
