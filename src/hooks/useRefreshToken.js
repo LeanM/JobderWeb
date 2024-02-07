@@ -8,12 +8,9 @@ const useRefreshToken = () => {
     const data = {
       refreshToken: auth?.refreshToken,
     };
-    const response = await axios.get("/oauth/refreshToken", {
-      withCredentials: true,
-      credentials: "cross-origin",
+    const response = await axios.post("/oauth/refreshToken", {
+      refreshToken: localStorage.getItem("refresh_token"),
     });
-
-    console.log(response?.request?.headers);
 
     setAuth((prev) => {
       return {

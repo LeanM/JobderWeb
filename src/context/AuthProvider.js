@@ -7,10 +7,12 @@ import {
   socialLogIn,
 } from "../connection/requests";
 import useGeoLocation from "../hooks/useGeoLocation";
+import { CookiesProvider, useCookies } from "react-cookie";
 
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
+  const [cookie, setCookie] = useCookies(["refresh_token"]);
   const [auth, setAuth] = useState({});
 
   const navigate = useNavigate();
@@ -23,9 +25,17 @@ export const AuthProvider = ({ children }) => {
       loading: "Logging In...",
       success: (response) => {
         const accessToken = response.data?.accessToken;
+        /*
+        setCookie("refresh_token", response.data?.refreshToken, {
+          path: "/",
+          httpOnly: true,
+        });
+        */
+
+        localStorage.setItem("refresh_token", response.data?.refreshToken);
+
         const authentication = {
           accessToken: accessToken,
-          refreshToken: response.data?.refreshToken,
           role: response.data?.role,
           userId: response.data?.userId,
         };
@@ -51,6 +61,7 @@ export const AuthProvider = ({ children }) => {
       loading: "Logging in...",
       success: (response) => {
         const accessToken = response.data?.accessToken;
+        localStorage.setItem("refresh_token", response.data?.refreshToken);
         const authentication = {
           accessToken: accessToken,
           refreshToken: response.data?.refreshToken,
@@ -81,7 +92,7 @@ export const AuthProvider = ({ children }) => {
       success: (response) => {
         setAuth({});
         navigate("/");
-
+        localStorage.setItem("refresh_token", "");
         return <b>Logged out successfuly.</b>;
       },
       error: (error) => {
