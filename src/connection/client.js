@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const server_path = "http://localhost:8080";
+const server_path = process.env.REACT_APP_SERVER_HOST;
 
 export default axios.create({
   baseURL: server_path,

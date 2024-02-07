@@ -11,7 +11,7 @@ import "rsuite/dist/rsuite.min.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <GoogleOAuthProvider clientId="658638942857-8jmoi2pbfcuvrfmhde9hq4a027ie6i4g.apps.googleusercontent.com">
+  <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_ID}>
     <React.StrictMode>
       <BrowserRouter>
         <Toaster position="bottom-center" reverseOrder={false}></Toaster>
