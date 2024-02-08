@@ -37,7 +37,7 @@ export default function ChatScreen() {
   }, []);
 
   const connect = () => {
-    let Sock = new SockJS("http://localhost:8080/ws");
+    let Sock = new SockJS(process.env.REACT_APP_SERVER_HOST + "/ws");
     stompClient = over(Sock);
     stompClient.connect({}, onConnected, onError);
   };
