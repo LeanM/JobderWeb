@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
         });
         */
 
-        localStorage.setItem("refresh_token", response.data?.refreshToken);
+        localStorage.setItem("refresh_token", response?.data?.refreshToken);
 
         const authentication = {
           accessToken: accessToken,
@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }) => {
         return (
           <span>
             The next error happened while making loggin :{" "}
-            {error.response.data.errors}
+            {error?.response?.data?.errors}
           </span>
         );
       },
