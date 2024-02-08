@@ -2,6 +2,8 @@ import { createUseStyles } from "react-jss";
 import { colors } from "../../assets/colors";
 import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
+import DesitionModal from "./DesitionModal";
+import { on } from "rsuite/esm/DOMHelper";
 
 export default function ChatUserItem(props) {
   const { actualRecipientId, chatroomUserData, onSelect } = props;
@@ -10,6 +12,7 @@ export default function ChatUserItem(props) {
   const [notificationShow, setNotificationShow] = useState(false);
   const [newChatShow, setNewChatShow] = useState(false);
   const classes = useStyles();
+  const [openDesitionModal, setOpenDesitionModal] = useState(false);
 
   useEffect(() => {
     if (
@@ -39,8 +42,12 @@ export default function ChatUserItem(props) {
   }, [actualRecipientId]);
 
   const handleSelectChatUser = () => {
-    if (auth.role === "WORKER" && chatroomUserData.chatRoom.state === "NEW") {
+    if (
+      auth?.role === "WORKER" &&
+      chatroomUserData?.chatRoom?.state === "NEW"
+    ) {
       //si es worker y el chatroom es nuevo mostrar modal para aceptar o rechazar
+      setOpenDesitionModal(true);
     } else {
       //sino onSelect
       onSelect(chatroomUserData.user.id);
@@ -48,28 +55,45 @@ export default function ChatUserItem(props) {
   };
 
   return (
-    <div
-      onClick={() => handleSelectChatUser()}
-      style={style}
-      className={classes.chatUserItem}
-    >
-      <img className={classes.chatUserItemImage} src="./worker.jpg"></img>
-      <span className={classes.chatUserItemText}>
-        {chatroomUserData.user.name}
-      </span>
-      {notificationShow ? (
-        <div className={classes.chatUserItemNotification}></div>
-      ) : (
-        <></>
-      )}
-      {newChatShow ? (
-        <div className={classes.chatUserItemNewNotification}>
-          <span>Nuevo!</span>
-        </div>
-      ) : (
-        <></>
-      )}
-    </div>
+    <>
+      <DesitionModal
+        clientData={chatroomUserData}
+        open={openDesitionModal}
+        onReject={() => {
+          props.onChange();
+          onSelect(0);
+          setOpenDesitionModal(false);
+        }}
+        onAccept={() => {
+          props.onChange();
+          onSelect(chatroomUserData.user.id);
+          setOpenDesitionModal(false);
+        }}
+        onClose={() => setOpenDesitionModal(false)}
+      />
+      <div
+        onClick={() => handleSelectChatUser()}
+        style={style}
+        className={classes.chatUserItem}
+      >
+        <img className={classes.chatUserItemImage} src="./worker.jpg"></img>
+        <span className={classes.chatUserItemText}>
+          {chatroomUserData.user.name}
+        </span>
+        {notificationShow ? (
+          <div className={classes.chatUserItemNotification}></div>
+        ) : (
+          <></>
+        )}
+        {newChatShow ? (
+          <div className={classes.chatUserItemNewNotification}>
+            <span>Nuevo!</span>
+          </div>
+        ) : (
+          <></>
+        )}
+      </div>
+    </>
   );
 }
 

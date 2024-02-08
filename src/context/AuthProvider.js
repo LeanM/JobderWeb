@@ -1,35 +1,50 @@
 import { createContext, useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import {
   logInSubmission,
   logoutSubmission,
   socialLogIn,
 } from "../connection/requests";
-import useGeoLocation from "../hooks/useGeoLocation";
+import { CookiesProvider, useCookies } from "react-cookie";
 
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
+  const [cookie, setCookie] = useCookies(["refresh_token"]);
   const [auth, setAuth] = useState({});
-
   const navigate = useNavigate();
-  const { geoLocation } = useGeoLocation();
   const location = useLocation();
   const from = location.state?.from || false;
 
-  const loginGoogle = (socialCredentials) => {
-    toast.promise(socialLogIn(socialCredentials), {
+  const loginGoogle = (socialCredentials, geoLocation) => {
+    let completeCredentials = {
+      value: socialCredentials?.value,
+      accountRole: socialCredentials?.accountRole,
+      searchParameters: socialCredentials?.searchParameters,
+      latitude: geoLocation?.latitude,
+      longitude: geoLocation?.longitude,
+    };
+
+    toast.promise(socialLogIn(completeCredentials), {
       loading: "Logging In...",
       success: (response) => {
         const accessToken = response.data?.accessToken;
+        /*
+        setCookie("refresh_token", response.data?.refreshToken, {
+          path: "/",
+          httpOnly: true,
+        });
+        */
+
+        localStorage.setItem("refresh_token", response.data?.refreshToken);
+
         const authentication = {
           accessToken: accessToken,
-          refreshToken: response.data?.refreshToken,
           role: response.data?.role,
           userId: response.data?.userId,
         };
-        console.log(authentication);
+
         setAuth(authentication);
         if (from) navigate(from, { replace: true });
 
@@ -51,6 +66,7 @@ export const AuthProvider = ({ children }) => {
       loading: "Logging in...",
       success: (response) => {
         const accessToken = response.data?.accessToken;
+        localStorage.setItem("refresh_token", response.data?.refreshToken);
         const authentication = {
           accessToken: accessToken,
           refreshToken: response.data?.refreshToken,
@@ -80,8 +96,10 @@ export const AuthProvider = ({ children }) => {
       loading: "Logging out...",
       success: (response) => {
         setAuth({});
-        navigate("/");
 
+        navigate("/", { refresh: true });
+
+        localStorage.setItem("refresh_token", "");
         return <b>Logged out successfuly.</b>;
       },
       error: (error) => {

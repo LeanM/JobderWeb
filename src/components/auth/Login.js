@@ -5,13 +5,14 @@ import useAuth from "../../hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
-import { socialLogIn } from "../../connection/requests";
 import { MDBIcon } from "mdb-react-ui-kit";
+import useGeoLocation from "../../hooks/useGeoLocation";
 
 function LogIn() {
   const { logInAuth, loginGoogle } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { geoLocation } = useGeoLocation();
   const from = location.state?.from || "/";
 
   const userRef = useRef();
@@ -42,8 +43,9 @@ function LogIn() {
       let authCode = response.code;
       let socialCredentials = {
         value: authCode,
+        accountRole: "CLIENT",
       };
-      loginGoogle(socialCredentials);
+      loginGoogle(socialCredentials, geoLocation);
     },
   });
 

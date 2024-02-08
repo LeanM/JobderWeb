@@ -13,7 +13,11 @@ export default function FrontWorkerCard(props) {
       <div className={classes.dataContainer}>
         <span
           className={classes.dataItem}
-          style={{ fontWeight: "800", fontSize: "2rem" }}
+          style={{
+            fontWeight: "800",
+            fontSize: "1.7rem",
+            marginBottom: "1rem",
+          }}
         >
           {workerData.worker.name}
         </span>

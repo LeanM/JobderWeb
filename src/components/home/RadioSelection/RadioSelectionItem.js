@@ -12,9 +12,7 @@ export default function RadioSelectionItem(props) {
     border: "1px solid " + colors.white,
   };
 
-  const nonSelectedItemStyle = {
-    border: "solid 1px " + colors.transparent,
-  };
+  const nonSelectedItemStyle = {};
 
   useEffect(() => {
     if (actualSelection === itemData.id) setItemStyle(selectedItemStyle);
@@ -22,13 +20,13 @@ export default function RadioSelectionItem(props) {
   }, [actualSelection]);
 
   return (
-    <div
+    <button
       className={classes.selectionItemContainer}
       style={itemStyle}
       onClick={() => props.onSelect(itemData.id, itemData.itemCode)}
     >
       <span className={classes.selectionItemText}>{itemData.itemName}</span>
-    </div>
+    </button>
   );
 }
 
@@ -36,18 +34,18 @@ const useStyles = createUseStyles({
   selectionItemContainer: {
     height: "80%",
     width: "10rem",
-    backgroundColor: colors.secondary,
-    cursor: "pointer",
-    color: colors.primary,
+    backgroundColor: colors.primary,
+    color: colors.textSecondary,
     borderRadius: "20px",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    border: `1px solid ${colors.secondary}`,
     transition: "background 0.5s , colors 0.5s , border 0.5s",
 
     "&:hover": {
-      backgroundColor: colors.hover,
-      color: colors.textSecondary,
+      backgroundColor: colors.secondary,
+      color: colors.primary,
     },
   },
   selectionItemText: {

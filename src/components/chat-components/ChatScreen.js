@@ -28,6 +28,12 @@ export default function ChatScreen() {
     window.scrollTo(0, 0);
     if (auth?.accessToken) connect();
     else navigate("/login", { state: { from: "/chat" } });
+
+    return () => {
+      try {
+        stompClient.disconnect();
+      } catch (error) {}
+    };
   }, []);
 
   const connect = () => {
@@ -39,25 +45,48 @@ export default function ChatScreen() {
   const onConnected = () => {
     getChatRoomUsers();
 
-    stompClient.subscribe(
-      `/user/${auth.userId}/queue/messages`,
-      onMessageReceived
-    );
+    try {
+      stompClient.subscribe(
+        `/user/${auth.userId}/queue/messages`,
+        onMessageReceived
+      );
+    } catch (error) {
+      console.log("ERROR");
+      console.log(error);
+    }
   };
 
   const getChatRoomUsers = () => {
-    getLikedOrMatchedWorkers()
-      .then((response) => {
-        setChatRoomUsers(response.data);
-      })
-      .catch((error) => {
-        if (error?.response?.status === 401)
-          navigate("/login", { state: { from: "/chat" } });
-      });
+    auth?.role === "CLIENT"
+      ? getLikedOrMatchedWorkers()
+          .then((response) => {
+            setChatRoomUsers(response.data);
+          })
+          .catch((error) => {
+            if (error?.response?.status === 401)
+              navigate("/login", { state: { from: "/chat" } });
+          })
+      : getLikedOrMatchedClients()
+          .then((response) => {
+            setChatRoomUsers(response.data);
+          })
+          .catch((error) => {
+            console.log(error.response.data);
+            if (error?.response?.status === 401)
+              navigate("/login", { state: { from: "/chat" } });
+          });
   };
 
   const getLikedOrMatchedWorkers = async () => {
     return axiosPrivate.post("matching/client/likedOrMatchedWorkers");
+  };
+
+  const getLikedOrMatchedClients = async () => {
+    return axiosPrivate.post("matching/worker/likedOrMatchedClients");
+  };
+
+  const resetSelectedUserChat = () => {
+    getChatRoomUsers();
   };
 
   const onMessageReceived = (payload) => {
@@ -120,17 +149,12 @@ export default function ChatScreen() {
                 <ChatUserItem
                   key={chatroomUser.interaction.id}
                   onSelect={(userId) => setActualRecipientId(userId)}
+                  onChange={() => resetSelectedUserChat()}
                   chatroomUserData={chatroomUser}
                   actualRecipientId={actualRecipientId}
                 />
               );
             })}
-            <div
-              onClick={() => setActualRecipientId("")}
-              className={classes.chatUserItem}
-            >
-              Limpiar
-            </div>
           </div>
           <ChatBox
             ref={chatBoxRef}

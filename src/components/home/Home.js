@@ -7,34 +7,16 @@ import WorkerCategorySelect from "./WorkerCategorySelect.js";
 import RadioSelection from "./RadioSelection/RadioSelection.js";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useGeolocated } from "react-geolocated";
-import useGeoLocation from "../../hooks/useGeoLocation.js";
 import useAuth from "../../hooks/useAuth.js";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
+import useGeoLocation from "../../hooks/useGeoLocation.js";
 
 export default function Home() {
+  const { geoLocation } = useGeoLocation();
   const { auth } = useAuth();
   const navigate = useNavigate();
   const classes = useStyles();
-  const { geoLocation, setGeoLocation } = useGeoLocation();
   const axiosPrivate = useAxiosPrivate();
-
-  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
-    useGeolocated({
-      positionOptions: {
-        enableHighAccuracy: false,
-      },
-      userDecisionTimeout: 5000,
-    });
-
-  useEffect(() => {
-    if (coords?.latitude && coords?.longitude) {
-      setGeoLocation({
-        latitude: coords.latitude,
-        longitude: coords.longitude,
-      });
-    }
-  }, [coords]);
 
   const [actualWorkerCategory, setActualWorkerCategory] = useState("");
   const [actualImportance, setActualImportance] = useState("");
@@ -45,9 +27,8 @@ export default function Home() {
   const [inputProblemText, setInputProblemText] = useState("");
 
   useEffect(() => {
-    if (auth?.accessToken) {
-      getUserSearchParametersIfLogged();
-    }
+    window.scrollTo(0, 0);
+    getUserSearchParametersIfLogged();
   }, []);
 
   const getUserSearchParametersIfLogged = () => {
@@ -57,7 +38,7 @@ export default function Home() {
         const importance = response.data?.availabilityStatus;
         const problemDescription = response.data?.clientProblemDescription;
 
-        if (workerCategory && importance && problemDescription) {
+        if (workerCategory && importance) {
           navigate("/clientLanding", {
             state: {
               workerCategory: workerCategory,
@@ -124,7 +105,10 @@ export default function Home() {
             onClick={() => {
               if (actualImportance === "" || actualWorkerCategory === "") {
                 toast.error("Seleccione todas las opciones!");
-              } else if (!geoLocation?.latitude) {
+              } else if (
+                !auth?.accessToken &&
+                (!geoLocation?.latitude || !geoLocation?.longitude)
+              ) {
                 toast.error(
                   "Debes brindar tu ubicacion para obtener trabajadores cercanos!"
                 );

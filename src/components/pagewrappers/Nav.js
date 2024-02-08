@@ -178,7 +178,9 @@ export default function Nav(props) {
             }}
           >
             <div className={classes.navBarListItemTextContainer}>
-              <p className={classes.navBarListItemText}>Mi cuenta</p>
+              <p className={classes.navBarListItemText}>
+                {auth.accessToken ? "Mi cuenta" : "Ingresar"}
+              </p>
             </div>
           </div>
         </div>
