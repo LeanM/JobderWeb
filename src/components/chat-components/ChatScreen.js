@@ -3,7 +3,7 @@ import { createUseStyles } from "react-jss";
 import { colors } from "../../assets/colors";
 import Nav from "../pagewrappers/Nav";
 import { over } from "stompjs";
-import SockJS from "sockjs-client";
+import SockJSS from "sockjs-client";
 import ChatBox from "./ChatBox";
 import ChatUserItem from "./ChatUserItem";
 import { format } from "date-fns";
@@ -37,7 +37,9 @@ export default function ChatScreen() {
   }, []);
 
   const connect = () => {
-    let Sock = new SockJS(process.env.REACT_APP_SOCKET_HOST + "/ws");
+    let Sock = new SockJSS(process.env.REACT_APP_SOCKET_HOST + "/ws", {
+      isSecureContext: true,
+    });
     stompClient = over(Sock);
     stompClient.connect({}, onConnected, onError);
   };
