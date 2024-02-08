@@ -6,7 +6,6 @@ import {
   logoutSubmission,
   socialLogIn,
 } from "../connection/requests";
-import useGeoLocation from "../hooks/useGeoLocation";
 import { CookiesProvider, useCookies } from "react-cookie";
 
 const AuthContext = createContext({});
@@ -16,12 +15,19 @@ export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({});
 
   const navigate = useNavigate();
-  const { geoLocation } = useGeoLocation();
   const location = useLocation();
   const from = location.state?.from || false;
 
-  const loginGoogle = (socialCredentials) => {
-    toast.promise(socialLogIn(socialCredentials), {
+  const loginGoogle = (socialCredentials, geoLocation) => {
+    let completeCredentials = {
+      value: socialCredentials?.value,
+      accountRole: socialCredentials?.accountRole,
+      searchParameters: socialCredentials?.searchParameters,
+      latitude: geoLocation?.latitude,
+      longitude: geoLocation?.longitude,
+    };
+
+    toast.promise(socialLogIn(completeCredentials), {
       loading: "Logging In...",
       success: (response) => {
         const accessToken = response.data?.accessToken;

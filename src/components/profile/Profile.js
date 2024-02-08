@@ -10,7 +10,7 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 export default function Profile() {
   const axiosPrivate = useAxiosPrivate();
-  const { auth } = useAuth();
+  const { auth, logOutAuth } = useAuth();
   const classes = useStyles();
   const navigate = useNavigate();
   const [userData, setUserData] = useState({});
@@ -83,6 +83,13 @@ export default function Profile() {
             ) : (
               <></>
             )}
+            <button
+              onClick={() => {
+                logOutAuth();
+              }}
+            >
+              Cerrar Sesion
+            </button>
           </div>
         </div>
       </div>

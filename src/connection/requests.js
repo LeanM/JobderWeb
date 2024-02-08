@@ -14,7 +14,7 @@ export const registerSubmission = async (userData) => {
 };
 
 export const logoutSubmission = async (accessToken) => {
-  return axiosAuth(accessToken).post("/auth/logout");
+  return axiosAuth(accessToken).get("/profile/logout");
 };
 
 export const socialLogIn = async (socialCredentials) => {

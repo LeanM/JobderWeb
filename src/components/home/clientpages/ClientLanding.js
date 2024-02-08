@@ -11,13 +11,14 @@ import { fetchWorkersUnlogged } from "../../../connection/requests";
 import useAuth from "../../../hooks/useAuth";
 import { useGoogleLogin } from "@react-oauth/google";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import toast from "react-hot-toast";
 
 export default function ClientLanding(props) {
   const { auth, resetSearchParameters, loginGoogle } = useAuth();
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
-  const { geoLocation, setGeoLocation } = useGeoLocation();
+  const { geoLocation } = useGeoLocation();
   const workerCategory = location.state?.workerCategory;
   const importance = location.state?.importance;
   const problemDescription = location.state?.problemDescription;
@@ -45,7 +46,7 @@ export default function ClientLanding(props) {
         setWorkers(response.data);
         setLoading(false);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => navigate("/"));
   };
 
   const searchWorkersLogged = () => {
@@ -67,6 +68,12 @@ export default function ClientLanding(props) {
             state: { from: "/clientLanding" },
             replace: true,
           });
+
+        if (error?.response?.status === 400) {
+          console.log(error.response?.data);
+          toast.error(error?.response?.data);
+          navigate("/profile");
+        }
       });
   };
 
@@ -114,12 +121,10 @@ export default function ClientLanding(props) {
       let socialCredentials = {
         value: authCode,
         accountRole: "CLIENT",
-        latitude: geoLocation?.latitude,
-        longitude: geoLocation?.longitude,
         searchParameters: searchParameters,
       };
 
-      loginGoogle(socialCredentials);
+      loginGoogle(socialCredentials, geoLocation);
     },
   });
 
@@ -149,7 +154,12 @@ export default function ClientLanding(props) {
           <span className={classes.title}>¡Trabajadores para ti!</span>
           <span className={classes.subTitle}>
             Tu busqueda actual esta conformada por trabadores de tipo{" "}
-            {workerCategory} para el siguiente problema: "{problemDescription}"
+            {workerCategory} con grado de importancia{" "}
+            {importance === "AVAILABLE" ? "alto" : "moderado"}
+            {problemDescription
+              ? ', para el siguiente problema: "' + problemDescription + '"'
+              : ""}
+            .
           </span>
           <button
             className={classes.resetSearchButton}
@@ -159,10 +169,7 @@ export default function ClientLanding(props) {
           >
             Realizar busqueda diferente
           </button>
-          <span className={classes.subTitle}>
-            Ten en cuenta que solo puedes comunicarte con 3 trabajadores al
-            mismo tiempo.
-          </span>
+
           <motion.div layout className={classes.resultsContainer}>
             {workers.map((worker) => {
               return (
@@ -186,13 +193,13 @@ export default function ClientLanding(props) {
 const useStyles = createUseStyles({
   container: {
     width: "100%",
-    height: "100%",
+    minHeight: "200vh",
     paddingTop: "12rem",
     background: `linear-gradient(${colors.primary},${colors.primary})`,
     fontFamily: "Montserrat",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
   },
   subContainer: {
@@ -229,15 +236,16 @@ const useStyles = createUseStyles({
     width: "15rem",
     height: "3rem",
     borderRadius: "10px",
-    border: `1px solid ${colors.transparent}`,
-    backgroundColor: colors.secondary,
-    color: colors.white,
+    border: `1px solid ${colors.secondary}`,
+    backgroundColor: colors.primary,
+
+    color: colors.textSecondary,
 
     transition: "color 0.3s, background 0.3s",
 
     "&:hover": {
-      backgroundColor: colors.primary,
-      borderColor: colors.secondary,
+      backgroundColor: colors.secondary,
+      color: colors.primary,
     },
   },
 });
