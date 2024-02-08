@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import {
   logInSubmission,
@@ -13,7 +13,6 @@ const AuthContext = createContext({});
 export const AuthProvider = ({ children }) => {
   const [cookie, setCookie] = useCookies(["refresh_token"]);
   const [auth, setAuth] = useState({});
-
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || false;
@@ -45,7 +44,7 @@ export const AuthProvider = ({ children }) => {
           role: response.data?.role,
           userId: response.data?.userId,
         };
-        console.log(authentication);
+
         setAuth(authentication);
         if (from) navigate(from, { replace: true });
 
@@ -97,7 +96,9 @@ export const AuthProvider = ({ children }) => {
       loading: "Logging out...",
       success: (response) => {
         setAuth({});
-        navigate("/");
+
+        navigate("/", { refresh: true });
+
         localStorage.setItem("refresh_token", "");
         return <b>Logged out successfuly.</b>;
       },

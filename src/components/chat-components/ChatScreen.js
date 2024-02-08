@@ -28,6 +28,12 @@ export default function ChatScreen() {
     window.scrollTo(0, 0);
     if (auth?.accessToken) connect();
     else navigate("/login", { state: { from: "/chat" } });
+
+    return () => {
+      try {
+        stompClient.disconnect();
+      } catch (error) {}
+    };
   }, []);
 
   const connect = () => {
@@ -77,6 +83,10 @@ export default function ChatScreen() {
 
   const getLikedOrMatchedClients = async () => {
     return axiosPrivate.post("matching/worker/likedOrMatchedClients");
+  };
+
+  const resetSelectedUserChat = () => {
+    getChatRoomUsers();
   };
 
   const onMessageReceived = (payload) => {
@@ -139,6 +149,7 @@ export default function ChatScreen() {
                 <ChatUserItem
                   key={chatroomUser.interaction.id}
                   onSelect={(userId) => setActualRecipientId(userId)}
+                  onChange={() => resetSelectedUserChat()}
                   chatroomUserData={chatroomUser}
                   actualRecipientId={actualRecipientId}
                 />

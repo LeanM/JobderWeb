@@ -27,6 +27,7 @@ export default function Home() {
   const [inputProblemText, setInputProblemText] = useState("");
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     getUserSearchParametersIfLogged();
   }, []);
 

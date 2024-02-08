@@ -19,7 +19,6 @@ export default function Profile() {
     { id: 2, itemName: "Moderado", itemCode: "MODERATED" },
     { id: 3, itemName: "No Disponible", itemCode: "NOT_AVAILABLE" },
   ]);
-  const [startSelection, setStartSelection] = useState(0);
 
   useEffect(() => {
     if (auth?.accessToken) initializeUser();
@@ -36,18 +35,6 @@ export default function Profile() {
     }
 
     //initializeSelectionStatus(userData.status);
-  };
-
-  const initializeSelectionStatus = (status) => {
-    if (status === "available") {
-      setStartSelection(1);
-    }
-    if (status === "moderated") {
-      setStartSelection(2);
-    }
-    if (status === "notavailable") {
-      setStartSelection(3);
-    }
   };
 
   return (
@@ -73,7 +60,17 @@ export default function Profile() {
             {auth.role === "WORKER" ? (
               <div className={classes.statusSelectionContainer}>
                 <span style={{ color: colors.white }}>
-                  Cual es tu grado de disponibilidad hoy?
+                  ¿Quieres cambiar tu grado de disponibilidad hoy?
+                </span>
+                <span>
+                  Actualmente tu disponibilidad es{" "}
+                  <b>
+                    {userData.availabilityStatus === "MODERATED"
+                      ? "Moderado"
+                      : userData.availabilityStatus === "AVAILABLE"
+                      ? "Disponible"
+                      : "No Disponible"}
+                  </b>
                 </span>
                 <RadioSelection
                   selectionItemsArray={selectionItemsArray}
