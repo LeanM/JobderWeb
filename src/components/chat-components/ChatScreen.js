@@ -11,8 +11,8 @@ import toast from "react-hot-toast";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { EventSourcePolyfill } from "event-source-polyfill";
 
-var stompClient = null;
 export default function ChatScreen() {
   const navigate = useNavigate();
   const { auth } = useAuth();
@@ -26,37 +26,35 @@ export default function ChatScreen() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (auth?.accessToken) connect();
-    else navigate("/login", { state: { from: "/chat" } });
+    if (auth?.accessToken) {
+      let url = process.env.REACT_APP_SERVER_HOST + "/chat/suscribe";
+      const sse = new EventSourcePolyfill(url, {
+        headers: {
+          Authorization: `Bearer ${auth?.accessToken}`,
+        },
+      });
 
-    return () => {
-      try {
-        stompClient.disconnect();
-      } catch (error) {}
-    };
+      sse.addEventListener("user-list-event", (event) => {
+        const data = JSON.parse(event.data);
+        onMessageReceived(data);
+      });
+
+      sse.onopen = () => {
+        onConnected();
+      };
+
+      sse.onerror = () => {
+        sse.close();
+      };
+
+      return () => {
+        sse.close();
+      };
+    } else navigate("/login", { state: { from: "/chat" } });
   }, []);
-
-  const connect = () => {
-    let Sock = new SockJS(process.env.REACT_APP_SOCKET_HOST + "/ws", null, {
-      transports: ["websocket"],
-      secure: true,
-    });
-    stompClient = over(Sock);
-    stompClient.connect({}, onConnected, onError);
-  };
 
   const onConnected = () => {
     getChatRoomUsers();
-
-    try {
-      stompClient.subscribe(
-        `/user/${auth.userId}/queue/messages`,
-        onMessageReceived
-      );
-    } catch (error) {
-      console.log("ERROR");
-      console.log(error);
-    }
   };
 
   const getChatRoomUsers = () => {
@@ -93,14 +91,24 @@ export default function ChatScreen() {
   };
 
   const onMessageReceived = (payload) => {
-    const message = JSON.parse(payload.body);
-
+    if (payload.length > 0) {
+      for (let i = 0; i < payload.length; i++) {
+        if (actualRecipientId === payload[i].senderId) {
+          chatBoxRef.current.addMessageToList(payload[i]);
+        } else {
+          toast.success("Recibiste un mensaje!");
+          getChatRoomUsers();
+        }
+      }
+    }
+    /*
     if (actualRecipientId === message.senderId) {
       chatBoxRef.current.addMessageToList(message);
     } else {
       toast.success("Recibiste un mensaje!");
       getChatRoomUsers();
     }
+    */
   };
 
   const calculateTime = (messageData) => {
@@ -122,19 +130,21 @@ export default function ChatScreen() {
   };
 
   const sendMessage = (messageContent) => {
-    if (stompClient) {
-      const actualDate = new Date();
-      const timestamp = format(actualDate, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-      var chatMessage = {
-        senderId: auth.userId,
-        recipientId: actualRecipientId,
-        content: messageContent,
-        timestamp: timestamp,
-      };
-      stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
+    const actualDate = new Date();
+    const timestamp = format(actualDate, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+    var chatMessage = {
+      senderId: auth.userId,
+      recipientId: actualRecipientId,
+      content: messageContent,
+      timestamp: timestamp,
+    };
 
-      return chatMessage;
-    }
+    axiosPrivate
+      .post("/chat/send", JSON.stringify(chatMessage))
+      .then((response) => {})
+      .catch((error) => toast.error("Error sending message!"));
+
+    return chatMessage;
   };
 
   const onError = (err) => {

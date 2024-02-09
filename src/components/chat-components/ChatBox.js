@@ -59,8 +59,7 @@ const ChatBox = forwardRef((props, ref) => {
 
   const handleMessage = () => {
     let newMessage = onSendMessage(inputText);
-    addMessageToList(newMessage);
-
+    if (newMessage) addMessageToList(newMessage);
     setInputText("");
   };
 
