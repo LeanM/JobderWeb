@@ -12,10 +12,13 @@ import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { EventSourcePolyfill } from "event-source-polyfill";
+import { MDBIcon } from "mdb-react-ui-kit";
+import useRefreshToken from "../../hooks/useRefreshToken";
 
 export default function ChatScreen() {
   const navigate = useNavigate();
   const { auth } = useAuth();
+  const refresh = useRefreshToken();
   const [userData, setUserData] = useState(null);
   const [chatRoomUsers, setChatRoomUsers] = useState([]);
   const [actualRecipientId, setActualRecipientId] = useState("");
@@ -36,7 +39,7 @@ export default function ChatScreen() {
 
       sse.addEventListener("user-list-event", (event) => {
         const data = JSON.parse(event.data);
-        onMessageReceived(data);
+        onMessagesReceived(data);
       });
 
       sse.onopen = () => {
@@ -90,15 +93,22 @@ export default function ChatScreen() {
     getChatRoomUsers();
   };
 
-  const onMessageReceived = (payload) => {
+  const onMessagesReceived = (payload) => {
+    let messageNotInChatBox = false;
     if (payload.length > 0) {
       for (let i = 0; i < payload.length; i++) {
-        if (chatBoxRef.current.verifyUpcomingMessage(payload[i])) {
-          chatBoxRef.current.addMessageToList(payload[i]);
-        } else {
-          toast.success("Recibiste un mensaje!");
-          getChatRoomUsers();
-        }
+        if (chatBoxRef.current.verifyUpcomingMessage(payload[i].message)) {
+          chatBoxRef.current.addMessageToList(payload[i].message);
+        } else messageNotInChatBox = true;
+      }
+      if (messageNotInChatBox) {
+        toast(() => (
+          <span>
+            <MDBIcon icon="info" /> Recibiste mensajes!
+          </span>
+        ));
+
+        getChatRoomUsers();
       }
     }
   };
