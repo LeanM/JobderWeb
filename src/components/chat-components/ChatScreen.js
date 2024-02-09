@@ -37,12 +37,10 @@ export default function ChatScreen() {
   }, []);
 
   const connect = () => {
-    let Sock = new SockJS(process.env.REACT_APP_SOCKET_HOST + "/ws", null, {
-      transports: ["websocket"],
-      secure: true,
-    });
-    stompClient = over(Sock);
-    stompClient.connect({}, onConnected, onError);
+    let socket = new WebSocket("ws://localhost:8080/ws");
+    socket.onopen = () => {
+      onConnected();
+    };
   };
 
   const onConnected = () => {
