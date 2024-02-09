@@ -93,7 +93,7 @@ export default function ChatScreen() {
   const onMessageReceived = (payload) => {
     if (payload.length > 0) {
       for (let i = 0; i < payload.length; i++) {
-        if (actualRecipientId === payload[i].senderId) {
+        if (chatBoxRef.current.verifyUpcomingMessage(payload[i])) {
           chatBoxRef.current.addMessageToList(payload[i]);
         } else {
           toast.success("Recibiste un mensaje!");
@@ -101,14 +101,6 @@ export default function ChatScreen() {
         }
       }
     }
-    /*
-    if (actualRecipientId === message.senderId) {
-      chatBoxRef.current.addMessageToList(message);
-    } else {
-      toast.success("Recibiste un mensaje!");
-      getChatRoomUsers();
-    }
-    */
   };
 
   const calculateTime = (messageData) => {
