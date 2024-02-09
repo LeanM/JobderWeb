@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 var stompClient = null;
+var socket = null;
 export default function ChatScreen() {
   const navigate = useNavigate();
   const { auth } = useAuth();
@@ -37,7 +38,7 @@ export default function ChatScreen() {
   }, []);
 
   const connect = () => {
-    let socket = new WebSocket("ws://localhost:8080/ws");
+    socket = new WebSocket("wss://localhost:8080/ws");
     socket.onopen = () => {
       onConnected();
     };
@@ -47,10 +48,7 @@ export default function ChatScreen() {
     getChatRoomUsers();
 
     try {
-      stompClient.subscribe(
-        `/user/${auth.userId}/queue/messages`,
-        onMessageReceived
-      );
+      socket.send({ asd: "asd" });
     } catch (error) {
       console.log("ERROR");
       console.log(error);
