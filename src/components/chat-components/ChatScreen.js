@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { MDBIcon } from "mdb-react-ui-kit";
 
 var stompClient = null;
 export default function ChatScreen() {
