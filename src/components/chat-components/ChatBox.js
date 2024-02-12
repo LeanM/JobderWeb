@@ -9,11 +9,9 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
 
 const ChatBox = forwardRef((props, ref) => {
-  const { auth } = useAuth();
   const { actualRecipientId, userData, onSendMessage } = props;
   const [messageList, setMessageList] = useState([]);
   const [inputText, setInputText] = useState("");
-  const [actualDate, setActualDate] = useState("");
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
 
@@ -29,8 +27,8 @@ const ChatBox = forwardRef((props, ref) => {
   }));
 
   useEffect(() => {
+    setMessageList([]);
     if (actualRecipientId !== "") loadMessages();
-    else setMessageList([]);
   }, [actualRecipientId]);
 
   useEffect(() => {
