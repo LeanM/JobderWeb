@@ -25,6 +25,7 @@ const ChatBox = forwardRef((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     addMessageToList,
+    verifyUpcomingMessage,
   }));
 
   useEffect(() => {
@@ -75,6 +76,10 @@ const ChatBox = forwardRef((props, ref) => {
 
       setMessageDisplay([...messageDisplay, newMessageDisplay]);
     }
+  };
+
+  const verifyUpcomingMessage = (newMessage) => {
+    return newMessage.senderId === actualRecipientId;
   };
 
   const scrollDown = () => {
