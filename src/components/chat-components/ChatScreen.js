@@ -98,7 +98,11 @@ export default function ChatScreen() {
     if (chatBoxRef.current.verifyUpcomingMessage(message)) {
       chatBoxRef.current.addMessageToList(message);
     } else {
-      toast.success("Recibiste un mensaje!");
+      toast(() => (
+        <span>
+          <MDBIcon icon="info" /> Recibiste un mensaje!
+        </span>
+      ));
       getChatRoomUsers();
     }
   };
