@@ -20,6 +20,7 @@ export default function ChatScreen() {
   const [chatRoomUsers, setChatRoomUsers] = useState([]);
   const [actualRecipientId, setActualRecipientId] = useState("");
   const [logged, setLogged] = useState(true);
+
   const chatBoxRef = useRef(null);
   const classes = useStyles();
   const axiosPrivate = useAxiosPrivate();
