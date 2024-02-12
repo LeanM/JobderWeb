@@ -95,7 +95,7 @@ export default function ChatScreen() {
   const onMessageReceived = (payload) => {
     const message = JSON.parse(payload.body);
 
-    if (actualRecipientId === message.senderId) {
+    if (chatBoxRef.current.verifyUpcomingMessage(message)) {
       chatBoxRef.current.addMessageToList(message);
     } else {
       toast.success("Recibiste un mensaje!");
