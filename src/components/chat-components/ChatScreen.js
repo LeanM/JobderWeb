@@ -17,10 +17,8 @@ var stompClient = null;
 export default function ChatScreen() {
   const navigate = useNavigate();
   const { auth } = useAuth();
-  const [userData, setUserData] = useState(null);
   const [chatRoomUsers, setChatRoomUsers] = useState([]);
   const [actualRecipientId, setActualRecipientId] = useState("");
-  const [logged, setLogged] = useState(true);
 
   const chatBoxRef = useRef(null);
   const classes = useStyles();
@@ -105,7 +103,10 @@ export default function ChatScreen() {
           <MDBIcon icon="info" /> Recibiste un mensaje!
         </span>
       ));
-      getChatRoomUsers();
+      let newUserOrder = moveChatroomUserToFrontOnMessage(message.senderId);
+      if (newUserOrder) {
+        setChatRoomUsers(newUserOrder);
+      } else getChatRoomUsers();
     }
   };
 
@@ -139,12 +140,41 @@ export default function ChatScreen() {
       };
       stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
 
-      return chatMessage;
+      let newUserOrder = moveChatroomUserToFrontOnMessage(actualRecipientId);
+      if (newUserOrder) {
+        setChatRoomUsers(newUserOrder);
+
+        return chatMessage;
+      }
     }
   };
 
   const onError = (err) => {
     console.log(err);
+  };
+
+  const moveChatroomUserToFrontOnMessage = (userId) => {
+    let chatroomUserToMove = null;
+    let newChatRoomUsersList = [];
+    console.log(chatRoomUsers);
+    chatRoomUsers.every((chatroomUser) => {
+      if (chatroomUser.user.id === userId) {
+        chatroomUserToMove = chatroomUser;
+        return true;
+      } else {
+        newChatRoomUsersList.push(chatroomUser);
+        return true;
+      }
+    });
+
+    if (chatroomUserToMove != null) {
+      chatroomUserToMove.chatRoom.state = "UNSEEN";
+      return [chatroomUserToMove, ...newChatRoomUsersList];
+    } else return false;
+  };
+
+  const onSelectUserChat = (userId) => {
+    setActualRecipientId(userId);
   };
 
   return (
@@ -157,7 +187,7 @@ export default function ChatScreen() {
               return (
                 <ChatUserItem
                   key={chatroomUser.interaction.id}
-                  onSelect={(userId) => setActualRecipientId(userId)}
+                  onSelect={(userId) => onSelectUserChat(userId)}
                   onChange={() => resetSelectedUserChat()}
                   chatroomUserData={chatroomUser}
                   actualRecipientId={actualRecipientId}
@@ -169,7 +199,6 @@ export default function ChatScreen() {
             ref={chatBoxRef}
             onSendMessage={(messageContent) => sendMessage(messageContent)}
             actualRecipientId={actualRecipientId}
-            userData={userData}
           />
         </div>
       </div>
