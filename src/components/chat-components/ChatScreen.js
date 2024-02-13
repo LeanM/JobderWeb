@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { colors } from "../../assets/colors";
 import Nav from "../pagewrappers/Nav";
@@ -12,6 +12,7 @@ import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { MDBIcon } from "mdb-react-ui-kit";
+import ChatUsers from "./ChatUsers";
 
 var stompClient = null;
 export default function ChatScreen() {
@@ -21,6 +22,7 @@ export default function ChatScreen() {
   const [actualRecipientId, setActualRecipientId] = useState("");
 
   const chatBoxRef = useRef(null);
+  const chatUsersRef = useRef(null);
   const classes = useStyles();
   const axiosPrivate = useAxiosPrivate();
 
@@ -47,7 +49,6 @@ export default function ChatScreen() {
 
   const onConnected = () => {
     getChatRoomUsers();
-
     try {
       stompClient.subscribe(
         `/user/${auth.userId}/queue/messages`,
@@ -103,7 +104,9 @@ export default function ChatScreen() {
           <MDBIcon icon="info" /> Recibiste un mensaje!
         </span>
       ));
-      let newUserOrder = moveChatroomUserToFrontOnMessage(message.senderId);
+      let newUserOrder = chatUsersRef.current.moveChatroomUserToFrontOnMessage(
+        message.senderId
+      );
       if (newUserOrder) {
         setChatRoomUsers(newUserOrder);
       } else getChatRoomUsers();
@@ -140,7 +143,10 @@ export default function ChatScreen() {
       };
       stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
 
-      let newUserOrder = moveChatroomUserToFrontOnMessage(actualRecipientId);
+      let newUserOrder =
+        chatUsersRef.current.moveChatroomUserToFrontOnMessage(
+          actualRecipientId
+        );
       if (newUserOrder) {
         setChatRoomUsers(newUserOrder);
 
@@ -153,26 +159,6 @@ export default function ChatScreen() {
     console.log(err);
   };
 
-  const moveChatroomUserToFrontOnMessage = (userId) => {
-    let chatroomUserToMove = null;
-    let newChatRoomUsersList = [];
-    console.log(chatRoomUsers);
-    chatRoomUsers.every((chatroomUser) => {
-      if (chatroomUser.user.id === userId) {
-        chatroomUserToMove = chatroomUser;
-        return true;
-      } else {
-        newChatRoomUsersList.push(chatroomUser);
-        return true;
-      }
-    });
-
-    if (chatroomUserToMove != null) {
-      chatroomUserToMove.chatRoom.state = "UNSEEN";
-      return [chatroomUserToMove, ...newChatRoomUsersList];
-    } else return false;
-  };
-
   const onSelectUserChat = (userId) => {
     setActualRecipientId(userId);
   };
@@ -182,19 +168,13 @@ export default function ChatScreen() {
       <Nav />
       <div className={classes.container}>
         <div className={classes.subContainer}>
-          <div className={classes.chatUsersContainer}>
-            {chatRoomUsers.map((chatroomUser) => {
-              return (
-                <ChatUserItem
-                  key={chatroomUser.interaction.id}
-                  onSelect={(userId) => onSelectUserChat(userId)}
-                  onChange={() => resetSelectedUserChat()}
-                  chatroomUserData={chatroomUser}
-                  actualRecipientId={actualRecipientId}
-                />
-              );
-            })}
-          </div>
+          <ChatUsers
+            ref={chatUsersRef}
+            onSelect={(userId) => onSelectUserChat(userId)}
+            onReset={() => resetSelectedUserChat()}
+            actualRecipientId={actualRecipientId}
+            chatRoomUsers={chatRoomUsers}
+          />
           <ChatBox
             ref={chatBoxRef}
             onSendMessage={(messageContent) => sendMessage(messageContent)}
@@ -225,16 +205,5 @@ const useStyles = createUseStyles({
     alignItems: "center",
     backgroundColor: colors.secondary,
     borderRadius: "20px",
-  },
-  chatUsersContainer: {
-    width: "30%",
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    borderRight: `solid 1px ${colors.primary}`,
-    gap: "1rem",
-    paddingTop: "2rem",
   },
 });
