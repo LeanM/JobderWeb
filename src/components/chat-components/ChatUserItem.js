@@ -7,30 +7,27 @@ import { forwardRef } from "react";
 import { useImperativeHandle } from "react";
 
 const ChatUserItem = forwardRef((props, ref) => {
-  const { actualRecipientId, chatroomUser, onSelect } = props;
-  const [chatroomUserData, setChatroomUserData] = useState({});
+  const { actualRecipientId, chatroomUserData, onSelect, state } = props;
   const { auth } = useAuth();
+  const [chatroomState, setChatroomState] = useState(state);
   const [style, setStyle] = useState({});
   const [notificationShow, setNotificationShow] = useState(false);
   const [newChatShow, setNewChatShow] = useState(false);
   const classes = useStyles();
   const [openDesitionModal, setOpenDesitionModal] = useState(false);
 
-  useEffect(() => {
-    setChatroomUserData(chatroomUser);
-    console.log(chatroomUser);
-  }, []);
+  useEffect(() => {}, [chatroomState]);
 
   useEffect(() => {
     if (
-      chatroomUserData?.chatRoom?.state === "UNSEEN" &&
+      chatroomState === "UNSEEN" &&
       actualRecipientId !== chatroomUserData?.user?.id
     )
       setNotificationShow(true);
-    else if (chatroomUserData?.chatRoom?.state === "NEW") {
+    else if (chatroomState === "NEW") {
       setNewChatShow(true);
     }
-  }, [chatroomUserData]);
+  }, [chatroomState]);
 
   const nonSelectedStyle = {
     borderBottom: `solid 1px ${colors.primary}`,
@@ -49,14 +46,13 @@ const ChatUserItem = forwardRef((props, ref) => {
   }, [actualRecipientId]);
 
   const handleSelectChatUser = () => {
-    if (
-      auth?.role === "WORKER" &&
-      chatroomUserData?.chatRoom?.state === "NEW"
-    ) {
+    if (auth?.role === "WORKER" && state === "NEW") {
       //si es worker y el chatroom es nuevo mostrar modal para aceptar o rechazar
       setOpenDesitionModal(true);
     } else {
       //sino onSelect
+      console.log("VISTO");
+      setChatroomState("SEEN");
       onSelect(chatroomUserData?.user?.id);
     }
   };

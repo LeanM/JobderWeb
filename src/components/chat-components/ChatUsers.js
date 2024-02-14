@@ -7,6 +7,7 @@ import { useImperativeHandle } from "react";
 const ChatUsers = forwardRef((props, ref) => {
   const { chatRoomUsers, actualRecipientId } = props;
   const [userItemsDisplay, setUserItemsDisplay] = useState([]);
+  const userItemRef = useRef(null);
   const classes = useStyles();
 
   useImperativeHandle(ref, () => ({
@@ -36,15 +37,16 @@ const ChatUsers = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    //regenerateUserItems()
+    //regenerateUserItems();
   }, [chatRoomUsers]);
 
   const regenerateUserItems = () => {
-    let userItemsDisplay = [];
+    let newUserItemsDisplay = [];
     chatRoomUsers.map((chatroomUser) => {
-      userItemsDisplay.push(
+      newUserItemsDisplay.push(
         <ChatUserItem
           key={chatroomUser.interaction.id}
+          ref={userItemRef}
           onSelect={(userId) => props.onSelect(userId)}
           onChange={() => props.onReset()}
           chatroomUserData={chatroomUser}
@@ -53,7 +55,9 @@ const ChatUsers = forwardRef((props, ref) => {
       );
     });
 
-    setUserItemsDisplay(userItemsDisplay);
+    console.log(newUserItemsDisplay);
+
+    setUserItemsDisplay(newUserItemsDisplay);
   };
 
   return (
@@ -64,7 +68,8 @@ const ChatUsers = forwardRef((props, ref) => {
             key={chatroomUser.interaction.id}
             onSelect={(userId) => props.onSelect(userId)}
             onChange={() => props.onReset()}
-            chatroomUser={chatroomUser}
+            chatroomUserData={chatroomUser}
+            state={chatroomUser.chatRoom.state}
             actualRecipientId={actualRecipientId}
           />
         );

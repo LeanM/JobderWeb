@@ -32,7 +32,6 @@ const ChatBox = forwardRef((props, ref) => {
   }, [actualRecipientId]);
 
   useEffect(() => {
-    console.log(messageDisplay);
     scrollDown();
   }, [messageDisplay]);
 
