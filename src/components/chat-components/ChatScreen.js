@@ -97,7 +97,7 @@ export default function ChatScreen() {
     const message = JSON.parse(payload.body);
 
     if (chatBoxRef.current.verifyUpcomingMessage(message)) {
-      chatBoxRef.current.addMessageToList(message);
+      chatBoxRef.current.addMessages([message]);
     } else {
       toast(() => (
         <span>

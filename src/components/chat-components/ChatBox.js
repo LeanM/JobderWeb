@@ -10,38 +10,35 @@ import { useNavigate } from "react-router-dom";
 
 const ChatBox = forwardRef((props, ref) => {
   const { actualRecipientId, onSendMessage } = props;
-  const [messageList, setMessageList] = useState([]);
   const [inputText, setInputText] = useState("");
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
 
   const [messageDisplay, setMessageDisplay] = useState([]);
+  const [lastMessageDate, setLastMessageDate] = useState("");
 
   const messageContainerRef = useRef(null);
 
   const classes = useStyles();
 
   useImperativeHandle(ref, () => ({
-    addMessageToList,
+    addMessages,
     verifyUpcomingMessage,
   }));
 
   useEffect(() => {
-    setMessageList([]);
+    setMessageDisplay([]);
     if (actualRecipientId !== "") loadMessages();
   }, [actualRecipientId]);
 
   useEffect(() => {
-    fillMessageDisplay();
-  }, [messageList]);
-
-  useEffect(() => {
+    console.log(messageDisplay);
     scrollDown();
   }, [messageDisplay]);
 
   const loadMessages = () => {
     getMessages()
-      .then((response) => setMessageList(response.data))
+      .then((response) => addMessages(response.data))
       .catch((error) => {
         if (error?.response?.status === 401)
           navigate("/login", { state: { from: "/chat" } });
@@ -58,22 +55,9 @@ const ChatBox = forwardRef((props, ref) => {
 
   const handleMessage = () => {
     let newMessage = onSendMessage(inputText);
-    addMessageToList(newMessage);
+    addMessages([newMessage]);
 
     setInputText("");
-  };
-
-  const addMessageToList = (newMessage) => {
-    if (newMessage) {
-      let newMessageDisplay =
-        newMessage.recipientId === actualRecipientId ? (
-          <Message type="sender" messageData={newMessage} />
-        ) : (
-          <Message type="receiver" messageData={newMessage} />
-        );
-
-      setMessageDisplay([...messageDisplay, newMessageDisplay]);
-    }
   };
 
   const verifyUpcomingMessage = (newMessage) => {
@@ -87,10 +71,10 @@ const ChatBox = forwardRef((props, ref) => {
     }
   };
 
-  const fillMessageDisplay = () => {
-    let display = [];
-    let previousDate = "";
-    messageList.map((message) => {
+  const addMessages = (messages) => {
+    let addedDisplay = [];
+    let previousDate = lastMessageDate;
+    messages.map((message) => {
       const messageTimestamp = new Date(
         format(message.timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
       );
@@ -100,7 +84,7 @@ const ChatBox = forwardRef((props, ref) => {
       const formattedDate = `${year}-${month}-${day}`;
       if (formattedDate !== previousDate) {
         previousDate = formattedDate;
-        display.push(
+        addedDisplay.push(
           <div className={classes.timeContainer}>
             <span style={{ color: colors.white }}>{formattedDate}</span>
             <div
@@ -113,21 +97,21 @@ const ChatBox = forwardRef((props, ref) => {
           </div>
         );
         if (message.recipientId === actualRecipientId) {
-          display.push(<Message type="sender" messageData={message} />);
+          addedDisplay.push(<Message type="sender" messageData={message} />);
         } else {
-          display.push(<Message type="receiver" messageData={message} />);
+          addedDisplay.push(<Message type="receiver" messageData={message} />);
         }
       } else {
         if (message.recipientId === actualRecipientId) {
-          display.push(<Message type="sender" messageData={message} />);
+          addedDisplay.push(<Message type="sender" messageData={message} />);
         } else {
-          display.push(<Message type="receiver" messageData={message} />);
+          addedDisplay.push(<Message type="receiver" messageData={message} />);
         }
       }
     });
 
-    setMessageDisplay(display);
-    scrollDown();
+    setLastMessageDate(previousDate);
+    setMessageDisplay([...messageDisplay, addedDisplay]);
   };
 
   return (

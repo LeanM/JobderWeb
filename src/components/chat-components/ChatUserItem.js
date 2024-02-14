@@ -3,10 +3,12 @@ import { colors } from "../../assets/colors";
 import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import DesitionModal from "./DesitionModal";
-import { on } from "rsuite/esm/DOMHelper";
+import { forwardRef } from "react";
+import { useImperativeHandle } from "react";
 
-export default function ChatUserItem(props) {
-  const { actualRecipientId, chatroomUserData, onSelect } = props;
+const ChatUserItem = forwardRef((props, ref) => {
+  const { actualRecipientId, chatroomUser, onSelect } = props;
+  const [chatroomUserData, setChatroomUserData] = useState({});
   const { auth } = useAuth();
   const [style, setStyle] = useState({});
   const [notificationShow, setNotificationShow] = useState(false);
@@ -15,12 +17,17 @@ export default function ChatUserItem(props) {
   const [openDesitionModal, setOpenDesitionModal] = useState(false);
 
   useEffect(() => {
+    setChatroomUserData(chatroomUser);
+    console.log(chatroomUser);
+  }, []);
+
+  useEffect(() => {
     if (
-      chatroomUserData.chatRoom.state === "UNSEEN" &&
-      actualRecipientId !== chatroomUserData.user.id
+      chatroomUserData?.chatRoom?.state === "UNSEEN" &&
+      actualRecipientId !== chatroomUserData?.user?.id
     )
       setNotificationShow(true);
-    else if (chatroomUserData.chatRoom.state === "NEW") {
+    else if (chatroomUserData?.chatRoom?.state === "NEW") {
       setNewChatShow(true);
     }
   }, [chatroomUserData]);
@@ -34,7 +41,7 @@ export default function ChatUserItem(props) {
   };
 
   useEffect(() => {
-    if (actualRecipientId === chatroomUserData.user.id) {
+    if (actualRecipientId === chatroomUserData?.user?.id) {
       setNotificationShow(false);
       setNewChatShow(false);
       setStyle(selectedStyle);
@@ -50,7 +57,7 @@ export default function ChatUserItem(props) {
       setOpenDesitionModal(true);
     } else {
       //sino onSelect
-      onSelect(chatroomUserData.user.id);
+      onSelect(chatroomUserData?.user?.id);
     }
   };
 
@@ -66,7 +73,7 @@ export default function ChatUserItem(props) {
         }}
         onAccept={() => {
           props.onChange();
-          onSelect(chatroomUserData.user.id);
+          onSelect(chatroomUserData?.user?.id);
           setOpenDesitionModal(false);
         }}
         onClose={() => setOpenDesitionModal(false)}
@@ -78,7 +85,7 @@ export default function ChatUserItem(props) {
       >
         <img className={classes.chatUserItemImage} src="./worker.jpg"></img>
         <span className={classes.chatUserItemText}>
-          {chatroomUserData.user.name}
+          {chatroomUserData?.user?.name}
         </span>
         {notificationShow ? (
           <div className={classes.chatUserItemNotification}></div>
@@ -95,7 +102,9 @@ export default function ChatUserItem(props) {
       </div>
     </>
   );
-}
+});
+
+export default ChatUserItem;
 
 const useStyles = createUseStyles({
   chatUserItem: {
