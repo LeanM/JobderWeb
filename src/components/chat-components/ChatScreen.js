@@ -71,6 +71,7 @@ export default function ChatScreen() {
       ? getLikedOrMatchedWorkers()
           .then((response) => {
             setChatRoomUsers(response.data);
+            verifyNotSeenMessages(response.data);
           })
           .catch((error) => {
             if (error?.response?.status === 401)
@@ -79,6 +80,7 @@ export default function ChatScreen() {
       : getLikedOrMatchedClients()
           .then((response) => {
             setChatRoomUsers(response.data);
+            verifyNotSeenMessages(response.data);
           })
           .catch((error) => {
             console.log(error.response.data);
@@ -96,24 +98,36 @@ export default function ChatScreen() {
   };
 
   useEffect(() => {
-    chatRoomUsers.map((chatroomUser) => {
+    setSeenChatRoom();
+  }, [actualRecipientId]);
+
+  const setSeenChatRoom = () => {
+    let body = {
+      recipientId: actualRecipientId,
+    };
+    axiosPrivate.post("/chatroom/updateSeenChatroom", JSON.stringify(body));
+  };
+
+  const verifyNotSeenMessages = (ChatRooms) => {
+    ChatRooms.map((chatroomUser) => {
       if (
         chatroomUser.chatRoom.state === "UNSEEN" ||
         chatroomUser.chatRoom.state === "NEW"
       ) {
         //Fetchear mensajes no vistos y agregarlos
+        let newChatState = chatroomUser.chatRoom.state;
         getNotSeenMessages(chatroomUser.user.id)
           .then((response) =>
             handleAddMessagesToChat(
               chatroomUser.user.id,
-              chatroomUser.chatRoom.state,
+              newChatState,
               response.data
             )
           )
           .catch((error) => console.log(error));
       }
     });
-  }, [chatRoomUsers]);
+  };
 
   const getNotSeenMessages = async (recipientId) => {
     return axiosPrivate.get(`/chat/messages/unseen/${recipientId}`);
@@ -184,7 +198,6 @@ export default function ChatScreen() {
 
       if (newUserOrder) {
         setChatRoomUsers(newUserOrder);
-
         return chatMessage;
       }
     }

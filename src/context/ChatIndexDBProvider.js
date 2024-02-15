@@ -26,12 +26,12 @@ export const ChatIndexDBProvider = ({ children }) => {
     fetchChats();
   }, []);
 
-  const existsUserChat = (userChatId) => {
-    return chats.find((chat) => chat.userChatId === userChatId);
-  };
-
   const handleSelectChat = async (userChatId) => {
-    const chat = chats.find((chat) => chat.userChatId === userChatId);
+    const db = await openDB("user-chats", 1);
+    const tx = db.transaction("chats", "readonly");
+    const store = tx.objectStore("chats");
+    const chat = await store.get(userChatId);
+    //const chat = chats.find((chat) => chat.userChatId === userChatId);
     return chat;
   };
 
@@ -40,7 +40,12 @@ export const ChatIndexDBProvider = ({ children }) => {
     newChatStatus,
     messages
   ) => {
-    const chat = chats.find((chat) => chat.userChatId === userChatId);
+    console.log("---------");
+    const db = await openDB("user-chats", 1);
+    const tx = db.transaction("chats", "readwrite");
+    const store = tx.objectStore("chats");
+    const chat = await store.get(userChatId);
+
     console.log(chat);
     let updatedChat;
     let updatedChatMessages;
@@ -52,7 +57,9 @@ export const ChatIndexDBProvider = ({ children }) => {
         userChatStatus: newChatStatus,
         chatMessages: updatedChatMessages,
       };
-
+      console.log("UPDATED");
+      console.log(updatedChat);
+      /*
       setChats((prev) => {
         return prev.map((chat) => {
           if (chat.userChatId !== userChatId) return chat;
@@ -61,19 +68,24 @@ export const ChatIndexDBProvider = ({ children }) => {
           }
         });
       });
+      */
     } else {
+      console.log("NO EXISTE");
       updatedChatMessages = messages;
       updatedChat = {
         userChatId: userChatId,
         userChatStatus: newChatStatus,
         chatMessages: updatedChatMessages,
       };
-      setChats((prev) => [...prev, updatedChat]);
+      //setChats((prev) => [...prev, updatedChat]);
     }
+
+    store.put(updatedChat);
+    console.log("---------");
   };
 
   useEffect(() => {
-    updateIndexDB();
+    //updateIndexDB();
   }, [chats]);
 
   const updateIndexDB = async () => {
@@ -91,7 +103,6 @@ export const ChatIndexDBProvider = ({ children }) => {
         currentChat,
         handleSelectChat,
         handleAddMessagesToChat,
-        existsUserChat,
       }}
     >
       {children}
