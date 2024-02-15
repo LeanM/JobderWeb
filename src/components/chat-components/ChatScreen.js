@@ -108,7 +108,6 @@ export default function ChatScreen() {
         message.senderId
       );
       if (newUserOrder) {
-        console.log("ASD");
         setChatRoomUsers(newUserOrder);
       } else getChatRoomUsers();
     }
