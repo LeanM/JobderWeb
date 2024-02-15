@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { colors } from "../../assets/colors";
 import Nav from "../pagewrappers/Nav";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
 import ChatBox from "./ChatBox";
-import ChatUserItem from "./ChatUserItem";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import useAuth from "../../hooks/useAuth";
@@ -13,10 +12,17 @@ import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { MDBIcon } from "mdb-react-ui-kit";
 import ChatUsers from "./ChatUsers";
+import ChatIndexDBContext from "../../context/ChatIndexDBProvider";
 
 var stompClient = null;
 export default function ChatScreen() {
   const navigate = useNavigate();
+  const {
+    currentChat,
+    handleSelectChat,
+    handleAddMessagesToChat,
+    existsUserChat,
+  } = useContext(ChatIndexDBContext);
   const { auth } = useAuth();
   const [chatRoomUsers, setChatRoomUsers] = useState([]);
   const [actualRecipientId, setActualRecipientId] = useState("");
@@ -89,6 +95,25 @@ export default function ChatScreen() {
     return axiosPrivate.post("matching/worker/likedOrMatchedClients");
   };
 
+  useEffect(() => {
+    chatRoomUsers.map((chatroomUser) => {
+      if (
+        chatroomUser.chatRoom.state === "UNSEEN" ||
+        chatroomUser.chatRoom.state === "NEW"
+      ) {
+        //Fetchear mensajes no vistos y agregarlos
+        getNotSeenMessages(chatroomUser.user.id);
+      }
+    });
+  }, [chatRoomUsers]);
+
+  const getNotSeenMessages = (recipientId) => {
+    axiosPrivate
+      .get(`/chat/messages/unseen/${recipientId}`)
+      .then((response) => handleAddMessagesToChat(recipientId, response.data))
+      .catch((error) => console.log(error));
+  };
+
   const resetSelectedUserChat = () => {
     getChatRoomUsers();
   };
@@ -149,7 +174,7 @@ export default function ChatScreen() {
         );
       if (newUserOrder) {
         setChatRoomUsers(newUserOrder);
-
+        handleAddMessagesToChat(actualRecipientId, chatMessage);
         return chatMessage;
       }
     }

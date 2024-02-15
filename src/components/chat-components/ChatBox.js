@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { createUseStyles } from "react-jss";
 import Message from "./Message";
 import { colors } from "../../assets/colors";
@@ -7,9 +7,11 @@ import { format } from "date-fns";
 import useAuth from "../../hooks/useAuth";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
+import ChatIndexDBContext from "../../context/ChatIndexDBProvider";
 
 const ChatBox = forwardRef((props, ref) => {
   const { actualRecipientId, onSendMessage } = props;
+  const { handleSelectChat } = useContext(ChatIndexDBContext);
   const [inputText, setInputText] = useState("");
   const [lastMessageDate, setLastMessageDate] = useState("");
   const axiosPrivate = useAxiosPrivate();
@@ -28,7 +30,11 @@ const ChatBox = forwardRef((props, ref) => {
 
   useEffect(() => {
     setMessageDisplay([]);
-    if (actualRecipientId !== "") loadMessages();
+    if (actualRecipientId !== "") {
+      const chat = handleSelectChat(actualRecipientId);
+      if (chat?.chatMessages) addMessages(chat?.chatMessages);
+      //loadMessages();
+    }
   }, [actualRecipientId]);
 
   useEffect(() => {

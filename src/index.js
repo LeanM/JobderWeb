@@ -8,6 +8,7 @@ import { GeoLocationProvider } from "./context/GeoLocationProvider";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Toaster } from "react-hot-toast";
 import "rsuite/dist/rsuite.min.css";
+import { ChatIndexDBProvider } from "./context/ChatIndexDBProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -17,9 +18,11 @@ root.render(
         <Toaster position="bottom-center" reverseOrder={false}></Toaster>
         <AuthProvider>
           <GeoLocationProvider>
-            <Routes>
-              <Route path="/*" element={<App />} />
-            </Routes>
+            <ChatIndexDBProvider>
+              <Routes>
+                <Route path="/*" element={<App />} />
+              </Routes>
+            </ChatIndexDBProvider>
           </GeoLocationProvider>
         </AuthProvider>
       </BrowserRouter>
