@@ -30,7 +30,6 @@ const ChatUsers = forwardRef((props, ref) => {
     });
 
     if (chatroomUserToMove != null) {
-      chatroomUserToMove.chatRoom.state = "UNSEEN";
       return [chatroomUserToMove, ...newChatRoomUsersList];
     } else return false;
   };

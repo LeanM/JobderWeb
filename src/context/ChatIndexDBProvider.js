@@ -30,31 +30,58 @@ export const ChatIndexDBProvider = ({ children }) => {
     return chats.find((chat) => chat.userChatId === userChatId);
   };
 
-  const handleSelectChat = (userChatId) => {
+  const handleSelectChat = async (userChatId) => {
     const chat = chats.find((chat) => chat.userChatId === userChatId);
-    setCurrentChat(chat);
     return chat;
   };
 
-  const handleAddMessagesToChat = async (userChatId, messages) => {
+  const handleAddMessagesToChat = async (
+    userChatId,
+    newChatStatus,
+    messages
+  ) => {
     const chat = chats.find((chat) => chat.userChatId === userChatId);
+
     let updatedChat;
     let updatedChatMessages;
     if (chat) {
-      updatedChatMessages = [...chat.chatMessages, messages];
-      updatedChat = { ...chat, chatMessages: updatedChatMessages };
+      updatedChatMessages = [...chat.chatMessages].concat(messages);
+      updatedChat = {
+        ...chat,
+        userChatStatus: newChatStatus,
+        chatMessages: updatedChatMessages,
+      };
+
+      setChats((prev) => {
+        return prev.map((chat) => {
+          if (chat.userChatId !== userChatId) return chat;
+          else {
+            return updatedChat;
+          }
+        });
+      });
     } else {
       updatedChatMessages = messages;
       updatedChat = {
         userChatId: userChatId,
+        userChatStatus: newChatStatus,
         chatMessages: updatedChatMessages,
       };
+      setChats((prev) => [...prev, updatedChat]);
     }
+  };
+
+  useEffect(() => {
+    updateIndexDB();
+  }, [chats]);
+
+  const updateIndexDB = async () => {
     const db = await openDB("user-chats", 1);
     const tx = db.transaction("chats", "readwrite");
     const store = tx.objectStore("chats");
-    await store.put(updatedChat);
-    setCurrentChat(updatedChat);
+    chats.map((chat) => {
+      store.put(chat);
+    });
   };
 
   return (

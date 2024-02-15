@@ -30,12 +30,16 @@ const ChatBox = forwardRef((props, ref) => {
 
   useEffect(() => {
     setMessageDisplay([]);
+    obtainChatMessages();
+  }, [actualRecipientId]);
+
+  const obtainChatMessages = async () => {
     if (actualRecipientId !== "") {
-      const chat = handleSelectChat(actualRecipientId);
+      const chat = await handleSelectChat(actualRecipientId);
       if (chat?.chatMessages) addMessages(chat?.chatMessages);
       //loadMessages();
     }
-  }, [actualRecipientId]);
+  };
 
   useEffect(() => {
     scrollDown();
@@ -79,7 +83,7 @@ const ChatBox = forwardRef((props, ref) => {
       if (formattedDate !== previousDate) {
         previousDate = formattedDate;
         addedDisplay.push(
-          <div className={classes.timeContainer}>
+          <div key={addedDisplay.length} className={classes.timeContainer}>
             <span style={{ color: colors.white }}>{formattedDate}</span>
             <div
               style={{
@@ -91,15 +95,39 @@ const ChatBox = forwardRef((props, ref) => {
           </div>
         );
         if (message.recipientId === actualRecipientId) {
-          addedDisplay.push(<Message type="sender" messageData={message} />);
+          addedDisplay.push(
+            <Message
+              key={addedDisplay.length}
+              type="sender"
+              messageData={message}
+            />
+          );
         } else {
-          addedDisplay.push(<Message type="receiver" messageData={message} />);
+          addedDisplay.push(
+            <Message
+              key={addedDisplay.length}
+              type="receiver"
+              messageData={message}
+            />
+          );
         }
       } else {
         if (message.recipientId === actualRecipientId) {
-          addedDisplay.push(<Message type="sender" messageData={message} />);
+          addedDisplay.push(
+            <Message
+              key={addedDisplay.length}
+              type="sender"
+              messageData={message}
+            />
+          );
         } else {
-          addedDisplay.push(<Message type="receiver" messageData={message} />);
+          addedDisplay.push(
+            <Message
+              key={addedDisplay.length}
+              type="receiver"
+              messageData={message}
+            />
+          );
         }
       }
     });

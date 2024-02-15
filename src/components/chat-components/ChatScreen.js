@@ -102,16 +102,21 @@ export default function ChatScreen() {
         chatroomUser.chatRoom.state === "NEW"
       ) {
         //Fetchear mensajes no vistos y agregarlos
-        getNotSeenMessages(chatroomUser.user.id);
+        getNotSeenMessages(chatroomUser.user.id)
+          .then((response) =>
+            handleAddMessagesToChat(
+              chatroomUser.user.id,
+              chatroomUser.chatRoom.state,
+              response.data
+            )
+          )
+          .catch((error) => console.log(error));
       }
     });
   }, [chatRoomUsers]);
 
-  const getNotSeenMessages = (recipientId) => {
-    axiosPrivate
-      .get(`/chat/messages/unseen/${recipientId}`)
-      .then((response) => handleAddMessagesToChat(recipientId, response.data))
-      .catch((error) => console.log(error));
+  const getNotSeenMessages = async (recipientId) => {
+    return axiosPrivate.get(`/chat/messages/unseen/${recipientId}`);
   };
 
   const resetSelectedUserChat = () => {
@@ -122,6 +127,7 @@ export default function ChatScreen() {
     const message = JSON.parse(payload.body);
 
     if (chatBoxRef.current.verifyUpcomingMessage(message)) {
+      handleAddMessagesToChat(message.senderId, "SEEN", [message]);
       chatBoxRef.current.addMessages([message]);
     } else {
       toast(() => (
@@ -133,6 +139,7 @@ export default function ChatScreen() {
         message.senderId
       );
       if (newUserOrder) {
+        handleAddMessagesToChat(message.senderId, "UNSEEN", [message]);
         setChatRoomUsers(newUserOrder);
       } else getChatRoomUsers();
     }
@@ -172,9 +179,12 @@ export default function ChatScreen() {
         chatUsersRef.current.moveChatroomUserToFrontOnMessage(
           actualRecipientId
         );
+
+      handleAddMessagesToChat(actualRecipientId, "SEEN", [chatMessage]);
+
       if (newUserOrder) {
         setChatRoomUsers(newUserOrder);
-        handleAddMessagesToChat(actualRecipientId, chatMessage);
+
         return chatMessage;
       }
     }
