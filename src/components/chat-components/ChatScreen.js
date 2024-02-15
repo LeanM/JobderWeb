@@ -98,12 +98,12 @@ export default function ChatScreen() {
   };
 
   useEffect(() => {
-    setSeenChatRoom();
+    setSeenChatRoom(actualRecipientId);
   }, [actualRecipientId]);
 
-  const setSeenChatRoom = () => {
+  const setSeenChatRoom = (userId) => {
     let body = {
-      recipientId: actualRecipientId,
+      recipientId: userId,
     };
     axiosPrivate.post("/chatroom/updateSeenChatroom", JSON.stringify(body));
   };
@@ -143,7 +143,7 @@ export default function ChatScreen() {
     if (chatBoxRef.current.verifyUpcomingMessage(message)) {
       handleAddMessagesToChat(message.senderId, "SEEN", [message]);
       chatBoxRef.current.addMessages([message]);
-      setSeenChatRoom();
+      setSeenChatRoom(message.senderId);
     } else {
       toast(() => (
         <span>
