@@ -143,6 +143,7 @@ export default function ChatScreen() {
     if (chatBoxRef.current.verifyUpcomingMessage(message)) {
       handleAddMessagesToChat(message.senderId, "SEEN", [message]);
       chatBoxRef.current.addMessages([message]);
+      setSeenChatRoom();
     } else {
       toast(() => (
         <span>
