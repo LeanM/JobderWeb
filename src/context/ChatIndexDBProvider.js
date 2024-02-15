@@ -41,10 +41,11 @@ export const ChatIndexDBProvider = ({ children }) => {
     messages
   ) => {
     const chat = chats.find((chat) => chat.userChatId === userChatId);
-
+    console.log(chat);
     let updatedChat;
     let updatedChatMessages;
     if (chat) {
+      console.log("EXISTE");
       updatedChatMessages = [...chat.chatMessages].concat(messages);
       updatedChat = {
         ...chat,
