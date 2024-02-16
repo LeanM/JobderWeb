@@ -54,6 +54,13 @@ export const ChatIndexDBProvider = ({ children }) => {
     store.put(updatedChat);
   };
 
+  const verifyMessagesConsistency = (chat) => {
+    let sortedMessages = chat?.chatMessages.sort(
+      (a, b) =>
+        new Date(a.timestamp).valueOf() - new Date(b.timestamp).valueOf()
+    );
+  };
+
   return (
     <ChatIndexDBContext.Provider
       value={{
