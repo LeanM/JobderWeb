@@ -90,6 +90,12 @@ export default function Home() {
               value={inputProblemText}
               onChange={(e) => setInputProblemText(e.target.value)}
             />
+            <style>
+              {` 
+                    ::placeholder { 
+                        color: ${colors.textSecondary}; 
+                    }`}
+            </style>
           </div>
           <div className={classes.selectionContainer}>
             <span className={classes.selectionLabel}>
@@ -167,18 +173,21 @@ const useStyles = createUseStyles({
     gap: "1rem",
   },
   selectionLabel: {
-    fontWeight: "200",
+    fontWeight: "400",
     fontSize: "1rem",
     textAlign: "center",
-    color: colors.textSecondary,
+    color: colors.secondary,
   },
   inputText: {
     width: "20rem",
     height: "3rem",
     outline: "none",
     border: "none",
-    color: colors.primary,
-    backgroundColor: colors.secondary,
+    color: colors.white,
+    backgroundColor: colors.primary,
+    borderRadius: "10px",
+    border: "solid 1px",
+    borderColor: colors.secondary,
   },
   searchButton: {
     fontWeight: "600",
