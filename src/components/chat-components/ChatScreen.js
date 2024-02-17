@@ -17,8 +17,13 @@ import ChatIndexDBContext from "../../context/ChatIndexDBProvider";
 var stompClient = null;
 export default function ChatScreen() {
   const navigate = useNavigate();
-  const { handleUpdateChat, handleMessageSent, handleMessageReceived } =
-    useContext(ChatIndexDBContext);
+  const {
+    handleUpdateChat,
+    handleMessageSent,
+    handleMessageReceived,
+    verifyMessageQuantity,
+    handleRefreshChat,
+  } = useContext(ChatIndexDBContext);
   const { auth } = useAuth();
   const [chatRoomUsers, setChatRoomUsers] = useState([]);
   const [actualRecipientId, setActualRecipientId] = useState("");
@@ -104,18 +109,52 @@ export default function ChatScreen() {
     axiosPrivate.post("/chatroom/updateSeenChatroom", JSON.stringify(body));
   };
 
-  const verifyNotSeenMessages = (ChatRooms) => {
+  const verifyNotSeenMessages = async (ChatRooms) => {
     ChatRooms.map((chatroomUser) => {
       if (
         chatroomUser.chatRoom.state === "UNSEEN" ||
         chatroomUser.chatRoom.state === "NEW"
       ) {
         //Fetchear mensajes no vistos y agregarlos
-        getNotSeenMessages(chatroomUser.user.id)
-          .then((response) => handleUpdateChat(chatroomUser, response.data))
+        let notSeenMessages;
+        getNotSeenMessages(chatroomUser?.user?.id)
+          .then((response) => {
+            notSeenMessages = response.data;
+          })
           .catch((error) => console.log(error));
+
+        handleUpdateChat(chatroomUser, notSeenMessages).then((completed) => {
+          if (!completed) {
+            //Los mensajes estan inconsistentes
+            //Pedir todos los mensajes del chat y setearlos con el handle refresh
+            getMessages(chatroomUser?.user?.id)
+              .then((response) =>
+                handleRefreshChat(chatroomUser, response.data)
+              )
+              .catch((error) => console.log(error));
+          }
+        });
+      } else {
+        verifyMessageQuantity(
+          chatroomUser?.user?.id,
+          chatroomUser?.chatRoom?.messageQuantity
+        ).then((correctMessageQuantity) => {
+          console.log("-----------");
+          console.log(correctMessageQuantity);
+          console.log(chatroomUser?.user?.id);
+          if (!correctMessageQuantity)
+            getMessages(chatroomUser?.user?.id)
+              .then((response) =>
+                handleRefreshChat(chatroomUser, response.data)
+              )
+              .catch((error) => console.log(error));
+        });
       }
     });
+  };
+
+  const getMessages = async (chatUserId) => {
+    return axiosPrivate.get(`/chat/messages/${chatUserId}`);
   };
 
   const getNotSeenMessages = async (recipientId) => {

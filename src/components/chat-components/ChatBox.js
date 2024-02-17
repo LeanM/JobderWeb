@@ -40,10 +40,6 @@ const ChatBox = forwardRef((props, ref) => {
     scrollDown();
   }, [messageDisplay]);
 
-  const getMessages = async () => {
-    return axiosPrivate.get(`/chat/messages/${actualRecipientId}`);
-  };
-
   const handleInputChange = (e) => {
     setInputText(e.target.value);
   };

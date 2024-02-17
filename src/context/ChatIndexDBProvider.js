@@ -37,6 +37,30 @@ export const ChatIndexDBProvider = ({ children }) => {
     return tx.objectStore("chats");
   };
 
+  const openDBtoRead = async () => {
+    const db = await openDB("user-chats", 1);
+    const tx = db.transaction("chats", "readonly");
+    return tx.objectStore("chats");
+  };
+
+  const verifyMessageQuantity = async (userChatId, validMessagesQuantity) => {
+    const read = await openDBtoRead();
+    const chat = await read.get(userChatId);
+
+    if (chat) return chat?.chatMessages?.length === validMessagesQuantity;
+    else return false;
+  };
+
+  const handleRefreshChat = async (userChatRoom, messages) => {
+    const store = await openDBtoWrite();
+    let updatedChat = {
+      userChatId: userChatRoom.user.id,
+      userChatStatus: userChatRoom.chatRoom.state,
+      chatMessages: messages,
+    };
+    store.put(updatedChat);
+  };
+
   const handleUpdateChat = async (userChatRoom, messages) => {
     const store = await openDBtoWrite();
     const chat = await store.get(userChatRoom.user.id);
@@ -69,7 +93,17 @@ export const ChatIndexDBProvider = ({ children }) => {
         chatMessages: updatedChatMessages,
       };
     }
-    store.put(updatedChat);
+
+    //En un futuro verificar que no se repitan y que esten en orden
+    verifyMessageQuantity(
+      updatedChat.userChatId,
+      userChatRoom.chatRoom.messageQuantity
+    ).then((correctMessageQuantity) => {
+      if (correctMessageQuantity) {
+        store.put(updatedChat);
+        return true;
+      } else return false;
+    });
   };
 
   const handleMessageSent = async (userChatId, message) => {
@@ -144,6 +178,8 @@ export const ChatIndexDBProvider = ({ children }) => {
         handleUpdateChat,
         handleMessageSent,
         handleMessageReceived,
+        verifyMessageQuantity,
+        handleRefreshChat,
       }}
     >
       {children}
