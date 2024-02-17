@@ -66,7 +66,7 @@ const ChatBox = forwardRef((props, ref) => {
         previousDate = formattedDate;
         addedDisplay.push(
           <div key={addedDisplay.length} className={classes.timeContainer}>
-            <span style={{ color: colors.white }}>{formattedDate}</span>
+            <span style={{ color: colors.textSecondary }}>{formattedDate}</span>
           </div>
         );
         if (message?.recipientId === actualRecipientId) {
@@ -175,7 +175,7 @@ const useStyles = createUseStyles({
     justifyContent: "center",
     alignItems: "center",
     gap: "0.5rem",
-    borderBottom: "solid 1px " + colors.secondary,
+    borderBottom: "solid 1px " + colors.textSecondary,
   },
   inputContainer: {
     width: "90%",
@@ -192,7 +192,7 @@ const useStyles = createUseStyles({
     borderRadius: "0 !important",
     outline: "none",
     border: "none",
-    color: colors.white,
+    color: colors.textSecondary,
     backgroundColor: colors.primary,
     //borderBottom: `solid 1px ${colors.secondary}`,
   },

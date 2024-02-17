@@ -81,7 +81,8 @@ const useStyles = createUseStyles({
   frontContainer: {
     width: "100%",
     height: "100%",
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary,
+    border: "solid 1px " + colors.secondary,
     borderRadius: "10px",
     display: "flex",
     justifyContent: "flex-start",

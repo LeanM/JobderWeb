@@ -176,7 +176,7 @@ const useStyles = createUseStyles({
     fontWeight: "400",
     fontSize: "1rem",
     textAlign: "center",
-    color: colors.secondary,
+    color: colors.textSecondary,
   },
   inputText: {
     width: "20rem",
