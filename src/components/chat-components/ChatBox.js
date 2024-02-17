@@ -4,9 +4,7 @@ import Message from "./Message";
 import { colors } from "../../assets/colors";
 import React, { forwardRef, useImperativeHandle } from "react";
 import { format } from "date-fns";
-import useAuth from "../../hooks/useAuth";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-import { useNavigate } from "react-router-dom";
 import ChatIndexDBContext from "../../context/ChatIndexDBProvider";
 
 const ChatBox = forwardRef((props, ref) => {
@@ -15,7 +13,6 @@ const ChatBox = forwardRef((props, ref) => {
   const [inputText, setInputText] = useState("");
   const [lastMessageDate, setLastMessageDate] = useState("");
   const axiosPrivate = useAxiosPrivate();
-  const navigate = useNavigate();
 
   const [messageDisplay, setMessageDisplay] = useState([]);
 
@@ -29,30 +26,19 @@ const ChatBox = forwardRef((props, ref) => {
   }));
 
   useEffect(() => {
-    setMessageDisplay([]);
     obtainChatMessages();
   }, [actualRecipientId]);
 
   const obtainChatMessages = async () => {
     if (actualRecipientId !== "") {
       const chat = await handleSelectChat(actualRecipientId);
-      if (chat?.chatMessages) addMessages(chat?.chatMessages);
-      //loadMessages();
+      if (chat?.chatMessages) addMessages(true, chat?.chatMessages);
     }
   };
 
   useEffect(() => {
     scrollDown();
   }, [messageDisplay]);
-
-  const loadMessages = () => {
-    getMessages()
-      .then((response) => addMessages(response.data))
-      .catch((error) => {
-        if (error?.response?.status === 401)
-          navigate("/login", { state: { from: "/chat" } });
-      });
-  };
 
   const getMessages = async () => {
     return axiosPrivate.get(`/chat/messages/${actualRecipientId}`);
@@ -64,12 +50,12 @@ const ChatBox = forwardRef((props, ref) => {
 
   const handleMessage = () => {
     let newMessage = onSendMessage(inputText);
-    addMessages([newMessage]);
+    addMessages(false, [newMessage]);
 
     setInputText("");
   };
 
-  const addMessages = (messages) => {
+  const addMessages = (reset, messages) => {
     let addedDisplay = [];
     let previousDate = lastMessageDate;
     messages.map((message) => {
@@ -85,13 +71,6 @@ const ChatBox = forwardRef((props, ref) => {
         addedDisplay.push(
           <div key={addedDisplay.length} className={classes.timeContainer}>
             <span style={{ color: colors.white }}>{formattedDate}</span>
-            <div
-              style={{
-                width: "100%",
-                height: "1px",
-                backgroundColor: colors.primary,
-              }}
-            ></div>
           </div>
         );
         if (message?.recipientId === actualRecipientId) {
@@ -131,7 +110,10 @@ const ChatBox = forwardRef((props, ref) => {
         }
       }
     });
-    setMessageDisplay([...messageDisplay, addedDisplay]);
+
+    if (reset) setMessageDisplay(addedDisplay);
+    else setMessageDisplay([...messageDisplay, addedDisplay]);
+
     setLastMessageDate(previousDate);
   };
 
@@ -156,6 +138,7 @@ const ChatBox = forwardRef((props, ref) => {
           value={inputText}
           className={classes.input}
           onChange={(e) => handleInputChange(e)}
+          placeholder="Envia un mensaje..."
           type="text"
         ></input>
         <button className={classes.sendButton} onClick={() => handleMessage()}>
@@ -174,11 +157,11 @@ const useStyles = createUseStyles({
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "space-around",
     alignItems: "center",
   },
   messagesContainer: {
-    width: "100%",
+    width: "90%",
     height: "85%",
     display: "flex",
     flexDirection: "column",
@@ -188,7 +171,7 @@ const useStyles = createUseStyles({
     overflowX: "none",
   },
   timeContainer: {
-    width: "65%",
+    width: "60%",
     height: "3rem",
     display: "flex",
     marginBottom: "1rem",
@@ -196,26 +179,33 @@ const useStyles = createUseStyles({
     justifyContent: "center",
     alignItems: "center",
     gap: "0.5rem",
+    borderBottom: "solid 1px " + colors.secondary,
   },
   inputContainer: {
-    width: "100%",
-    height: "10%",
+    width: "90%",
+    height: "3rem",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    borderTop: `solid 1px ${colors.primary}`,
+    border: `solid 1px ${colors.secondary}`,
+    borderRadius: "100px",
     gap: "1rem",
   },
   input: {
     width: "80%",
-    borderRadius: 0,
+    borderRadius: "0 !important",
     outline: "none",
     border: "none",
-    borderBottom: `solid 1px ${colors.black}`,
+    color: colors.white,
+    backgroundColor: colors.primary,
+    //borderBottom: `solid 1px ${colors.secondary}`,
   },
   sendButton: {
-    borderRadius: "10px",
+    height: "2rem",
+    //borderRadius: "10px",
     backgroundColor: colors.primary,
+    //borderBottom: "solid 1px " + colors.secondary,
     color: colors.white,
+    fontWeight: "300",
   },
 });

@@ -131,7 +131,7 @@ export default function ChatScreen() {
 
     if (chatBoxRef.current.verifyUpcomingMessage(message)) {
       handleMessageReceived(message.senderId, true, message);
-      chatBoxRef.current.addMessages([message]);
+      chatBoxRef.current.addMessages(false, [message]);
       setSeenChatRoom(message.senderId);
     } else {
       toast(() => (
@@ -227,12 +227,12 @@ export default function ChatScreen() {
 const useStyles = createUseStyles({
   container: {
     width: "100%",
-    height: "100vh",
+    height: "80vh",
     paddingTop: "12rem",
     backgroundColor: colors.primary,
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "start",
     fontFamily: "Montserrat",
   },
   subContainer: {
@@ -241,7 +241,8 @@ const useStyles = createUseStyles({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.secondary,
-    borderRadius: "20px",
+    backgroundColor: colors.primary,
+    //border: "solid 1px " + colors.secondary,
+    borderRadius: "10px",
   },
 });

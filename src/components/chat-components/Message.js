@@ -61,7 +61,8 @@ const useStyles = createUseStyles({
     borderRadius: "10px",
   },
   bubbleContainer: {
-    minWidth: "10rem",
+    minWidth: "7rem",
+    maxWidth: "45%",
     minHeight: "80%",
     borderRadius: "7px",
     backgroundColor: colors.white,
@@ -76,7 +77,7 @@ const useStyles = createUseStyles({
     justifyContent: "flex-start",
     alignItems: "center",
     width: "90%",
-    minHeight: "2rem",
+    minHeight: "90%",
   },
   hourContainer: {
     display: "flex",

@@ -36,17 +36,19 @@ const ChatUsers = forwardRef((props, ref) => {
 
   return (
     <div className={classes.chatUsersContainer}>
-      {chatRoomUsers.map((chatroomUser) => {
-        return (
-          <ChatUserItem
-            key={chatroomUser.interaction.id}
-            onSelect={(userId) => props.onSelect(userId)}
-            onChange={() => props.onReset()}
-            chatroomUserData={chatroomUser}
-            actualRecipientId={actualRecipientId}
-          />
-        );
-      })}
+      <div className={classes.chatUsersSubContainer}>
+        {chatRoomUsers.map((chatroomUser) => {
+          return (
+            <ChatUserItem
+              key={chatroomUser.interaction.id}
+              onSelect={(userId) => props.onSelect(userId)}
+              onChange={() => props.onReset()}
+              chatroomUserData={chatroomUser}
+              actualRecipientId={actualRecipientId}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 });
@@ -55,13 +57,20 @@ export default ChatUsers;
 
 const useStyles = createUseStyles({
   chatUsersContainer: {
-    width: "30%",
+    width: "25%",
     height: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  chatUsersSubContainer: {
+    width: "100%",
+    height: "80%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
-    borderRight: `solid 1px ${colors.primary}`,
+    borderRight: "solid 1px " + colors.secondary,
     gap: "1rem",
     paddingTop: "2rem",
   },

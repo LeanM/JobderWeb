@@ -29,7 +29,7 @@ export default function ChatUserItem(props) {
     borderBottom: `solid 1px ${colors.primary}`,
   };
   const selectedStyle = {
-    borderBottom: `solid 1px ${colors.white}`,
+    borderBottom: `solid 1px ${colors.secondary}`,
     backgroundColor: colors.primary,
   };
 
@@ -111,31 +111,30 @@ const useStyles = createUseStyles({
     alignItems: "center",
     //backgroundColor: colors.primary,
     cursor: "pointer",
-    borderBottom: `solid 1px ${colors.primary}`,
+    borderBottom: `solid 1px ${colors.transparent}`,
     transition: "border 0.3s, background 0.3s",
 
     "&:hover": {
-      backgroundColor: colors.primary,
+      backgroundColor: colors.secondary,
     },
   },
   chatUserItemImage: {
-    width: "3rem",
-    height: "3rem",
+    width: "2.5rem",
+    height: "2.5rem",
     borderRadius: "100%",
     objectFit: "cover",
   },
   chatUserItemText: {
     color: colors.white,
-    fontWeight: "500",
-    fontSize: "1.1rem",
+    fontWeight: "200",
+    fontSize: "1rem",
   },
   chatUserItemNotification: {
     position: "absolute",
-
     right: "5%",
     borderRadius: "100%",
-    width: "1rem",
-    height: "1rem",
+    width: "0.4rem",
+    height: "0.4rem",
     backgroundColor: colors.notificationLight,
   },
   chatUserItemNewNotification: {
@@ -147,7 +146,7 @@ const useStyles = createUseStyles({
     alignItems: "center",
     right: "5%",
     height: "1.5rem",
-    fontWeight: "700",
+    fontWeight: "300",
     color: colors.notificationLight,
   },
 });
