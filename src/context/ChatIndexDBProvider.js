@@ -22,8 +22,11 @@ export const ChatIndexDBProvider = ({ children }) => {
     const tx = db.transaction("chats", "readwrite");
     const store = tx.objectStore("chats");
     let chat = await store.get(userChatId);
-    chat = { ...chat, userChatStatus: "SEEN" };
-    store.put(chat);
+
+    if (chat) {
+      chat = { ...chat, userChatStatus: "SEEN" };
+      store.put(chat);
+    }
 
     return chat;
   };
@@ -41,10 +44,12 @@ export const ChatIndexDBProvider = ({ children }) => {
     let updatedChatMessages;
     if (chat) {
       updatedChatMessages = [...chat.chatMessages].concat(messages);
+      /*
       let verifiedChatMessages = verifyMessagesConsistency(
         updatedChatMessages,
         userChatRoom.chatRoom.messageQuantity
       );
+      */
       updatedChat = {
         ...chat,
         userChatStatus: userChatRoom.chatRoom.state,
@@ -52,10 +57,12 @@ export const ChatIndexDBProvider = ({ children }) => {
       };
     } else {
       updatedChatMessages = messages;
+      /*
       let verifiedChatMessages = verifyMessagesConsistency(
         updatedChatMessages,
         userChatRoom.chatRoom.messageQuantity
       );
+      */
       updatedChat = {
         userChatId: userChatRoom.user.id,
         userChatStatus: userChatRoom.chatRoom.state,
@@ -77,8 +84,8 @@ export const ChatIndexDBProvider = ({ children }) => {
         userChatStatus: "SEEN",
         chatMessages: updatedChatMessages,
       };
+      store.put(updatedChat);
     }
-    store.put(updatedChat);
   };
 
   const handleMessageReceived = async (userChatId, onChat, message) => {
@@ -86,15 +93,28 @@ export const ChatIndexDBProvider = ({ children }) => {
     const chat = await store.get(userChatId);
     let updatedChat;
     let updatedChatMessages;
-    if (chat) {
+    if (chat && !verifyExistsMessage(chat?.chatMessages, message.id)) {
       updatedChatMessages = [...chat.chatMessages, message];
       updatedChat = {
         ...chat,
         userChatStatus: onChat ? "SEEN" : "UNSEEN",
         chatMessages: updatedChatMessages,
       };
+      store.put(updatedChat);
     }
-    store.put(updatedChat);
+  };
+
+  const verifyExistsMessage = (chatMessages, messageId) => {
+    let existsMessage = false;
+    chatMessages.every((message) => {
+      if (message.id === messageId) {
+        existsMessage = true;
+        return false;
+      }
+      return true;
+    });
+
+    return existsMessage;
   };
 
   const verifyMessagesConsistency = (chatMessages, validMessageQuantity) => {

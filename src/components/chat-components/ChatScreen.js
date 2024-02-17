@@ -143,7 +143,7 @@ export default function ChatScreen() {
         message.senderId
       );
       if (newUserOrder) {
-        handleMessageReceived(message.senderId, false, [message]);
+        handleMessageReceived(message.senderId, false, message);
         setChatRoomUsers(newUserOrder);
       } else getChatRoomUsers();
     }

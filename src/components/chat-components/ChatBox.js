@@ -74,7 +74,7 @@ const ChatBox = forwardRef((props, ref) => {
     let previousDate = lastMessageDate;
     messages.map((message) => {
       const messageTimestamp = new Date(
-        format(message.timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+        format(message?.timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
       );
       const year = messageTimestamp.getFullYear();
       const month = ("0" + (messageTimestamp.getMonth() + 1)).slice(-2); // Suma 1 ya que los meses van de 0 a 11
@@ -94,7 +94,7 @@ const ChatBox = forwardRef((props, ref) => {
             ></div>
           </div>
         );
-        if (message.recipientId === actualRecipientId) {
+        if (message?.recipientId === actualRecipientId) {
           addedDisplay.push(
             <Message
               key={addedDisplay.length}
