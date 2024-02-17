@@ -19,53 +19,111 @@ export const ChatIndexDBProvider = ({ children }) => {
 
   const handleSelectChat = async (userChatId) => {
     const db = await openDB("user-chats", 1);
-    const tx = db.transaction("chats", "readonly");
+    const tx = db.transaction("chats", "readwrite");
     const store = tx.objectStore("chats");
-    const chat = await store.get(userChatId);
+    let chat = await store.get(userChatId);
+    chat = { ...chat, userChatStatus: "SEEN" };
+    store.put(chat);
+
     return chat;
   };
 
-  const handleAddMessagesToChat = async (
-    userChatId,
-    newChatStatus,
-    messages
-  ) => {
+  const openDBtoWrite = async () => {
     const db = await openDB("user-chats", 1);
     const tx = db.transaction("chats", "readwrite");
-    const store = tx.objectStore("chats");
-    const chat = await store.get(userChatId);
+    return tx.objectStore("chats");
+  };
+
+  const handleUpdateChat = async (userChatRoom, messages) => {
+    const store = await openDBtoWrite();
+    const chat = await store.get(userChatRoom.user.id);
     let updatedChat;
     let updatedChatMessages;
     if (chat) {
       updatedChatMessages = [...chat.chatMessages].concat(messages);
+      let verifiedChatMessages = verifyMessagesConsistency(
+        updatedChatMessages,
+        userChatRoom.chatRoom.messageQuantity
+      );
       updatedChat = {
         ...chat,
-        userChatStatus: newChatStatus,
+        userChatStatus: userChatRoom.chatRoom.state,
         chatMessages: updatedChatMessages,
       };
     } else {
       updatedChatMessages = messages;
+      let verifiedChatMessages = verifyMessagesConsistency(
+        updatedChatMessages,
+        userChatRoom.chatRoom.messageQuantity
+      );
       updatedChat = {
-        userChatId: userChatId,
-        userChatStatus: newChatStatus,
+        userChatId: userChatRoom.user.id,
+        userChatStatus: userChatRoom.chatRoom.state,
         chatMessages: updatedChatMessages,
       };
     }
     store.put(updatedChat);
   };
 
-  const verifyMessagesConsistency = (chat) => {
-    let sortedMessages = chat?.chatMessages.sort(
+  const handleMessageSent = async (userChatId, message) => {
+    const store = await openDBtoWrite();
+    const chat = await store.get(userChatId);
+    let updatedChat;
+    let updatedChatMessages;
+    if (chat) {
+      updatedChatMessages = [...chat.chatMessages, message];
+      updatedChat = {
+        ...chat,
+        userChatStatus: "SEEN",
+        chatMessages: updatedChatMessages,
+      };
+    }
+    store.put(updatedChat);
+  };
+
+  const handleMessageReceived = async (userChatId, onChat, message) => {
+    const store = await openDBtoWrite();
+    const chat = await store.get(userChatId);
+    let updatedChat;
+    let updatedChatMessages;
+    if (chat) {
+      updatedChatMessages = [...chat.chatMessages, message];
+      updatedChat = {
+        ...chat,
+        userChatStatus: onChat ? "SEEN" : "UNSEEN",
+        chatMessages: updatedChatMessages,
+      };
+    }
+    store.put(updatedChat);
+  };
+
+  const verifyMessagesConsistency = (chatMessages, validMessageQuantity) => {
+    let cleanedMessages = [];
+    let previousId = "";
+    chatMessages.map((message) => {
+      if (message.id !== previousId) {
+        previousId = message.id;
+        cleanedMessages.push(message);
+      }
+    });
+
+    let sortedMessages = cleanedMessages.sort(
       (a, b) =>
         new Date(a.timestamp).valueOf() - new Date(b.timestamp).valueOf()
     );
+
+    if (sortedMessages.length === validMessageQuantity) {
+      return sortedMessages;
+    } else return false;
   };
 
   return (
     <ChatIndexDBContext.Provider
       value={{
         handleSelectChat,
-        handleAddMessagesToChat,
+        handleUpdateChat,
+        handleMessageSent,
+        handleMessageReceived,
       }}
     >
       {children}

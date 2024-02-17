@@ -17,12 +17,8 @@ import ChatIndexDBContext from "../../context/ChatIndexDBProvider";
 var stompClient = null;
 export default function ChatScreen() {
   const navigate = useNavigate();
-  const {
-    currentChat,
-    handleSelectChat,
-    handleAddMessagesToChat,
-    existsUserChat,
-  } = useContext(ChatIndexDBContext);
+  const { handleUpdateChat, handleMessageSent, handleMessageReceived } =
+    useContext(ChatIndexDBContext);
   const { auth } = useAuth();
   const [chatRoomUsers, setChatRoomUsers] = useState([]);
   const [actualRecipientId, setActualRecipientId] = useState("");
@@ -115,15 +111,8 @@ export default function ChatScreen() {
         chatroomUser.chatRoom.state === "NEW"
       ) {
         //Fetchear mensajes no vistos y agregarlos
-        let newChatState = chatroomUser.chatRoom.state;
         getNotSeenMessages(chatroomUser.user.id)
-          .then((response) =>
-            handleAddMessagesToChat(
-              chatroomUser.user.id,
-              newChatState,
-              response.data
-            )
-          )
+          .then((response) => handleUpdateChat(chatroomUser, response.data))
           .catch((error) => console.log(error));
       }
     });
@@ -141,7 +130,7 @@ export default function ChatScreen() {
     const message = JSON.parse(payload.body);
 
     if (chatBoxRef.current.verifyUpcomingMessage(message)) {
-      handleAddMessagesToChat(message.senderId, "SEEN", [message]);
+      handleMessageReceived(message.senderId, true, message);
       chatBoxRef.current.addMessages([message]);
       setSeenChatRoom(message.senderId);
     } else {
@@ -154,7 +143,7 @@ export default function ChatScreen() {
         message.senderId
       );
       if (newUserOrder) {
-        handleAddMessagesToChat(message.senderId, "UNSEEN", [message]);
+        handleMessageReceived(message.senderId, false, [message]);
         setChatRoomUsers(newUserOrder);
       } else getChatRoomUsers();
     }
@@ -195,7 +184,7 @@ export default function ChatScreen() {
           actualRecipientId
         );
 
-      handleAddMessagesToChat(actualRecipientId, "SEEN", [chatMessage]);
+      handleMessageSent(actualRecipientId, chatMessage);
 
       if (newUserOrder) {
         setChatRoomUsers(newUserOrder);
