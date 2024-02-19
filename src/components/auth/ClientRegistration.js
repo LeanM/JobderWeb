@@ -6,18 +6,17 @@ import Nav from "../pagewrappers/Nav";
 import { colors } from "../../assets/colors";
 import useGeoLocation from "../../hooks/useGeoLocation";
 import AddressSelection from "./AddressSelection";
-import WorkerCategorySelect from "../home/WorkerCategorySelect";
 import { registerSubmission } from "../../connection/requests";
 import toast from "react-hot-toast";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
-export default function WorkerRegistration() {
+export default function ClientRegistration() {
   const formRef = useRef(null);
-  const { setAuth } = useAuth();
-  const navigate = useNavigate();
   const { geoLocation, getAddressSugestions, setGeoLocation } =
     useGeoLocation();
+  const navigate = useNavigate();
+  const { setAuth } = useAuth();
   const [completion, setCompletion] = useState(0);
   const [addressSuggestions, setAddressSugestions] = useState([]);
   const [values, setValues] = useState({
@@ -26,13 +25,10 @@ export default function WorkerRegistration() {
     password: "",
     birthDate: "",
     phoneNumber: "",
-    description: "",
-    workingHours: "",
     address: "",
     latitude: 0,
     longitude: 0,
-    accountRole: "WORKER",
-    workSpecialization: "",
+    accountRole: "CLIENT",
   });
   const classes = useStyles();
   const inputs = [
@@ -75,22 +71,6 @@ export default function WorkerRegistration() {
     },
     {
       id: 5,
-      name: "description",
-      type: "text",
-      placeholder: "Describete como trabajador...",
-      label: "Describete",
-      required: true,
-    },
-    {
-      id: 6,
-      name: "workingHours",
-      type: "text",
-      placeholder: "8AM - 16PM / A toda hora / Otro",
-      label: "Horario Laboral",
-      required: true,
-    },
-    {
-      id: 7,
       name: "address",
       type: "text",
       placeholder: "Ej. Direccion, Ciudad, Provincia",
@@ -98,7 +78,7 @@ export default function WorkerRegistration() {
       required: true,
     },
     {
-      id: 8,
+      id: 6,
       name: "password",
       type: "text",
       placeholder: "Elije una contraseña segura",
@@ -115,8 +95,9 @@ export default function WorkerRegistration() {
   }, []);
 
   const handleSubmit = (e) => {
+    //Verifica inputs
     e.preventDefault();
-    if (values.workSpecialization !== "" && values.address !== "") {
+    if (values.address !== "") {
       //Correcto
       toast.promise(registerSubmission(values), {
         loading: "Logging In...",
@@ -173,16 +154,13 @@ export default function WorkerRegistration() {
 
   const verifyStep = () => {
     let newCompletion = 0;
-    let eachCompletion = Math.ceil(100 / 9);
+    let eachCompletion = Math.ceil(100 / 6);
 
     if (values.name !== "") newCompletion += eachCompletion;
     if (values.password !== "") newCompletion += eachCompletion;
     if (values.email !== "") newCompletion += eachCompletion;
     if (values.date !== "") newCompletion += eachCompletion;
     if (values.phone !== "") newCompletion += eachCompletion;
-    if (values.description !== "") newCompletion += eachCompletion;
-    if (values.workingHours !== "") newCompletion += eachCompletion;
-    if (values.workSpecialization !== "") newCompletion += eachCompletion;
     if (
       values.address !== "" &&
       values.latitude !== 0 &&
@@ -219,7 +197,7 @@ export default function WorkerRegistration() {
                 alignItems: "center",
               }}
             >
-              <h1 className={classes.title}>Registro de Trabajador</h1>
+              <h1 className={classes.title}>Registro de Cliente</h1>
             </div>
             <form
               className={classes.form}
@@ -241,22 +219,10 @@ export default function WorkerRegistration() {
                     onChange={onChange}
                   />
                   <FormInput
-                    key={inputs[7].id}
-                    {...inputs[7]}
-                    value={values[inputs[7]]}
+                    key={inputs[5].id}
+                    {...inputs[5]}
+                    value={values[inputs[5]]}
                     onChange={onChange}
-                  />
-                  <FormInput
-                    key={inputs[2].id}
-                    {...inputs[2]}
-                    value={values[inputs[2]]}
-                    onChange={onChange}
-                  />
-                  <FormInput
-                    key={inputs[6].id}
-                    {...inputs[6]}
-                    value={values[inputs[6]]}
-                    onChange={onSuggestAddress}
                   />
                 </div>
                 <div className={classes.inputsContainer}>
@@ -266,44 +232,18 @@ export default function WorkerRegistration() {
                     value={values[inputs[3]]}
                     onChange={onChange}
                   />
-
+                  <FormInput
+                    key={inputs[2].id}
+                    {...inputs[2]}
+                    value={values[inputs[2]]}
+                    onChange={onChange}
+                  />
                   <FormInput
                     key={inputs[4].id}
                     {...inputs[4]}
                     value={values[inputs[4]]}
-                    onChange={onChange}
+                    onChange={onSuggestAddress}
                   />
-                  <FormInput
-                    key={inputs[5].id}
-                    {...inputs[5]}
-                    value={values[inputs[5]]}
-                    onChange={onChange}
-                  />
-                  <div
-                    style={{
-                      width: "80%",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "start",
-                      gap: "1rem",
-                    }}
-                  >
-                    <label
-                      style={{
-                        fontSize: "1.1rem",
-                        fontWeight: "400",
-                        color: colors.black,
-                      }}
-                    >
-                      Tu Especializacion
-                    </label>
-                    <WorkerCategorySelect
-                      onSelect={(selection) =>
-                        handleSelectWorkerCategory(selection)
-                      }
-                    />
-                  </div>
                 </div>
               </div>
 

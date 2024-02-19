@@ -11,6 +11,8 @@ import ChatScreen from "./chat-components/ChatScreen";
 import PersistLogin from "./PersistLogin";
 import { useEffect } from "react";
 import Registration from "./auth/Registration.js";
+import WorkerRegistration from "./auth/WorkerRegistration.js";
+import ClientRegistration from "./auth/ClientRegistration.js";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
 
         <Route path="/login" element={<LogIn />} />
         <Route path="/register" element={<Registration />} />
+        <Route path="/registerWorker" element={<WorkerRegistration />} />
+        <Route path="/registerClient" element={<ClientRegistration />} />
 
         {/* Want to protect these routes */}
         <Route element={<PersistLogin />}>

@@ -75,9 +75,11 @@ export default function Home() {
             <span className={classes.selectionLabel}>
               Que tipo de trabajador buscas?
             </span>
-            <WorkerCategorySelect
-              onSelect={(selection) => handleSelectWorkerCategory(selection)}
-            />
+            <div style={{ width: "40%" }}>
+              <WorkerCategorySelect
+                onSelect={(selection) => handleSelectWorkerCategory(selection)}
+              />
+            </div>
           </div>
           <div className={classes.selectionContainer}>
             <span className={classes.selectionLabel}>

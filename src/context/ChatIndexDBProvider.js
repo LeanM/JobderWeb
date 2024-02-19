@@ -100,8 +100,12 @@ export const ChatIndexDBProvider = ({ children }) => {
       userChatRoom.chatRoom.messageQuantity
     ).then((correctMessageQuantity) => {
       if (correctMessageQuantity) {
-        store.put(updatedChat);
-        return true;
+        try {
+          store.put(updatedChat);
+          return true;
+        } catch {
+          return false;
+        }
       } else return false;
     });
   };

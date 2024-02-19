@@ -33,7 +33,15 @@ const ChatBox = forwardRef((props, ref) => {
     if (actualRecipientId !== "") {
       const chat = await handleSelectChat(actualRecipientId);
       if (chat?.chatMessages) addMessages(true, chat?.chatMessages);
+      if (chat?.userChatStatus !== "SEEN") setSeenChatRoom(actualRecipientId);
     }
+  };
+
+  const setSeenChatRoom = (userId) => {
+    let body = {
+      recipientId: userId,
+    };
+    axiosPrivate.post("/chatroom/updateSeenChatroom", JSON.stringify(body));
   };
 
   useEffect(() => {

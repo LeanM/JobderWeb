@@ -7,10 +7,7 @@ export const logInSubmission = async (userData) => {
 };
 
 export const registerSubmission = async (userData) => {
-  return axios.post(
-    "/oauth/register/client/credentials",
-    JSON.stringify(userData)
-  );
+  return axios.post("/oauth/register/credentials", JSON.stringify(userData));
 };
 
 export const logoutSubmission = async (accessToken) => {

@@ -98,10 +98,6 @@ export default function ChatScreen() {
     return axiosPrivate.post("matching/worker/likedOrMatchedClients");
   };
 
-  useEffect(() => {
-    setSeenChatRoom(actualRecipientId);
-  }, [actualRecipientId]);
-
   const setSeenChatRoom = (userId) => {
     let body = {
       recipientId: userId,
@@ -116,24 +112,21 @@ export default function ChatScreen() {
         chatroomUser.chatRoom.state === "NEW"
       ) {
         //Fetchear mensajes no vistos y agregarlos
-        let notSeenMessages;
         getNotSeenMessages(chatroomUser?.user?.id)
           .then((response) => {
-            notSeenMessages = response.data;
+            handleUpdateChat(chatroomUser, response.data).then((completed) => {
+              if (!completed) {
+                //Los mensajes estan inconsistentes
+                //Pedir todos los mensajes del chat y setearlos con el handle refresh
+                getMessages(chatroomUser?.user?.id)
+                  .then((response) =>
+                    handleRefreshChat(chatroomUser, response.data)
+                  )
+                  .catch((error) => console.log(error));
+              }
+            });
           })
           .catch((error) => console.log(error));
-
-        handleUpdateChat(chatroomUser, notSeenMessages).then((completed) => {
-          if (!completed) {
-            //Los mensajes estan inconsistentes
-            //Pedir todos los mensajes del chat y setearlos con el handle refresh
-            getMessages(chatroomUser?.user?.id)
-              .then((response) =>
-                handleRefreshChat(chatroomUser, response.data)
-              )
-              .catch((error) => console.log(error));
-          }
-        });
       } else {
         verifyMessageQuantity(
           chatroomUser?.user?.id,

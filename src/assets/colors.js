@@ -7,6 +7,7 @@ export const colors = {
   primarySemiTransparent: "rgba(171, 51, 36, 0.4)",
   primaryLight: "#c95f52",
   textSecondary: "#9da4f3",
+  terciary: "#4339cf",
   notification: "rgba(216, 57, 57, 0.7)",
   notificationLight: "rgba(235, 168, 168, 0.7)",
   transparent: "rgba(228, 189, 99, 0)",

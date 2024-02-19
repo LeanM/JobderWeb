@@ -66,7 +66,9 @@ export default function WorkerCategorySelect(props) {
         }),
         option: (baseStyles, state) => ({
           ...baseStyles,
-          backgroundColor: state.isFocused ? colors.hover : colors.primary,
+          backgroundColor: state.isFocused
+            ? colors.textSecondary
+            : colors.primary,
           color: state.isFocused ? colors.primary : colors.secondary,
           transition: "background 0.5s ease, color 0.5s ease",
         }),
@@ -97,7 +99,6 @@ export default function WorkerCategorySelect(props) {
 
 const useStyles = createUseStyles({
   container: {
-    width: "17rem",
-    height: "3rem",
+    width: "100%",
   },
 });
