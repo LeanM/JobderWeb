@@ -21,7 +21,7 @@ const ChatBox = forwardRef((props, ref) => {
   const classes = useStyles();
 
   useImperativeHandle(ref, () => ({
-    addMessages,
+    concatMessages,
     verifyUpcomingMessage,
   }));
 
@@ -32,7 +32,7 @@ const ChatBox = forwardRef((props, ref) => {
   const obtainChatMessages = async () => {
     if (actualRecipientId !== "") {
       const chat = await handleSelectChat(actualRecipientId);
-      if (chat?.chatMessages) addMessages(true, chat?.chatMessages);
+      if (chat?.chatMessages) setNewMessagesDisplay(chat?.chatMessages);
       if (chat?.userChatStatus !== "SEEN") setSeenChatRoom(actualRecipientId);
     }
   };
@@ -54,14 +54,25 @@ const ChatBox = forwardRef((props, ref) => {
 
   const handleMessage = () => {
     let newMessage = onSendMessage(inputText);
-    addMessages(false, [newMessage]);
+    concatMessages([newMessage]);
 
     setInputText("");
   };
 
-  const addMessages = (reset, messages) => {
+  const concatMessages = (messages) => {
+    let addedDisplay = addMessages(messages, lastMessageDate);
+    setMessageDisplay([...messageDisplay, addedDisplay]);
+  };
+
+  const setNewMessagesDisplay = (messages) => {
+    setLastMessageDate("");
+    let addedDisplay = addMessages(messages, "");
+    setMessageDisplay(addedDisplay);
+  };
+
+  const addMessages = (messages, dateOflastMessage) => {
     let addedDisplay = [];
-    let previousDate = lastMessageDate;
+    let previousDate = dateOflastMessage;
     messages.map((message) => {
       const messageTimestamp = new Date(
         format(message?.timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
@@ -115,10 +126,7 @@ const ChatBox = forwardRef((props, ref) => {
       }
     });
 
-    if (reset) setMessageDisplay(addedDisplay);
-    else setMessageDisplay([...messageDisplay, addedDisplay]);
-
-    setLastMessageDate(previousDate);
+    return addedDisplay;
   };
 
   const verifyUpcomingMessage = (newMessage) => {

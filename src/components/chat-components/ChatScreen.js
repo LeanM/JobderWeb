@@ -160,7 +160,7 @@ export default function ChatScreen() {
 
     if (chatBoxRef.current.verifyUpcomingMessage(message)) {
       handleMessageReceived(message.senderId, true, message);
-      chatBoxRef.current.addMessages(false, [message]);
+      chatBoxRef.current.concatMessages([message]);
       setSeenChatRoom(message.senderId);
     } else {
       toast(() => (
