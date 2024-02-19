@@ -139,9 +139,6 @@ export default function ChatScreen() {
           chatroomUser?.user?.id,
           chatroomUser?.chatRoom?.messageQuantity
         ).then((correctMessageQuantity) => {
-          console.log("-----------");
-          console.log(correctMessageQuantity);
-          console.log(chatroomUser?.user?.id);
           if (!correctMessageQuantity)
             getMessages(chatroomUser?.user?.id)
               .then((response) =>
