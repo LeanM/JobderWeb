@@ -10,28 +10,9 @@ import Register from "./auth/Register";
 import ChatScreen from "./chat-components/ChatScreen";
 import PersistLogin from "./PersistLogin";
 import { useEffect } from "react";
-import { useGeolocated } from "react-geolocated";
-import useGeoLocation from "../hooks/useGeoLocation.js";
+import Registration from "./auth/Registration.js";
 
 function App() {
-  const { geoLocation, setGeoLocation } = useGeoLocation();
-  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
-    useGeolocated({
-      positionOptions: {
-        enableHighAccuracy: false,
-      },
-      userDecisionTimeout: 5000,
-    });
-
-  useEffect(() => {
-    if (coords?.latitude && coords?.longitude) {
-      setGeoLocation({
-        latitude: coords.latitude,
-        longitude: coords.longitude,
-      });
-    }
-  }, [coords]);
-
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
@@ -40,7 +21,7 @@ function App() {
         <Route path="/clientLanding" element={<ClientLanding />} />
 
         <Route path="/login" element={<LogIn />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/register" element={<Registration />} />
 
         {/* Want to protect these routes */}
         <Route element={<PersistLogin />}>
