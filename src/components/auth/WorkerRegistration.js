@@ -172,6 +172,7 @@ export default function WorkerRegistration() {
 
   useEffect(() => {
     verifyStep();
+    console.log(values);
   }, [values]);
 
   const verifyStep = () => {
@@ -181,8 +182,8 @@ export default function WorkerRegistration() {
     if (values.name !== "") newCompletion += eachCompletion;
     if (values.password !== "") newCompletion += eachCompletion;
     if (values.email !== "") newCompletion += eachCompletion;
-    if (values.date !== "") newCompletion += eachCompletion;
-    if (values.phone !== "") newCompletion += eachCompletion;
+    if (values.birthDate !== "") newCompletion += eachCompletion;
+    if (values.phoneNumber !== "") newCompletion += eachCompletion;
     if (values.description !== "") newCompletion += eachCompletion;
     if (values.workingHours !== "") newCompletion += eachCompletion;
     if (values.workSpecialization !== "") newCompletion += eachCompletion;

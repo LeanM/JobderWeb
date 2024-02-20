@@ -159,8 +159,8 @@ export default function ClientRegistration() {
     if (values.name !== "") newCompletion += eachCompletion;
     if (values.password !== "") newCompletion += eachCompletion;
     if (values.email !== "") newCompletion += eachCompletion;
-    if (values.date !== "") newCompletion += eachCompletion;
-    if (values.phone !== "") newCompletion += eachCompletion;
+    if (values.birthDate !== "") newCompletion += eachCompletion;
+    if (values.phoneNumber !== "") newCompletion += eachCompletion;
     if (
       values.address !== "" &&
       values.latitude !== 0 &&
