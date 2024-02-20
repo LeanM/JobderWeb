@@ -50,8 +50,13 @@ export default function ChatScreen() {
       transports: ["websocket"],
       secure: true,
     });
+
     stompClient = over(Sock);
-    stompClient.connect({}, onConnected, onError);
+    stompClient.connect(
+      { Authorization: `Bearer ${auth?.accessToken}` },
+      onConnected,
+      onError
+    );
   };
 
   const onConnected = () => {
