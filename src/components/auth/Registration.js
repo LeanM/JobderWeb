@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 export default function Registration() {
   const { loginGoogle } = useAuth();
   const classes = useStyles();
-  const { geoLocation } = useGeoLocation();
+  const { geoLocation, getGeoLocationForRegister } = useGeoLocation();
   const navigate = useNavigate();
 
   const login = useGoogleLogin({
@@ -35,7 +35,7 @@ export default function Registration() {
             <div className={classes.innerContainer}>
               <span
                 className={classes.title}
-                style={{ color: colors.textSecondary }}
+                style={{ color: colors.secondary }}
               >
                 Registrate como Cliente!
               </span>
@@ -46,8 +46,19 @@ export default function Registration() {
                 >
                   Registro comun
                 </button>
-                <button className={classes.button} onClick={() => login()}>
-                  <MDBIcon style={{ color: "red" }} fab icon="google"></MDBIcon>
+                <button
+                  className={classes.button}
+                  onClick={() => {
+                    getGeoLocationForRegister();
+
+                    login();
+                  }}
+                >
+                  <MDBIcon
+                    style={{ color: colors.secondary }}
+                    fab
+                    icon="google"
+                  ></MDBIcon>
                   Registro con google
                 </button>
               </div>
@@ -95,7 +106,7 @@ const useStyles = createUseStyles({
   clientSelectionContainer: {
     width: "45%",
     height: "100%",
-    backgroundColor: colors.terciary,
+    backgroundColor: colors.primaryDark,
     display: "flex",
     justifyContent: "center",
     borderRadius: "5px 0 0 5px",
@@ -124,14 +135,25 @@ const useStyles = createUseStyles({
     gap: "2rem",
   },
   button: {
+    display: "flex",
+    borderRadius: "20px",
+    boxShadow: "0 0 5px black",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "0.5rem",
+    backgroundColor: colors.primary,
+    fontWeight: "400",
+    fontSize: "1rem",
     width: "80%",
     height: "3rem",
-    borderRadius: "10px",
-    //border: "solid 1px " + colors.primary,
-    fontSize: "1.4rem",
-    fontWeight: "400",
-    backgroundColor: colors.primary,
     color: colors.textSecondary,
+
+    transition: "background 0.3s, color 0.3s",
+
+    "&:hover": {
+      backgroundColor: colors.textSecondary,
+      color: colors.primary,
+    },
   },
   workerSelectionContainer: {
     width: "45%",

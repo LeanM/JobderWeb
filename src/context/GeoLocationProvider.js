@@ -1,27 +1,51 @@
 import { createContext, useEffect, useState } from "react";
-import { useGeolocated } from "react-geolocated";
+import toast from "react-hot-toast";
 
 const GeoLocationContext = createContext({});
 
 export const GeoLocationProvider = ({ children }) => {
   const [geoLocation, setGeoLocation] = useState({});
 
-  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
-    useGeolocated({
-      positionOptions: {
-        enableHighAccuracy: false,
-      },
-      userDecisionTimeout: 5000,
-    });
-
   useEffect(() => {
-    if (coords?.latitude && coords?.longitude) {
+    navigator.geolocation.getCurrentPosition((position) => {
       setGeoLocation({
-        latitude: coords.latitude,
-        longitude: coords.longitude,
+        latitude: position?.coords?.latitude,
+        longitude: position?.coords?.longitude,
       });
-    }
-  }, [coords]);
+    });
+  }, []);
+
+  const getGeoLocationForRegister = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setGeoLocation({
+          latitude: position?.coords?.latitude,
+          longitude: position?.coords?.longitude,
+        });
+      },
+      () => {
+        toast(
+          "No posees la ubicacion del navegador habilitada, debera especificar su ubicacion una vez registrado!"
+        );
+      }
+    );
+  };
+
+  const getGeoLocationForSearch = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setGeoLocation({
+          latitude: position?.coords?.latitude,
+          longitude: position?.coords?.longitude,
+        });
+      },
+      () => {
+        toast(
+          "Debes habilitar tu ubicacion para obtener trabajadores cercanos sin haberse registrado!"
+        );
+      }
+    );
+  };
 
   const getAddressSugestions = async (query) => {
     const baseUrl = "https://nominatim.openstreetmap.org/search";
@@ -44,7 +68,13 @@ export const GeoLocationProvider = ({ children }) => {
 
   return (
     <GeoLocationContext.Provider
-      value={{ geoLocation, setGeoLocation, getAddressSugestions }}
+      value={{
+        geoLocation,
+        setGeoLocation,
+        getAddressSugestions,
+        getGeoLocationForRegister,
+        getGeoLocationForSearch,
+      }}
     >
       {children}
     </GeoLocationContext.Provider>

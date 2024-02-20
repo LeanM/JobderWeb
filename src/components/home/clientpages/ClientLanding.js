@@ -36,17 +36,21 @@ export default function ClientLanding(props) {
   const searchWorkersNotLogged = () => {
     let searchInfo = {
       workSpecialization: workerCategory,
-      latitude: geoLocation.latitude,
-      longitude: geoLocation.longitude,
+      latitude: geoLocation?.latitude,
+      longitude: geoLocation?.longitude,
       availabilityStatus: importance,
       minimumDistanceInKm: 50,
     };
-    fetchWorkersUnlogged(searchInfo)
-      .then((response) => {
-        setWorkers(response.data);
-        setLoading(false);
-      })
-      .catch((error) => navigate("/"));
+    if (!searchInfo.latitude || !searchInfo.longitude) {
+      navigate("/");
+    } else {
+      fetchWorkersUnlogged(searchInfo)
+        .then((response) => {
+          setWorkers(response.data);
+          setLoading(false);
+        })
+        .catch((error) => navigate("/"));
+    }
   };
 
   const searchWorkersLogged = () => {
@@ -70,7 +74,6 @@ export default function ClientLanding(props) {
           });
 
         if (error?.response?.status === 400) {
-          console.log(error.response?.data);
           toast.error(error?.response?.data);
           navigate("/profile");
         }

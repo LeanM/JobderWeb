@@ -30,13 +30,6 @@ export const AuthProvider = ({ children }) => {
       loading: "Logging In...",
       success: (response) => {
         const accessToken = response.data?.accessToken;
-        /*
-        setCookie("refresh_token", response.data?.refreshToken, {
-          path: "/",
-          httpOnly: true,
-        });
-        */
-
         localStorage.setItem("refresh_token", response?.data?.refreshToken);
 
         const authentication = {

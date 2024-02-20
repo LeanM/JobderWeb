@@ -10,9 +10,12 @@ import toast from "react-hot-toast";
 import useAuth from "../../hooks/useAuth.js";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
 import useGeoLocation from "../../hooks/useGeoLocation.js";
+import { MDBIcon } from "mdb-react-ui-kit";
+import { Modal } from "rsuite";
+import InfoModal from "./InfoModal.js";
 
 export default function Home() {
-  const { geoLocation } = useGeoLocation();
+  const { geoLocation, getGeoLocationForSearch } = useGeoLocation();
   const { auth } = useAuth();
   const navigate = useNavigate();
   const classes = useStyles();
@@ -25,6 +28,8 @@ export default function Home() {
     { id: 2, itemName: "Moderado", itemCode: "MODERATED" },
   ]);
   const [inputProblemText, setInputProblemText] = useState("");
+
+  const [openInfoModal, setOpenInfoModal] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -66,6 +71,13 @@ export default function Home() {
   return (
     <>
       <Nav />
+      <InfoModal
+        open={openInfoModal}
+        onClose={() => {
+          getGeoLocationForSearch();
+          setOpenInfoModal(false);
+        }}
+      />
       <div className={classes.container}>
         <div className={classes.subContainer}>
           <span className={classes.title}>
@@ -85,9 +97,10 @@ export default function Home() {
             <span className={classes.selectionLabel}>
               Si quieres, describe en breves palabras tu problema
             </span>
-            <input
+            <textarea
               className={classes.inputText}
               type="text"
+              rows="5"
               placeholder="Tengo un problema con..."
               value={inputProblemText}
               onChange={(e) => setInputProblemText(e.target.value)}
@@ -108,30 +121,62 @@ export default function Home() {
               onSelect={(selection) => handleSelectImportance(selection)}
             />
           </div>
-          <button
-            className={classes.searchButton}
-            onClick={() => {
-              if (actualImportance === "" || actualWorkerCategory === "") {
-                toast.error("Seleccione todas las opciones!");
-              } else if (
-                !auth?.accessToken &&
-                (!geoLocation?.latitude || !geoLocation?.longitude)
-              ) {
-                toast.error(
-                  "Debes brindar tu ubicacion para obtener trabajadores cercanos!"
-                );
-              } else
-                navigate("/clientLanding", {
-                  state: {
-                    workerCategory: actualWorkerCategory,
-                    importance: actualImportance,
-                    problemDescription: inputProblemText,
-                  },
-                });
-            }}
-          >
-            ¡Buscar!
-          </button>
+          {!geoLocation?.longitude && !auth?.accessToken ? (
+            <div className={classes.infoLocationContainer}>
+              <MDBIcon icon="pin" />
+              <span style={{ color: colors.notificationLight }}>
+                Debes habilitar la ubicacion en tu navegador o ingresar a tu
+                cuenta para buscar trabadores cercanos!
+              </span>
+              <button
+                className={classes.howToButton}
+                onClick={() => {
+                  setOpenInfoModal(true);
+                }}
+              >
+                Habilita la ubicacion
+              </button>
+              <p style={{ fontWeight: "400", color: colors.textSecondary }}>
+                o
+              </p>
+              <button
+                className={classes.registerButton}
+                onClick={() => navigate("/register")}
+              >
+                <MDBIcon
+                  style={{ color: colors.primary }}
+                  fab
+                  icon="google"
+                ></MDBIcon>
+                <p style={{ color: colors.primary, fontWeight: "600" }}>
+                  ¡Registrate!
+                </p>
+              </button>
+            </div>
+          ) : (
+            <button
+              className={classes.searchButton}
+              onClick={() => {
+                if (actualImportance === "" || actualWorkerCategory === "") {
+                  toast.error("Seleccione todos los parametros!");
+                } else if (
+                  !auth?.accessToken &&
+                  (!geoLocation?.latitude || !geoLocation?.longitude)
+                ) {
+                  getGeoLocationForSearch();
+                } else
+                  navigate("/clientLanding", {
+                    state: {
+                      workerCategory: actualWorkerCategory,
+                      importance: actualImportance,
+                      problemDescription: inputProblemText,
+                    },
+                  });
+              }}
+            >
+              ¡Buscar!
+            </button>
+          )}
         </div>
       </div>
     </>
@@ -182,7 +227,8 @@ const useStyles = createUseStyles({
   },
   inputText: {
     width: "20rem",
-    height: "3rem",
+    height: "6rem",
+    padding: "10px",
     outline: "none",
     border: "none",
     color: colors.white,
@@ -204,6 +250,47 @@ const useStyles = createUseStyles({
     "&:hover": {
       backgroundColor: colors.secondary,
       color: colors.white,
+    },
+  },
+  infoLocationContainer: {
+    width: "70%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "1rem",
+  },
+  howToButton: {
+    width: "10rem",
+    height: "2rem",
+    border: "none",
+    fontWeight: "400",
+    backgroundColor: colors.primary,
+    color: colors.textSecondary,
+    textShadow: "0 0 white 10px",
+
+    transition: "color 0.2s",
+
+    "&:hover": {
+      color: colors.white,
+      textShadow: "0 0 white 20px",
+    },
+  },
+  registerButton: {
+    display: "flex",
+    width: "15rem",
+    height: "2rem",
+    borderRadius: "20px",
+    boxShadow: "0 0 10px black",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "0.5rem",
+    backgroundColor: colors.textSecondary,
+
+    transition: "background 0.4s",
+
+    "&:hover": {
+      backgroundColor: colors.white,
     },
   },
 });

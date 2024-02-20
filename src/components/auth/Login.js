@@ -12,7 +12,7 @@ function LogIn() {
   const { logInAuth, loginGoogle } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { geoLocation } = useGeoLocation();
+  const { geoLocation, getGeoLocationForRegister } = useGeoLocation();
   const from = location.state?.from || "/";
 
   const userRef = useRef();
@@ -62,7 +62,10 @@ function LogIn() {
           </p>
           <h1>Log In</h1>
           <button
-            onClick={() => login()}
+            onClick={() => {
+              getGeoLocationForRegister();
+              login();
+            }}
             style={{
               display: "flex",
               width: "10rem",
