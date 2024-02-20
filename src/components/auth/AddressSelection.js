@@ -6,7 +6,7 @@ import AddressItem from "./AddressItem";
 
 export default function AddressSelection(props) {
   const classes = useStyles();
-  const { addressSugestions } = props;
+  const { addressSugestions, isSearching } = props;
   const [selectedAddress, setSelectedAddress] = useState("");
 
   return (
@@ -25,10 +25,12 @@ export default function AddressSelection(props) {
             />
           );
         })
-      ) : (
+      ) : !isSearching ? (
         <span style={{ color: colors.textSecondary, textAlign: "center" }}>
-          Escribe tu direccion en el formulario!
+          Escribe tu direccion en el formulario para ver resultados!
         </span>
+      ) : (
+        <span>Buscando...</span>
       )}
     </div>
   );

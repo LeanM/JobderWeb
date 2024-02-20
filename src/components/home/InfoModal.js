@@ -1,31 +1,104 @@
 import { createUseStyles } from "react-jss";
 import { colors } from "../../assets/colors";
 import Modal from "@mui/material/Modal";
+import AddressSelection from "../auth/AddressSelection";
+import { useState } from "react";
+import useGeoLocation from "../../hooks/useGeoLocation";
+import { MDBIcon } from "mdb-react-ui-kit";
 
 export default function InfoModal(props) {
   const { open } = props;
+  const { getAddressSugestions, setGeoLocation } = useGeoLocation();
   const classes = useStyles();
+  const [addressSugestions, setAddressSugestions] = useState([]);
+  const [debounceTimer, setDebounceTimer] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const onChange = (e) => {
+    setAddressSugestions([]);
+    setIsSearching(true);
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+    }
+
+    const timer = setTimeout(async () => {
+      getAddressSugestions(e.target.value).then((response) => {
+        setAddressSugestions(response);
+        setIsSearching(false);
+      });
+    }, 2000);
+
+    setDebounceTimer(timer);
+  };
+
+  const onSelectAddress = (address) => {
+    setGeoLocation({
+      latitude: address?.lat,
+      longitude: address?.lon,
+    });
+    props.onChooseAddress();
+  };
 
   return (
     <Modal open={open} onClose={props.onClose}>
       <div className={classes.container}>
         <button
           className={classes.upperCloseButton}
-          onClick={() => props.onClose()}
+          onClick={() => props.onReady()}
         >
           X
         </button>
         <div className={classes.header}>
           <div className={classes.headerLine}></div>
-          <span className={classes.title}>MENU</span>
-          <span className={classes.subTitle}>Apetito Granada</span>
+          <span className={classes.title}>COMO</span>
+          <span className={classes.subTitle}>Habilitar Ubicacion</span>
+          <span>
+            1. Busca en la barra de tu navegador el icono{" "}
+            <MDBIcon icon="compass"></MDBIcon>
+          </span>
+          <span>2. Clickealo y permite la ubicacion para esta pagina</span>
+          <span>3. Listo, puedes cerrar esta ventana</span>
+          <span>No lo encontraste?</span>
+          <span style={{ textAlign: "center" }}>
+            Ve a configuracion del navegador, luego a privacidad y seguridad,
+            configuracion de sitios y ahi dentro habilita la ubicacion para
+            Jobder.
+          </span>
         </div>
-        <div className={classes.body}></div>
+        <div
+          style={{
+            height: "1px",
+            width: "80%",
+            backgroundColor: colors.secondary,
+          }}
+        ></div>
+        <div className={classes.body}>
+          <span>
+            Si no pudiste habilitar la ubicacion en el navegador, o tu navegador
+            no posee esa capacidad:
+          </span>
+          <span>
+            Escribe en que ciudad te encuentras y seleccionala en la lista de
+            abajo
+          </span>
+          <input
+            type="text"
+            placeholder="Escribe tu ciudad"
+            onChange={onChange}
+          ></input>
+          <div>
+            <AddressSelection
+              isSearching={isSearching}
+              onSelectAddress={(address) => onSelectAddress(address)}
+              addressSugestions={addressSugestions}
+            />
+          </div>
+        </div>
         <div className={classes.bottom}>
           <div className={classes.bottomInner}>
             <button
               className={classes.closeButton}
-              onClick={() => props.onClose()}
+              onClick={() => props.onReady()}
             >
               ¡Listo!
             </button>
@@ -40,7 +113,7 @@ const useStyles = createUseStyles({
   container: {
     position: "absolute",
     width: "50%",
-    height: "60%",
+    height: "80%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",

@@ -73,8 +73,12 @@ export default function Home() {
       <Nav />
       <InfoModal
         open={openInfoModal}
-        onClose={() => {
-          getGeoLocationForSearch();
+        onReady={() => {
+          if (!geoLocation?.latitude || !geoLocation?.longitude)
+            getGeoLocationForSearch();
+          setOpenInfoModal(false);
+        }}
+        onChooseAddress={() => {
           setOpenInfoModal(false);
         }}
       />
@@ -158,7 +162,9 @@ export default function Home() {
               className={classes.searchButton}
               onClick={() => {
                 if (actualImportance === "" || actualWorkerCategory === "") {
-                  toast.error("Seleccione todos los parametros!");
+                  toast.error(
+                    "Seleccione todos los parametros para buscar trabajadores!"
+                  );
                 } else if (
                   !auth?.accessToken &&
                   (!geoLocation?.latitude || !geoLocation?.longitude)

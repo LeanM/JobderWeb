@@ -19,6 +19,7 @@ export default function WorkerRegistration() {
   const { geoLocation, getAddressSugestions, setGeoLocation } =
     useGeoLocation();
   const [completion, setCompletion] = useState(0);
+  const [isSearchingAddress, setIsSearchingAddress] = useState(false);
   const [addressSuggestions, setAddressSugestions] = useState([]);
   const [values, setValues] = useState({
     name: "",
@@ -154,6 +155,8 @@ export default function WorkerRegistration() {
   const [debounceTimer, setDebounceTimer] = useState(null);
 
   const onSuggestAddress = (e) => {
+    setAddressSugestions([]);
+    setIsSearchingAddress(true);
     if (debounceTimer) {
       clearTimeout(debounceTimer);
     }
@@ -316,6 +319,7 @@ export default function WorkerRegistration() {
                 Selecciona tu direccion!
               </span>
               <AddressSelection
+                isSearching={isSearchingAddress}
                 onSelectAddress={(address) => {
                   setValues((prev) => ({
                     ...prev,
