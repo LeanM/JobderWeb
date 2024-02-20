@@ -162,9 +162,10 @@ export default function WorkerRegistration() {
     }
 
     const timer = setTimeout(async () => {
-      getAddressSugestions(e.target.value).then((response) =>
-        setAddressSugestions(response)
-      );
+      getAddressSugestions(e.target.value).then((response) => {
+        setAddressSugestions(response);
+        setIsSearchingAddress(false);
+      });
     }, 3000);
 
     setDebounceTimer(timer);

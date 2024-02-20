@@ -7,6 +7,9 @@ import { getProfile } from "../../connection/requests";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import AttributeItem from "./AttributeItem";
+import AddressSelection from "../auth/AddressSelection";
+import AddressAttributeItem from "./AddressAttributeItem";
 
 export default function Profile() {
   const axiosPrivate = useAxiosPrivate();
@@ -37,13 +40,35 @@ export default function Profile() {
     //initializeSelectionStatus(userData.status);
   };
 
+  const sendUpdate = async () => {
+    let updateBody = {
+      ...userData,
+    };
+    axiosPrivate
+      .post("/profile/update/" + auth?.role)
+      .then((response) => {})
+      .catch((error) => {});
+  };
+
   return (
     <>
       <Nav />
       <div className={classes.container}>
+        <div className={classes.leftContainer}>
+          <span
+            style={{
+              fontWeight: "700",
+              width: "100%",
+              fontSize: "4rem",
+              color: colors.secondary,
+              textAlign: "start",
+            }}
+          >
+            PERFIL
+          </span>
+        </div>
         <div className={classes.subContainer}>
           <div className={classes.topSection}>
-            <img className={classes.userImage} src={userData.picture}></img>
             <span
               style={{
                 fontWeight: "800",
@@ -51,12 +76,81 @@ export default function Profile() {
                 fontSize: "1.7rem",
               }}
             >
-              {userData.name}
+              Mis datos
             </span>
           </div>
           <div className={classes.bodySection}>
-            <span>{userData.email}</span>
-            <span>{userData.phoneNumber}</span>
+            <div className={classes.attributeItemContainer}>
+              <img className={classes.userImage} src={userData.picture}></img>
+            </div>
+            <div className={classes.attributeItemContainer}>
+              <AttributeItem
+                inputData={{
+                  id: 1,
+                  name: "name",
+                  type: "text",
+                  placeholder: "Tu nombre",
+                  errorMessage: "It should be a valid email address!",
+                  label: "Nombre",
+                }}
+                actualValue={userData?.name}
+              />
+            </div>
+
+            <div className={classes.attributeItemContainer}>
+              <AttributeItem
+                inputData={{
+                  id: 2,
+                  name: "phoneNumber",
+                  type: "text",
+                  placeholder: "Nuevo numero de telefono",
+                  errorMessage: "It should be a valid email address!",
+                  label: "Telefono",
+                }}
+                actualValue={userData?.phoneNumber}
+              />
+            </div>
+
+            <div className={classes.attributeItemContainer}>
+              <AttributeItem
+                inputData={{
+                  id: 3,
+                  name: "password",
+                  type: "text",
+                  placeholder: "Nueva contraseña",
+                  errorMessage: "It should be a valid email address!",
+                  label: "Contraseña",
+                }}
+                actualValue={userData?.password}
+              />
+            </div>
+
+            <div className={classes.attributeItemContainer}>
+              <AttributeItem
+                inputData={{
+                  id: 4,
+                  name: "birthDate",
+                  type: "date",
+                  label: "Fecha de Nacimiento",
+                }}
+                actualValue={userData?.birthDate}
+              />
+            </div>
+
+            <div className={classes.attributeItemContainer}>
+              <AddressAttributeItem
+                actualValue={userData?.address}
+                inputData={{
+                  id: 5,
+                  name: "address",
+                  type: "text",
+                  placeholder: "Nueva direccion",
+
+                  label: "Direccion",
+                }}
+              />
+            </div>
+
             {auth.role === "WORKER" ? (
               <div className={classes.statusSelectionContainer}>
                 <span style={{ color: colors.white }}>
@@ -97,29 +191,41 @@ export default function Profile() {
 const useStyles = createUseStyles({
   container: {
     width: "100%",
+    height: "200vh",
     paddingTop: "12rem",
     backgroundColor: colors.primary,
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "space-around",
     alignItems: "center",
     fontFamily: "Montserrat",
   },
-  subContainer: {
-    width: "80%",
+  leftContainer: {
+    width: "25%",
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "dlex-start",
-    alignItems: "center",
+    alignItems: "start",
+    paddingLeft: "2rem",
+    justifyContent: "flex-start",
+    borderRight: "solid 1px " + colors.secondary,
   },
-  topSection: {
-    width: "100%",
-    height: "40vh",
+  subContainer: {
+    width: "60%",
+    height: "100%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",
-    alignItems: "center",
+    alignItems: "start",
+  },
+  topSection: {
+    width: "80%",
+    height: "5rem",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "start",
     gap: "1rem",
+    padding: "2rem",
   },
   userImage: {
     borderRadius: "100%",
@@ -134,14 +240,18 @@ const useStyles = createUseStyles({
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",
-    alignItems: "center",
+    alignItems: "start",
+    padding: "2rem",
   },
   statusSelectionContainer: {
-    width: "80%",
+    width: "50%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "start",
     gap: "1rem",
+  },
+  attributeItemContainer: {
+    width: "60%",
   },
 });
