@@ -43,6 +43,21 @@ export const ChatIndexDBProvider = ({ children }) => {
     return tx.objectStore("chats");
   };
 
+  const obtainAllChatUserAndState = async () => {
+    const read = await openDBtoRead();
+    let chatUsers = [];
+    const allChats = await read.getAll();
+    if (allChats)
+      allChats.map((chat) =>
+        chatUsers.push({
+          userChatId: chat.userChatId,
+          userChatStatus: chat.userChatStatus,
+        })
+      );
+
+    return chatUsers;
+  };
+
   const verifyMessageQuantity = async (userChatId, validMessagesQuantity) => {
     const read = await openDBtoRead();
     const chat = await read.get(userChatId);
@@ -184,6 +199,7 @@ export const ChatIndexDBProvider = ({ children }) => {
         handleMessageReceived,
         verifyMessageQuantity,
         handleRefreshChat,
+        obtainAllChatUserAndState,
       }}
     >
       {children}

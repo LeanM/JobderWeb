@@ -1,13 +1,20 @@
 import { createUseStyles } from "react-jss";
 import ChatUserItem from "./ChatUserItem";
 import { colors } from "../../assets/colors";
-import { forwardRef } from "react";
+import { forwardRef, useContext, useEffect } from "react";
 import { useImperativeHandle } from "react";
+import ChatIndexDBContext from "../../context/ChatIndexDBProvider";
 
 const ChatUsers = forwardRef((props, ref) => {
   const { chatRoomUsers, actualRecipientId } = props;
+  const { obtainAllChatUserAndState } = useContext(ChatIndexDBContext);
+  const [chatRoomUsersData, setChatRoomUsersData] = useEffect([]);
 
   const classes = useStyles();
+
+  useEffect(() => {
+    obtainAllChatUserAndState().then((response) => console.log(response));
+  }, [chatRoomUsers]);
 
   useImperativeHandle(ref, () => ({
     moveChatroomUserToFrontOnMessage,
