@@ -32,6 +32,7 @@ const ChatBox = forwardRef((props, ref) => {
   const obtainChatMessages = async () => {
     if (actualRecipientId !== "") {
       const chat = await handleSelectChat(actualRecipientId);
+      console.log(chat);
       if (chat?.chatMessages) setNewMessagesDisplay(chat?.chatMessages);
       if (chat?.userChatStatus !== "SEEN") setSeenChatRoom(actualRecipientId);
     }

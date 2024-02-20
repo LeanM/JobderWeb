@@ -24,8 +24,8 @@ export const ChatIndexDBProvider = ({ children }) => {
     let chat = await store.get(userChatId);
 
     if (chat) {
-      chat = { ...chat, userChatStatus: "SEEN" };
-      store.put(chat);
+      let updatedChat = { ...chat, userChatStatus: "SEEN" };
+      store.put(updatedChat);
     }
 
     return chat;
@@ -43,19 +43,11 @@ export const ChatIndexDBProvider = ({ children }) => {
     return tx.objectStore("chats");
   };
 
-  const obtainAllChatUserAndState = async () => {
+  const obtainChatUserState = async (userChatId) => {
     const read = await openDBtoRead();
-    let chatUsers = [];
-    const allChats = await read.getAll();
-    if (allChats)
-      allChats.map((chat) =>
-        chatUsers.push({
-          userChatId: chat.userChatId,
-          userChatStatus: chat.userChatStatus,
-        })
-      );
+    const chat = await read.get(userChatId);
 
-    return chatUsers;
+    return chat.userChatStatus;
   };
 
   const verifyMessageQuantity = async (userChatId, validMessagesQuantity) => {
@@ -199,7 +191,7 @@ export const ChatIndexDBProvider = ({ children }) => {
         handleMessageReceived,
         verifyMessageQuantity,
         handleRefreshChat,
-        obtainAllChatUserAndState,
+        obtainChatUserState,
       }}
     >
       {children}

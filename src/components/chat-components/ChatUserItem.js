@@ -9,6 +9,7 @@ export default function ChatUserItem(props) {
   const { actualRecipientId, chatroomUserData, onSelect } = props;
   const { auth } = useAuth();
   const [style, setStyle] = useState({});
+  const [data, setData] = useState(chatroomUserData);
   const [notificationShow, setNotificationShow] = useState(false);
   const [newChatShow, setNewChatShow] = useState(false);
   const classes = useStyles();
@@ -16,14 +17,15 @@ export default function ChatUserItem(props) {
 
   useEffect(() => {
     if (
-      chatroomUserData.chatRoom.state === "UNSEEN" &&
-      actualRecipientId !== chatroomUserData.user.id
-    )
+      data.chatRoom.state === "UNSEEN" &&
+      actualRecipientId !== data.user.id
+    ) {
       setNotificationShow(true);
-    else if (chatroomUserData.chatRoom.state === "NEW") {
+      setNewChatShow(false);
+    } else if (data.chatRoom.state === "NEW") {
       setNewChatShow(true);
     }
-  }, [chatroomUserData]);
+  }, [data]);
 
   const nonSelectedStyle = {
     borderBottom: `solid 1px ${colors.primary}`,
@@ -34,7 +36,7 @@ export default function ChatUserItem(props) {
   };
 
   useEffect(() => {
-    if (actualRecipientId === chatroomUserData.user.id) {
+    if (actualRecipientId === data?.user?.id) {
       setNotificationShow(false);
       setNewChatShow(false);
       setStyle(selectedStyle);
@@ -42,16 +44,24 @@ export default function ChatUserItem(props) {
   }, [actualRecipientId]);
 
   const handleSelectChatUser = () => {
-    if (
-      auth?.role === "WORKER" &&
-      chatroomUserData?.chatRoom?.state === "NEW"
-    ) {
+    if (auth?.role === "WORKER" && data?.chatRoom?.state === "NEW") {
       //si es worker y el chatroom es nuevo mostrar modal para aceptar o rechazar
       setOpenDesitionModal(true);
     } else {
       //sino onSelect
-      onSelect(chatroomUserData.user.id);
+      onSelect(data?.user?.id);
     }
+  };
+
+  const updateDataStatusOnAccept = () => {
+    //En un futuro traer la data actualizada del backend cuando sale bien
+    // y setearlo aca completo
+    let newData = {
+      user: data.user,
+      interaction: data.interaction,
+      chatRoom: { ...data.chatRoom, state: "UNSEEN" },
+    };
+    setData(newData);
   };
 
   return (
@@ -65,8 +75,7 @@ export default function ChatUserItem(props) {
           setOpenDesitionModal(false);
         }}
         onAccept={() => {
-          props.onChange();
-          onSelect(chatroomUserData.user.id);
+          updateDataStatusOnAccept();
           setOpenDesitionModal(false);
         }}
         onClose={() => setOpenDesitionModal(false)}
@@ -77,9 +86,7 @@ export default function ChatUserItem(props) {
         className={classes.chatUserItem}
       >
         <img className={classes.chatUserItemImage} src="./worker.jpg"></img>
-        <span className={classes.chatUserItemText}>
-          {chatroomUserData.user.name}
-        </span>
+        <span className={classes.chatUserItemText}>{data.user.name}</span>
         {notificationShow ? (
           <div className={classes.chatUserItemNotification}></div>
         ) : (
