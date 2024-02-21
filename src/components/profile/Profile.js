@@ -10,6 +10,9 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import AttributeItem from "./AttributeItem";
 import AddressSelection from "../auth/AddressSelection";
 import AddressAttributeItem from "./AddressAttributeItem";
+import PasswordModal from "./PasswordModal";
+import Avatar from "react-avatar";
+import AvailbilityStatus from "./AvailabilityStatus";
 
 export default function Profile() {
   const axiosPrivate = useAxiosPrivate();
@@ -17,11 +20,7 @@ export default function Profile() {
   const classes = useStyles();
   const navigate = useNavigate();
   const [userData, setUserData] = useState({});
-  const [selectionItemsArray, setSelectionItemsArray] = useState([
-    { id: 1, itemName: "Disponible", itemCode: "AVAILABLE" },
-    { id: 2, itemName: "Moderado", itemCode: "MODERATED" },
-    { id: 3, itemName: "No Disponible", itemCode: "NOT_AVAILABLE" },
-  ]);
+  const [openPasswordModal, setOpenPasswordModal] = useState(false);
 
   useEffect(() => {
     if (auth?.accessToken) initializeUser();
@@ -43,19 +42,36 @@ export default function Profile() {
   return (
     <>
       <Nav />
+      <PasswordModal
+        open={openPasswordModal}
+        isGoogleUser={userData.isGoogleUser}
+        onClose={() => setOpenPasswordModal(false)}
+      />
       <div className={classes.container}>
         <div className={classes.leftContainer}>
-          <span
-            style={{
-              fontWeight: "700",
-              width: "100%",
-              fontSize: "4rem",
-              color: colors.secondary,
-              textAlign: "start",
-            }}
-          >
-            PERFIL
-          </span>
+          <div className={classes.leftTopSection}>
+            <span
+              style={{
+                fontWeight: "700",
+                width: "100%",
+                fontSize: "4rem",
+                color: colors.secondary,
+                textAlign: "start",
+              }}
+            >
+              PERFIL
+            </span>
+          </div>
+          <div className={classes.leftBodySection}>
+            <button
+              onClick={() => {
+                logOutAuth();
+              }}
+              className={classes.logoutButton}
+            >
+              Cerrar Sesion
+            </button>
+          </div>
         </div>
         <div className={classes.subContainer}>
           <div className={classes.topSection}>
@@ -70,8 +86,21 @@ export default function Profile() {
             </span>
           </div>
           <div className={classes.bodySection}>
-            <div className={classes.attributeItemContainer}>
-              <img className={classes.userImage} src={userData.picture}></img>
+            <div className={classes.attributePictureContainer}>
+              {userData?.picture ? (
+                <div className={classes.userImageContainer}>
+                  <Avatar
+                    size="100%"
+                    name={userData?.name}
+                    maxInitials={2}
+                    round={true}
+                  />
+                </div>
+              ) : (
+                <img className={classes.userImage} src={userData.picture}></img>
+              )}
+
+              <input style={{}} type="file" name="myImage" />
             </div>
             <div className={classes.attributeItemContainer}>
               <AttributeItem
@@ -98,20 +127,6 @@ export default function Profile() {
                   label: "Telefono",
                 }}
                 actualValue={userData?.phoneNumber}
-              />
-            </div>
-
-            <div className={classes.attributeItemContainer}>
-              <AttributeItem
-                inputData={{
-                  id: 3,
-                  name: "password",
-                  type: "text",
-                  placeholder: "Nueva contraseña",
-                  errorMessage: "It should be a valid email address!",
-                  label: "Contraseña",
-                }}
-                actualValue={userData?.password}
               />
             </div>
 
@@ -167,36 +182,30 @@ export default function Profile() {
                     actualValue={userData?.description}
                   />
                 </div>
-                <div className={classes.statusSelectionContainer}>
-                  <span style={{ color: colors.white }}>
-                    ¿Quieres cambiar tu grado de disponibilidad hoy?
-                  </span>
-                  <span>
-                    Actualmente tu disponibilidad es{" "}
-                    <b>
-                      {userData.availabilityStatus === "MODERATED"
-                        ? "Moderado"
-                        : userData.availabilityStatus === "AVAILABLE"
-                        ? "Disponible"
-                        : "No Disponible"}
-                    </b>
-                  </span>
-                  <RadioSelection
-                    selectionItemsArray={selectionItemsArray}
-                    onSelect={() => {}}
-                  />
-                </div>
+                <AvailbilityStatus
+                  availability={userData?.availabilityStatus}
+                />
               </>
             ) : (
               <></>
             )}
-            <button
-              onClick={() => {
-                logOutAuth();
-              }}
-            >
-              Cerrar Sesion
-            </button>
+            <div className={classes.attributeItemContainer}>
+              <button
+                style={{
+                  fontWeight: "400",
+                  width: "15rem",
+                  height: "2rem",
+                  fontSize: "1rem",
+                  color: colors.notificationLight,
+                  backgroundColor: colors.primary,
+                  border: "solid 1px " + colors.notificationLight,
+                  borderRadius: "10px",
+                }}
+                onClick={() => setOpenPasswordModal(true)}
+              >
+                Cambiar Contraseña
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -225,6 +234,31 @@ const useStyles = createUseStyles({
     justifyContent: "flex-start",
     borderRight: "solid 1px " + colors.secondary,
   },
+  leftTopSection: {
+    width: "100%",
+    height: "15rem",
+  },
+  leftBodySection: {
+    width: "100%",
+    minHeight: "10rem",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "start",
+  },
+  logoutButton: {
+    width: "10rem",
+    height: "2rem",
+    borderRadius: "10px",
+    backgroundColor: colors.notificationLight,
+    color: colors.primary,
+
+    transition: "background 0.3s",
+
+    "&:hover": {
+      backgroundColor: colors.notification,
+    },
+  },
   subContainer: {
     width: "60%",
     height: "100%",
@@ -235,7 +269,7 @@ const useStyles = createUseStyles({
   },
   topSection: {
     width: "80%",
-    height: "5rem",
+    height: "2rem",
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",
@@ -243,12 +277,18 @@ const useStyles = createUseStyles({
     gap: "1rem",
     padding: "2rem",
   },
+  userImageContainer: {
+    width: "7rem",
+    height: "7rem",
+    borderRadius: "100%",
+    border: "solid 2px " + colors.secondary,
+  },
   userImage: {
     borderRadius: "100%",
     objectFit: "cover",
     border: "solid 2px " + colors.secondary,
-    width: "10rem",
-    height: "10rem",
+    width: "100%",
+    height: "100%",
   },
   bodySection: {
     height: "100vh",
@@ -257,17 +297,20 @@ const useStyles = createUseStyles({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "start",
-    padding: "2rem",
-  },
-  statusSelectionContainer: {
-    width: "50%",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "start",
-    gap: "1rem",
   },
   attributeItemContainer: {
     width: "70%",
+    display: "flex",
+    minHeight: "4rem",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  attributePictureContainer: {
+    width: "70%",
+    display: "flex",
+    minHeight: "10rem",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
 });
