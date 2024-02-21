@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     toast.promise(socialLogIn(completeCredentials), {
-      loading: "Logging In...",
+      loading: "Iniciando sesion...",
       success: (response) => {
         const accessToken = response.data?.accessToken;
         localStorage.setItem("refresh_token", response?.data?.refreshToken);
@@ -41,15 +41,10 @@ export const AuthProvider = ({ children }) => {
         setAuth(authentication);
         if (from) navigate(from, { replace: true });
 
-        return <b>Successfuly logged in!</b>;
+        return <b>Sesion iniciada!</b>;
       },
       error: (error) => {
-        return (
-          <span>
-            The next error happened while making loggin :{" "}
-            {error?.response?.data?.errors}
-          </span>
-        );
+        return <span>Ocurrio un error al iniciar sesion!</span>;
       },
     });
   };

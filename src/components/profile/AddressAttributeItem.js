@@ -1,24 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createUseStyles } from "react-jss";
 import AddressSelection from "../auth/AddressSelection";
 import { colors } from "../../assets/colors";
 import { MDBIcon } from "mdb-react-ui-kit";
 import AttributeInput from "./AtribbuteInput";
 import useGeoLocation from "../../hooks/useGeoLocation";
-import { axiosPrivate } from "../../connection/client";
 import useAuth from "../../hooks/useAuth";
+import toast from "react-hot-toast";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 export default function AddressAttributeItem(props) {
   const { geoLocation, getAddressSugestions, setGeoLocation } =
     useGeoLocation();
+  const { auth } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
   const [isSearching, setIsSearching] = useState(false);
   const [value, setValue] = useState({});
+  const [actualValueShow, setActualValueShow] = useState("");
   const [addressSugestions, setAddressSugestions] = useState([]);
   const [canEdit, setCanEdit] = useState(false);
 
   const { actualValue, inputData } = props;
 
   const classes = useStyles();
+
+  useEffect(() => {
+    setActualValueShow(actualValue);
+  }, [actualValue]);
 
   const [debounceTimer, setDebounceTimer] = useState(null);
 
@@ -37,6 +45,32 @@ export default function AddressAttributeItem(props) {
     }, 3000);
 
     setDebounceTimer(timer);
+  };
+
+  const sendUpdate = async () => {
+    let updateBody = {
+      longitude: value.longitude,
+      latitude: value.latitude,
+      address: value.address,
+    };
+    toast.promise(
+      axiosPrivate.post(
+        "/profile/update/" + auth?.role,
+        JSON.stringify(updateBody)
+      ),
+      {
+        loading: "Actualizando datos...",
+        success: (response) => {
+          setCanEdit(false);
+          setActualValueShow(value.address);
+          setValue({});
+          return <b>Se actualizaron los datos correctamente!</b>;
+        },
+        error: (error) => {
+          return <span>Ocurrio un error al actualizar el dato!</span>;
+        },
+      }
+    );
   };
 
   return canEdit ? (
@@ -64,7 +98,7 @@ export default function AddressAttributeItem(props) {
               className={classes.button}
               style={{ color: colors.price }}
               onClick={() => {
-                setCanEdit(false);
+                sendUpdate();
               }}
             >
               <MDBIcon icon="check" />
@@ -107,7 +141,17 @@ export default function AddressAttributeItem(props) {
         </div>
         <div className={classes.inputContainer}>
           <div className={classes.infoContainer}>
-            <span style={{ color: colors.textSecondary }}>{actualValue}</span>
+            <span
+              style={{
+                color: colors.textSecondary,
+                width: "80%",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {actualValueShow}
+            </span>
           </div>
           <div className={classes.buttonsContainer}>
             <button
@@ -169,11 +213,11 @@ const useStyles = createUseStyles({
     width: "70%",
     height: "100%",
     display: "flex",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     alignItems: "center",
   },
   buttonsContainer: {
-    width: "6rem",
+    width: "20%",
     height: "100%",
     display: "flex",
     alignItems: "center",

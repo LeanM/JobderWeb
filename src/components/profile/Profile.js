@@ -40,16 +40,6 @@ export default function Profile() {
     //initializeSelectionStatus(userData.status);
   };
 
-  const sendUpdate = async () => {
-    let updateBody = {
-      ...userData,
-    };
-    axiosPrivate
-      .post("/profile/update/" + auth?.role)
-      .then((response) => {})
-      .catch((error) => {});
-  };
-
   return (
     <>
       <Nav />
@@ -152,25 +142,51 @@ export default function Profile() {
             </div>
 
             {auth.role === "WORKER" ? (
-              <div className={classes.statusSelectionContainer}>
-                <span style={{ color: colors.white }}>
-                  ¿Quieres cambiar tu grado de disponibilidad hoy?
-                </span>
-                <span>
-                  Actualmente tu disponibilidad es{" "}
-                  <b>
-                    {userData.availabilityStatus === "MODERATED"
-                      ? "Moderado"
-                      : userData.availabilityStatus === "AVAILABLE"
-                      ? "Disponible"
-                      : "No Disponible"}
-                  </b>
-                </span>
-                <RadioSelection
-                  selectionItemsArray={selectionItemsArray}
-                  onSelect={() => {}}
-                />
-              </div>
+              <>
+                <div className={classes.attributeItemContainer}>
+                  <AttributeItem
+                    inputData={{
+                      id: 6,
+                      name: "workingHours",
+                      type: "text",
+                      placeholder: "Nuevo horario laboral",
+                      label: "Horario Laboral",
+                    }}
+                    actualValue={userData?.workingHours}
+                  />
+                </div>
+                <div className={classes.attributeItemContainer}>
+                  <AttributeItem
+                    inputData={{
+                      id: 7,
+                      name: "description",
+                      type: "text",
+                      placeholder: "Nueva descripcion...",
+                      label: "Descripcion",
+                    }}
+                    actualValue={userData?.description}
+                  />
+                </div>
+                <div className={classes.statusSelectionContainer}>
+                  <span style={{ color: colors.white }}>
+                    ¿Quieres cambiar tu grado de disponibilidad hoy?
+                  </span>
+                  <span>
+                    Actualmente tu disponibilidad es{" "}
+                    <b>
+                      {userData.availabilityStatus === "MODERATED"
+                        ? "Moderado"
+                        : userData.availabilityStatus === "AVAILABLE"
+                        ? "Disponible"
+                        : "No Disponible"}
+                    </b>
+                  </span>
+                  <RadioSelection
+                    selectionItemsArray={selectionItemsArray}
+                    onSelect={() => {}}
+                  />
+                </div>
+              </>
             ) : (
               <></>
             )}
@@ -252,6 +268,6 @@ const useStyles = createUseStyles({
     gap: "1rem",
   },
   attributeItemContainer: {
-    width: "60%",
+    width: "70%",
   },
 });

@@ -3,20 +3,51 @@ import { createUseStyles } from "react-jss";
 import AttributeInput from "./AtribbuteInput";
 import { colors } from "../../assets/colors";
 import { MDBIcon } from "mdb-react-ui-kit";
+import useAuth from "../../hooks/useAuth";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import toast from "react-hot-toast";
 
 export default function AttributeItem(props) {
   const { inputData, actualValue } = props;
+  const axiosPrivate = useAxiosPrivate();
+  const { auth } = useAuth();
   const [value, setValue] = useState("");
+  const [actualValueShow, setActualValueShow] = useState("");
   const [canEdit, setCanEdit] = useState(false);
 
   const classes = useStyles();
 
   useEffect(() => {
-    console.log(value);
-  }, [value]);
+    setActualValueShow(actualValue);
+  }, [actualValue]);
 
   const onChange = (e) => {
     setValue(e.target.value);
+  };
+
+  const sendUpdate = async () => {
+    let attribute = inputData.name;
+    let updateBody = {
+      [attribute]: value,
+    };
+    toast.promise(
+      axiosPrivate.post(
+        "/profile/update/" + auth?.role,
+        JSON.stringify(updateBody)
+      ),
+      {
+        loading: "Actualizando datos...",
+        success: (response) => {
+          setCanEdit(false);
+          setActualValueShow(value);
+          setValue("");
+          return <b>Se actualizaron los datos correctamente!</b>;
+        },
+        error: (error) => {
+          return <span>Ocurrio un error al actualizar el dato!</span>;
+        },
+      }
+    );
   };
 
   return canEdit ? (
@@ -39,7 +70,9 @@ export default function AttributeItem(props) {
             <button
               className={classes.button}
               style={{ color: colors.price }}
-              onClick={() => setCanEdit(true)}
+              onClick={() => {
+                sendUpdate();
+              }}
             >
               <MDBIcon icon="check" />
             </button>
@@ -70,7 +103,9 @@ export default function AttributeItem(props) {
         </div>
         <div className={classes.inputContainer}>
           <div className={classes.infoContainer}>
-            <span style={{ color: colors.textSecondary }}>{actualValue}</span>
+            <span style={{ color: colors.textSecondary }}>
+              {actualValueShow}
+            </span>
           </div>
           <div className={classes.buttonsContainer}>
             <button
@@ -123,11 +158,11 @@ const useStyles = createUseStyles({
     width: "70%",
     height: "100%",
     display: "flex",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     alignItems: "center",
   },
   buttonsContainer: {
-    width: "6rem",
+    width: "20%",
     height: "100%",
     display: "flex",
     alignItems: "center",
