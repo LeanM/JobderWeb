@@ -52,46 +52,60 @@ export default function InfoModal(props) {
           <div className={classes.headerLine}></div>
           <span className={classes.title}>COMO</span>
           <span className={classes.subTitle}>Habilitar Ubicacion</span>
-          <span>
-            1. Busca en la barra de tu navegador el icono{" "}
-            <MDBIcon icon="compass"></MDBIcon>
-          </span>
-          <span>2. Clickealo y permite la ubicacion para esta pagina</span>
-          <span>3. Listo, puedes cerrar esta ventana</span>
-          <span>No lo encontraste?</span>
-          <span style={{ textAlign: "center" }}>
-            Ve a configuracion del navegador, luego a privacidad y seguridad,
-            configuracion de sitios y ahi dentro habilita la ubicacion para
-            Jobder.
-          </span>
         </div>
-        <div
-          style={{
-            height: "1px",
-            width: "80%",
-            backgroundColor: colors.secondary,
-          }}
-        ></div>
+
         <div className={classes.body}>
-          <span>
-            Si no pudiste habilitar la ubicacion en el navegador, o tu navegador
-            no posee esa capacidad:
-          </span>
-          <span>
-            Escribe en que ciudad te encuentras y seleccionala en la lista de
-            abajo
-          </span>
-          <input
-            type="text"
-            placeholder="Escribe tu ciudad"
-            onChange={onChange}
-          ></input>
-          <div>
-            <AddressSelection
-              isSearching={isSearching}
-              onSelectAddress={(address) => onSelectAddress(address)}
-              addressSugestions={addressSugestions}
-            />
+          <div className={classes.stepsContainer}>
+            <span>
+              1. Busca en la barra de tu navegador el icono{" "}
+              <MDBIcon icon="compass"></MDBIcon>
+            </span>
+            <span>2. Clickealo y permite la ubicacion para esta pagina</span>
+            <span>3. Listo, puedes cerrar esta ventana</span>
+            <span style={{ fontWeight: "700" }}>No lo encontraste?</span>
+            <span style={{ textAlign: "center" }}>
+              Ve a configuracion del navegador, luego a privacidad y seguridad,
+              configuracion de sitios y ahi dentro habilita la ubicacion para
+              Jobder.
+            </span>
+          </div>
+          <div
+            style={{
+              height: "1px",
+              width: "60%",
+              backgroundColor: colors.secondary,
+            }}
+          ></div>
+          <div className={classes.stepsContainer}>
+            <span>
+              Si no pudiste habilitar la ubicacion en el navegador, o tu
+              navegador no posee esa capacidad:
+            </span>
+            <span>
+              Escribe en que ciudad te encuentras y seleccionala en la lista de
+              abajo
+            </span>
+            <input
+              type="text"
+              placeholder="Escribe tu ciudad"
+              style={{
+                backgroundColor: colors.textSecondary,
+                width: "40%",
+                height: "2rem",
+                color: colors.primary,
+                outline: "none",
+                border: "none",
+                borderBottom: `solid 1px ${colors.primary}`,
+              }}
+              onChange={onChange}
+            ></input>
+            <div style={{ width: "60%", height: "7rem" }}>
+              <AddressSelection
+                isSearching={isSearching}
+                onSelectAddress={(address) => onSelectAddress(address)}
+                addressSugestions={addressSugestions}
+              />
+            </div>
           </div>
         </div>
         <div className={classes.bottom}>
@@ -112,11 +126,11 @@ export default function InfoModal(props) {
 const useStyles = createUseStyles({
   container: {
     position: "absolute",
-    width: "50%",
-    height: "80%",
+    width: "60%",
+    height: "90%",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     alignItems: "center",
     top: "50%",
     left: "50%",
@@ -144,11 +158,12 @@ const useStyles = createUseStyles({
   },
   header: {
     width: "100%",
-    height: "15rem",
+    height: "20%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-end",
     alignItems: "center",
+    marginBottom: "2rem",
   },
   headerLine: {
     width: "1px",
@@ -167,26 +182,36 @@ const useStyles = createUseStyles({
     fontWeight: "300",
     color: colors.primary,
   },
+  stepsContainer: {
+    display: "flex",
+    width: "80%",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    color: colors.primaryDark,
+    gap: "0.3rem",
+  },
   body: {
     width: "100%",
+    height: "60%",
     display: "flex",
     position: "relative",
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
-    paddingTop: "5rem",
-    marginBottom: "5rem",
+    gap: "1rem",
   },
 
   bottom: {
     width: "100%",
+    height: "8%",
     backgroundColor: colors.primary,
     borderBottomLeftRadius: "5px",
     borderBottomRightRadius: "5px",
   },
   bottomInner: {
     width: "100%",
-    height: "7rem",
+    height: "100%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
