@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import DesitionModal from "./DesitionModal";
 import { on } from "rsuite/esm/DOMHelper";
+import Avatar from "react-avatar";
 
 export default function ChatUserItem(props) {
   const { actualRecipientId, chatroomUserData, onSelect } = props;
@@ -85,8 +86,33 @@ export default function ChatUserItem(props) {
         style={style}
         className={classes.chatUserItem}
       >
-        <img className={classes.chatUserItemImage} src="./worker.jpg"></img>
-        <span className={classes.chatUserItemText}>{data.user.name}</span>
+        {!data?.user?.picture ? (
+          <div className={classes.imageContainer}>
+            <Avatar
+              size="100%"
+              name={data?.user?.name}
+              maxInitials={2}
+              round={true}
+            />
+          </div>
+        ) : (
+          <div className={classes.imageContainer}>
+            <img className={classes.image} src={data?.user?.picture} />
+          </div>
+        )}
+
+        <span
+          className={classes.chatUserItemText}
+          style={{
+            width: "70%",
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+            textAlign: "left",
+          }}
+        >
+          {data?.user?.name}
+        </span>
         {notificationShow ? (
           <div className={classes.chatUserItemNotification}></div>
         ) : (
@@ -125,9 +151,14 @@ const useStyles = createUseStyles({
       backgroundColor: colors.secondary,
     },
   },
-  chatUserItemImage: {
+  imageContainer: {
     width: "2.5rem",
     height: "2.5rem",
+    borderRadius: "100%",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
     borderRadius: "100%",
     objectFit: "cover",
   },

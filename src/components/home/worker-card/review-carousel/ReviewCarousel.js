@@ -3,8 +3,9 @@ import Slider from "react-slick";
 import { useEffect, useState, useRef } from "react";
 import { createUseStyles } from "react-jss";
 import { colors } from "../../../../assets/colors";
+import { fetchWorkerReviewsExample } from "../../../../connection/requests";
 
-export default function ReviewCarousel() {
+export default function ReviewCarousel(props) {
   const [viewportSize, setViewportSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -12,6 +13,8 @@ export default function ReviewCarousel() {
   const [slidesToShow, setSlidesToShow] = useState(1);
   const [draggable, setDraggable] = useState(false);
   const [reviews, setReviews] = useState([]);
+
+  const { workerData } = props;
 
   const sliderRef = useRef(null);
   const classes = useStyles();
@@ -40,12 +43,13 @@ export default function ReviewCarousel() {
     if (viewportSize.width < 800) setDraggable(true);
   }, [viewportSize]);
 
-  const getReviews = () => {
-    setReviews([
-      { id: 1, description: "asda", rating: 3 },
-      { id: 2, description: "dddd", rating: 3 },
-      { id: 3, description: "cccc", rating: 3 },
-    ]);
+  const getReviews = async () => {
+    if (workerData?.worker?.totalReviews > 0)
+      fetchWorkerReviewsExample(workerData?.worker?.id)
+        .then((response) => {
+          setReviews(response.data);
+        })
+        .catch((error) => console.log(error));
   };
 
   let settings = {
@@ -72,9 +76,15 @@ export default function ReviewCarousel() {
         swipeToSlide={true}
         draggable={draggable}
       >
-        {reviews.map((review) => {
-          return <Review key={review.id} reviewData={review} />;
-        })}
+        {reviews?.length > 0 ? (
+          reviews.map((review) => {
+            return <Review key={review.id} reviewData={review} />;
+          })
+        ) : (
+          <span style={{ color: colors.primary }}>
+            El trabajador no posee opiniones!
+          </span>
+        )}
       </Slider>
       <button
         className={classes.button}

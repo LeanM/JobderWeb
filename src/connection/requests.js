@@ -31,3 +31,11 @@ export const fetchWorkersUnlogged = async (searchInfo) => {
     JSON.stringify(searchInfo)
   );
 };
+
+export const fetchWorkerReviewsExample = (workerId) => {
+  return axios.get("/review/obtain/reviews/example/" + workerId);
+};
+
+export const fetchALLWorkerReviews = (workerId) => {
+  return axios.get("/review/obtain/reviews/" + workerId);
+};

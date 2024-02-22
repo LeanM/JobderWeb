@@ -1,15 +1,31 @@
 import { createUseStyles } from "react-jss";
 import { MDBIcon } from "mdb-react-ui-kit";
 import { colors } from "../../../assets/colors";
+import Avatar from "react-avatar";
 
 export default function FrontWorkerCard(props) {
   const { workerData } = props;
   const classes = useStyles();
   return (
     <div className={classes.frontContainer}>
-      <div className={classes.imageContainer}>
-        <img className={classes.image} src="./worker.jpg"></img>
-      </div>
+      {!workerData?.worker?.picture ? (
+        <div className={classes.imageContainer}>
+          <Avatar
+            size="100%"
+            name={workerData?.worker?.name}
+            maxInitials={2}
+            round={true}
+          />
+        </div>
+      ) : (
+        <div className={classes.imageContainer}>
+          <img
+            className={classes.image}
+            src={workerData?.worker?.picture}
+          ></img>
+        </div>
+      )}
+
       <div className={classes.dataContainer}>
         <span
           className={classes.dataItem}
@@ -26,7 +42,7 @@ export default function FrontWorkerCard(props) {
             <MDBIcon icon="info" style={{}}></MDBIcon>
           </div>
           <span className={classes.dataItemTextContainer}>
-            {workerData.distanceInKm}Km de distancia
+            {workerData?.distanceInKm}Km de distancia
           </span>
         </div>
         <div className={classes.dataItem}>
@@ -34,7 +50,7 @@ export default function FrontWorkerCard(props) {
             <MDBIcon style={{ color: "yellow" }} icon="star"></MDBIcon>
           </div>
           <span className={classes.dataItemTextContainer}>
-            {workerData.worker.averageRating}
+            {workerData?.worker?.averageRating}
           </span>
         </div>
         <div className={classes.dataItem}>
@@ -42,11 +58,11 @@ export default function FrontWorkerCard(props) {
             <MDBIcon style={{ color: "orange" }} icon="medal"></MDBIcon>
           </div>
           <span className={classes.dataItemTextContainer}>
-            {workerData.worker.worksFinished}+ trabajos realizados
+            {workerData?.worker?.worksFinished}+ trabajos realizados
           </span>
         </div>
         <div className={classes.statusContainer}>
-          {workerData.worker.availabilityStatus === "AVAILABLE" ? (
+          {workerData?.worker?.availabilityStatus === "AVAILABLE" ? (
             <>
               <div
                 className={classes.statusIcon}
@@ -54,7 +70,7 @@ export default function FrontWorkerCard(props) {
               ></div>
               <span className={classes.statusText}>Hoy disponible!</span>
             </>
-          ) : workerData.worker.availabilityStatus === "MODERATED" ? (
+          ) : workerData?.worker?.availabilityStatus === "MODERATED" ? (
             <>
               <div
                 className={classes.statusIcon}
@@ -93,6 +109,7 @@ const useStyles = createUseStyles({
     width: "95%",
     height: "60%",
     padding: "10px",
+    borderRadius: "10px",
   },
   image: {
     width: "100%",

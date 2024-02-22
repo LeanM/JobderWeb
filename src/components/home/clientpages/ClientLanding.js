@@ -132,15 +132,17 @@ export default function ClientLanding(props) {
   });
 
   const handleResetUserSearch = () => {
-    fetchResetUserSearch()
-      .then((response) => navigate("/"))
-      .catch((error) => {
-        if (error?.response?.status === 401)
-          navigate("/login", {
-            state: { from: "/clientLanding" },
-            replace: true,
-          });
-      });
+    if (auth?.accessToken) {
+      fetchResetUserSearch()
+        .then((response) => navigate("/"))
+        .catch((error) => {
+          if (error?.response?.status === 401)
+            navigate("/login", {
+              state: { from: "/clientLanding" },
+              replace: true,
+            });
+        });
+    } else navigate("/");
   };
 
   const fetchResetUserSearch = async () => {

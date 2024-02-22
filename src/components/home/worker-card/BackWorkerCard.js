@@ -28,10 +28,14 @@ export default function BackWorkerCard(props) {
       <div className={classes.reviewContainer}>
         <span className={classes.reviewTitle}>Opiniones del trabajador</span>
         <div className={classes.reviewCarousel}>
-          <ReviewCarousel />
-          <button className={classes.opinionButton}>
-            Ver todas las opiniones!
-          </button>
+          <ReviewCarousel workerData={workerData} />
+          {workerData?.worker?.totalReviews > 0 ? (
+            <button className={classes.opinionButton}>
+              Ver todas las opiniones!
+            </button>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
       <div className={classes.buttonContainer}>

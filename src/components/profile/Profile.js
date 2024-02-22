@@ -87,7 +87,7 @@ export default function Profile() {
           </div>
           <div className={classes.bodySection}>
             <div className={classes.attributePictureContainer}>
-              {userData?.picture ? (
+              {!userData?.picture ? (
                 <div className={classes.userImageContainer}>
                   <Avatar
                     size="100%"
@@ -97,9 +97,13 @@ export default function Profile() {
                   />
                 </div>
               ) : (
-                <img className={classes.userImage} src={userData.picture}></img>
+                <div className={classes.userImageContainer}>
+                  <img
+                    className={classes.userImage}
+                    src={userData.picture}
+                  ></img>
+                </div>
               )}
-
               <input style={{}} type="file" name="myImage" />
             </div>
             <div className={classes.attributeItemContainer}>
@@ -286,7 +290,6 @@ const useStyles = createUseStyles({
   userImage: {
     borderRadius: "100%",
     objectFit: "cover",
-    border: "solid 2px " + colors.secondary,
     width: "100%",
     height: "100%",
   },

@@ -148,6 +148,7 @@ export default function AddressAttributeItem(props) {
                 overflow: "hidden",
                 whiteSpace: "nowrap",
                 textOverflow: "ellipsis",
+                textAlign: "left",
               }}
             >
               {actualValueShow}
