@@ -97,10 +97,6 @@ const ChatUsersForWorker = forwardRef((props, ref) => {
                 <ChatUserItemForWorker
                   key={chatroomUser.interaction.id}
                   onSelect={(userId) => props.onSelect(userId)}
-                  onReject={(userId) => {
-                    props.onDelete(userId);
-                  }}
-                  onAccept={(userChatRoom) => props.onUpdate(userChatRoom)}
                   chatroomUserData={chatroomUser}
                   actualRecipientId={actualRecipientId}
                 />
