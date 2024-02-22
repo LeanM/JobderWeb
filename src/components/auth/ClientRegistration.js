@@ -19,6 +19,7 @@ export default function ClientRegistration() {
   const { setAuth } = useAuth();
   const [completion, setCompletion] = useState(0);
   const [addressSuggestions, setAddressSugestions] = useState([]);
+  const [isSearchingAddress, setIsSearchingAddress] = useState(false);
   const [values, setValues] = useState({
     name: "",
     email: "",
@@ -135,14 +136,16 @@ export default function ClientRegistration() {
   const [debounceTimer, setDebounceTimer] = useState(null);
 
   const onSuggestAddress = (e) => {
+    setIsSearchingAddress(true);
     if (debounceTimer) {
       clearTimeout(debounceTimer);
     }
 
     const timer = setTimeout(async () => {
-      getAddressSugestions(e.target.value).then((response) =>
-        setAddressSugestions(response)
-      );
+      getAddressSugestions(e.target.value).then((response) => {
+        setAddressSugestions(response);
+        setIsSearchingAddress(false);
+      });
     }, 3000);
 
     setDebounceTimer(timer);
@@ -251,21 +254,24 @@ export default function ClientRegistration() {
             </form>
           </div>
           <div className={classes.infoContainer}>
-            <div className={classes.interestMenusContainter}>
+            <div className={classes.topInfoContainter}>
               <span style={{ color: colors.textSecondary }}>
                 Selecciona tu direccion!
               </span>
-              <AddressSelection
-                onSelectAddress={(address) => {
-                  setValues((prev) => ({
-                    ...prev,
-                    address: address?.display_name,
-                    longitude: address?.lon,
-                    latitude: address?.lat,
-                  }));
-                }}
-                addressSugestions={addressSuggestions}
-              />
+              <div className={classes.addressSelectionContainer}>
+                <AddressSelection
+                  onSelectAddress={(address) => {
+                    setValues((prev) => ({
+                      ...prev,
+                      address: address?.display_name,
+                      longitude: address?.lon,
+                      latitude: address?.lat,
+                    }));
+                  }}
+                  isSearching={isSearchingAddress}
+                  addressSugestions={addressSuggestions}
+                />
+              </div>
             </div>
             <div className={classes.progessContainer}>
               <p style={{ fontWeight: "400", color: colors.textSecondary }}>
@@ -418,7 +424,7 @@ const useStyles = createUseStyles({
       width: "95%",
     },
   },
-  interestMenusContainter: {
+  topInfoContainter: {
     width: "95%",
     height: "25rem",
     display: "flex",
@@ -430,6 +436,10 @@ const useStyles = createUseStyles({
     "@media screen and (max-width: 900px)": {
       height: "12rem",
     },
+  },
+  addressSelectionContainer: {
+    width: "80%",
+    height: "20rem",
   },
   submitButton: {
     width: "8rem",

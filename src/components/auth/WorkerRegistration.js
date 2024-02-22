@@ -316,22 +316,24 @@ export default function WorkerRegistration() {
             </form>
           </div>
           <div className={classes.infoContainer}>
-            <div className={classes.interestMenusContainter}>
+            <div className={classes.topInfoContainter}>
               <span style={{ color: colors.textSecondary }}>
                 Selecciona tu direccion!
               </span>
-              <AddressSelection
-                isSearching={isSearchingAddress}
-                onSelectAddress={(address) => {
-                  setValues((prev) => ({
-                    ...prev,
-                    address: address?.display_name,
-                    longitude: address?.lon,
-                    latitude: address?.lat,
-                  }));
-                }}
-                addressSugestions={addressSuggestions}
-              />
+              <div className={classes.addressSelectionContainer}>
+                <AddressSelection
+                  isSearching={isSearchingAddress}
+                  onSelectAddress={(address) => {
+                    setValues((prev) => ({
+                      ...prev,
+                      address: address?.display_name,
+                      longitude: address?.lon,
+                      latitude: address?.lat,
+                    }));
+                  }}
+                  addressSugestions={addressSuggestions}
+                />
+              </div>
             </div>
             <div className={classes.progessContainer}>
               <p style={{ fontWeight: "400", color: colors.textSecondary }}>
@@ -484,7 +486,7 @@ const useStyles = createUseStyles({
       width: "95%",
     },
   },
-  interestMenusContainter: {
+  topInfoContainter: {
     width: "95%",
     height: "25rem",
     display: "flex",
@@ -496,6 +498,10 @@ const useStyles = createUseStyles({
     "@media screen and (max-width: 900px)": {
       height: "12rem",
     },
+  },
+  addressSelectionContainer: {
+    width: "80%",
+    height: "20rem",
   },
   submitButton: {
     width: "8rem",

@@ -113,17 +113,19 @@ export default function AddressAttributeItem(props) {
           </div>
         </div>
       </div>
-      <AddressSelection
-        isSearching={isSearching}
-        onSelectAddress={(address) => {
-          setValue({
-            address: address?.display_name,
-            longitude: address?.lon,
-            latitude: address?.lat,
-          });
-        }}
-        addressSugestions={addressSugestions}
-      />
+      <div className={classes.addressSelectionContainer}>
+        <AddressSelection
+          isSearching={isSearching}
+          onSelectAddress={(address) => {
+            setValue({
+              address: address?.display_name,
+              longitude: address?.lon,
+              latitude: address?.lat,
+            });
+          }}
+          addressSugestions={addressSugestions}
+        />
+      </div>
     </div>
   ) : (
     <div className={classes.closedContainer}>
@@ -172,10 +174,9 @@ export default function AddressAttributeItem(props) {
 const useStyles = createUseStyles({
   container: {
     width: "100%",
-    height: "20rem",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     gap: "2rem",
   },
@@ -188,7 +189,6 @@ const useStyles = createUseStyles({
   },
   subContainer: {
     width: "100%",
-    height: "100%",
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "center",
@@ -215,6 +215,13 @@ const useStyles = createUseStyles({
     height: "100%",
     display: "flex",
     justifyContent: "space-between",
+    alignItems: "center",
+  },
+  addressSelectionContainer: {
+    width: "70%",
+    height: "20rem",
+    display: "flex",
+    justifyContent: "center",
     alignItems: "center",
   },
   buttonsContainer: {
