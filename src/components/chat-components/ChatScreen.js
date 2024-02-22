@@ -11,8 +11,9 @@ import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { MDBIcon } from "mdb-react-ui-kit";
-import ChatUsers from "./ChatUsers";
 import ChatIndexDBContext from "../../context/ChatIndexDBProvider";
+import ChatUsersForWorker from "./chatUsersComponents/worker/ChatUsersForWorker";
+import ChatUsers from "./chatUsersComponents/client/ChatUsers";
 
 var stompClient = null;
 export default function ChatScreen() {
@@ -25,6 +26,7 @@ export default function ChatScreen() {
     handleRefreshChat,
     handleDeleteChat,
     handleUpdateChatRoomStatus,
+    cleanUpDeprecatedChatRoomUsers,
   } = useContext(ChatIndexDBContext);
   const { auth } = useAuth();
   const [chatRoomUsers, setChatRoomUsers] = useState([]);
@@ -80,15 +82,17 @@ export default function ChatScreen() {
           .then((response) => {
             setChatRoomUsers(response.data);
             verifyNotSeenMessages(response.data);
+            cleanUpDeprecatedChatRoomUsers(response.data);
           })
           .catch((error) => {
             if (error?.response?.status === 401)
               navigate("/login", { state: { from: "/chat" } });
           })
-      : getLikedOrMatchedClients()
+      : getMatchedClients()
           .then((response) => {
             setChatRoomUsers(response.data);
             verifyNotSeenMessages(response.data);
+            cleanUpDeprecatedChatRoomUsers(response.data);
           })
           .catch((error) => {
             console.log(error.response.data);
@@ -101,7 +105,7 @@ export default function ChatScreen() {
     return axiosPrivate.post("matching/client/likedOrMatchedWorkers");
   };
 
-  const getLikedOrMatchedClients = async () => {
+  const getMatchedClients = async () => {
     return axiosPrivate.post("matching/worker/likedOrMatchedClients");
   };
 
@@ -110,6 +114,10 @@ export default function ChatScreen() {
       recipientId: userId,
     };
     axiosPrivate.post("/chatroom/updateSeenChatroom", JSON.stringify(body));
+  };
+
+  const cleanUpChatRoomUsers = (chatRooms) => {
+    cleanUpDeprecatedChatRoomUsers(chatRooms);
   };
 
   const verifyNotSeenMessages = async (ChatRooms) => {
@@ -267,14 +275,25 @@ export default function ChatScreen() {
       <Nav />
       <div className={classes.container}>
         <div className={classes.subContainer}>
-          <ChatUsers
-            ref={chatUsersRef}
-            onSelect={(userId) => onSelectUserChat(userId)}
-            onDelete={(userId) => deleteUserChat(userId)}
-            onUpdate={(userChatRoom) => updateUserChat(userChatRoom)}
-            actualRecipientId={actualRecipientId}
-            chatRoomUsers={chatRoomUsers}
-          />
+          {auth?.role === "WORKER" ? (
+            <ChatUsersForWorker
+              ref={chatUsersRef}
+              onSelect={(userId) => onSelectUserChat(userId)}
+              onDelete={(userId) => deleteUserChat(userId)}
+              onUpdate={(userChatRoom) => updateUserChat(userChatRoom)}
+              actualRecipientId={actualRecipientId}
+              chatRoomUsers={chatRoomUsers}
+            />
+          ) : (
+            <ChatUsers
+              ref={chatUsersRef}
+              onSelect={(userId) => onSelectUserChat(userId)}
+              onUpdate={(userChatRoom) => updateUserChat(userChatRoom)}
+              actualRecipientId={actualRecipientId}
+              chatRoomUsers={chatRoomUsers}
+            />
+          )}
+
           <ChatBox
             ref={chatBoxRef}
             onSendMessage={(messageContent) => sendMessage(messageContent)}

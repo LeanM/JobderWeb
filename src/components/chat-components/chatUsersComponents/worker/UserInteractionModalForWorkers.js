@@ -1,9 +1,9 @@
 import { createUseStyles } from "react-jss";
-import { colors } from "../../assets/colors";
+import { colors } from "../../../../assets/colors";
 import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
 import { MDBIcon } from "mdb-react-ui-kit";
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
 import toast from "react-hot-toast";
 
 export default function UserInteractionModalForWorkers(props) {
@@ -94,6 +94,33 @@ export default function UserInteractionModalForWorkers(props) {
     );
   };
 
+  const handleCompleteMatch = () => {
+    let completeRequest = {
+      clientId: actualData?.user?.id,
+    };
+    toast.promise(
+      axiosPrivate.post(
+        "matching/worker/matchComplete",
+        JSON.stringify(completeRequest)
+      ),
+      {
+        loading: "Terminando trabajo...",
+        success: (response) => {
+          onReject();
+          return <b>Se finalizo el trabajo con el cliente!</b>;
+        },
+        error: (error) => {
+          return (
+            <span>
+              Ocurrio el siguiente error al terminar el trabajo con el cliente :{" "}
+              {error?.response?.data}
+            </span>
+          );
+        },
+      }
+    );
+  };
+
   return (
     <Modal open={open}>
       <div className={classes.container}>
@@ -158,6 +185,22 @@ export default function UserInteractionModalForWorkers(props) {
                   Aceptar
                 </span>
                 <MDBIcon style={{ color: colors.price }} icon="check" />
+              </button>
+            ) : actualData?.interaction?.interactionType === "MATCH" ? (
+              <button
+                className={classes.completeMatchButton}
+                onClick={() => handleCompleteMatch()}
+              >
+                <span
+                  style={{
+                    fontSize: "0.7rem",
+                    fontWeight: "500",
+                    color: colors.priceLight,
+                  }}
+                >
+                  Terminar Trabajo
+                </span>
+                <MDBIcon icon="magic" style={{ color: colors.priceLight }} />
               </button>
             ) : (
               <></>
@@ -386,7 +429,7 @@ const useStyles = createUseStyles({
     width: "7rem",
     height: "3rem",
     position: "absolute",
-    right: "0",
+    right: "2rem",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -398,6 +441,24 @@ const useStyles = createUseStyles({
 
     "&:hover": {
       border: `solid 1px ${colors.notificationLight}`,
+    },
+  },
+  completeMatchButton: {
+    width: "7rem",
+    height: "3rem",
+    position: "absolute",
+    left: "2rem",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    border: `solid 1px ${colors.transparent}`,
+    borderRadius: "100px",
+    backgroundColor: colors.primary,
+
+    transition: "border 0.2s",
+
+    "&:hover": {
+      border: `solid 1px ${colors.priceLight}`,
     },
   },
 });

@@ -1,9 +1,9 @@
 import { createUseStyles } from "react-jss";
-import { colors } from "../../assets/colors";
+import { colors } from "../../../../assets/colors";
 import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
 import { MDBIcon } from "mdb-react-ui-kit";
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
 import toast from "react-hot-toast";
 import Avatar from "react-avatar";
 
@@ -366,7 +366,7 @@ const useStyles = createUseStyles({
     width: "7rem",
     height: "3rem",
     position: "absolute",
-    right: "0",
+    right: "2rem",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

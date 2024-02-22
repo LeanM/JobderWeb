@@ -17,10 +17,24 @@ export const ChatIndexDBProvider = ({ children }) => {
     fetchChats();
   }, []);
 
+  const cleanUpDeprecatedChatRoomUsers = async (actualChatrooms) => {
+    const store = await openDBtoWrite();
+    const chats = await store.getAll();
+
+    chats.map((chat) => {
+      let isDeprecated = true;
+      actualChatrooms.every((chatroom) => {
+        if (chatroom?.user?.id === chat?.userChatId) {
+          isDeprecated = false;
+          return false;
+        } else return true;
+      });
+      if (isDeprecated) store.delete(chat?.userChatId);
+    });
+  };
+
   const handleSelectChat = async (userChatId) => {
-    const db = await openDB("user-chats", 1);
-    const tx = db.transaction("chats", "readwrite");
-    const store = tx.objectStore("chats");
+    const store = await openDBtoWrite();
     let chat = await store.get(userChatId);
 
     if (chat) {
@@ -32,10 +46,7 @@ export const ChatIndexDBProvider = ({ children }) => {
   };
 
   const handleDeleteChat = async (userChatId) => {
-    const db = await openDB("user-chats", 1);
-    const tx = db.transaction("chats", "readwrite");
-    const store = tx.objectStore("chats");
-
+    const store = await openDBtoWrite();
     await store.delete(userChatId);
   };
 
@@ -211,6 +222,7 @@ export const ChatIndexDBProvider = ({ children }) => {
         obtainChatUserState,
         handleDeleteChat,
         handleUpdateChatRoomStatus,
+        cleanUpDeprecatedChatRoomUsers,
       }}
     >
       {children}

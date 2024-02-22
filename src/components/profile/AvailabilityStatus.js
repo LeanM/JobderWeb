@@ -52,10 +52,10 @@ export default function AvailbilityStatus(props) {
 
   return (
     <div className={classes.statusSelectionContainer}>
-      <span style={{ color: colors.textSecondary, fontWeight: "700" }}>
+      <span style={{ color: colors.secondary, fontWeight: "700" }}>
         ¿Quieres cambiar tu grado de disponibilidad hoy?
       </span>
-      <span style={{ color: colors.textSecondary }}>
+      <span style={{ color: colors.secondary }}>
         Actualmente tu disponibilidad es{" "}
         <b>
           {actualAvailability === "MODERATED"
@@ -79,7 +79,17 @@ export default function AvailbilityStatus(props) {
           alignItems: "center",
         }}
       >
-        <button style={{}} onClick={() => handleChangeAvailability()}>
+        <button
+          style={{
+            backgroundColor: colors.primary,
+            color: colors.secondary,
+            borderRadius: "5px",
+            border: "solid 1px " + colors.secondary,
+            fontWeight: "400",
+            fontSize: "1rem",
+          }}
+          onClick={() => handleChangeAvailability()}
+        >
           Cambiar disponibilidad
         </button>
       </div>

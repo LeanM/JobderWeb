@@ -104,7 +104,6 @@ export default function Profile() {
                   ></img>
                 </div>
               )}
-              <input style={{}} type="file" name="myImage" />
             </div>
             <div className={classes.attributeItemContainer}>
               <AttributeItem
@@ -251,16 +250,17 @@ const useStyles = createUseStyles({
     alignItems: "start",
   },
   logoutButton: {
-    width: "10rem",
+    width: "8rem",
     height: "2rem",
     borderRadius: "10px",
-    backgroundColor: colors.notificationLight,
-    color: colors.primary,
+    fontWeight: "700",
+    backgroundColor: colors.primary,
+    color: colors.notificationLight,
 
-    transition: "background 0.3s",
+    transition: "color 0.3s",
 
     "&:hover": {
-      backgroundColor: colors.notification,
+      color: colors.notification,
     },
   },
   subContainer: {
