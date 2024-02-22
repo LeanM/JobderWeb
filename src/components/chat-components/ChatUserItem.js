@@ -5,6 +5,7 @@ import useAuth from "../../hooks/useAuth";
 import DesitionModal from "./DesitionModal";
 import { on } from "rsuite/esm/DOMHelper";
 import Avatar from "react-avatar";
+import { Tooltip, Whisper } from "rsuite";
 
 export default function ChatUserItem(props) {
   const { actualRecipientId, chatroomUserData, onSelect } = props;
@@ -87,18 +88,56 @@ export default function ChatUserItem(props) {
         className={classes.chatUserItem}
       >
         {!data?.user?.picture ? (
-          <div className={classes.imageContainer}>
-            <Avatar
-              size="100%"
-              name={data?.user?.name}
-              maxInitials={2}
-              round={true}
-            />
-          </div>
+          <Whisper
+            trigger="hover"
+            placement={"bottom"}
+            speaker={
+              <Tooltip
+                style={{
+                  fontSize: "0.7rem",
+                  fontFamily: "Poppins",
+                  textAlign: "center",
+                  backgroundColor: colors.secondary,
+                  color: colors.primary,
+                  borderRadius: "5px",
+                }}
+              >
+                Ver info detallada
+              </Tooltip>
+            }
+          >
+            <div className={classes.imageContainer} onClick={() => {}}>
+              <Avatar
+                size="92%"
+                name={data?.user?.name}
+                maxInitials={2}
+                round={true}
+              />
+            </div>
+          </Whisper>
         ) : (
-          <div className={classes.imageContainer}>
-            <img className={classes.image} src={data?.user?.picture} />
-          </div>
+          <Whisper
+            trigger="hover"
+            placement={"bottom"}
+            speaker={
+              <Tooltip
+                style={{
+                  fontSize: "0.7rem",
+                  fontFamily: "Montserrat",
+                  backgroundColor: colors.secondary,
+                  color: colors.primary,
+                  textAlign: "center",
+                  borderRadius: "5px",
+                }}
+              >
+                Ver info detallada
+              </Tooltip>
+            }
+          >
+            <div className={classes.imageContainer} onClick={() => {}}>
+              <img className={classes.image} src={data?.user?.picture} />
+            </div>
+          </Whisper>
         )}
 
         <span
@@ -152,13 +191,23 @@ const useStyles = createUseStyles({
     },
   },
   imageContainer: {
-    width: "2.5rem",
-    height: "2.5rem",
+    width: "2.7rem",
+    height: "2.7rem",
     borderRadius: "100%",
+    outline: "solid 1px " + colors.textSecondary,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+
+    transition: "outline 0.1s",
+
+    "&:hover": {
+      outline: "solid 3px " + colors.textSecondary,
+    },
   },
   image: {
-    width: "100%",
-    height: "100%",
+    width: "90%",
+    height: "92%",
     borderRadius: "100%",
     objectFit: "cover",
   },
