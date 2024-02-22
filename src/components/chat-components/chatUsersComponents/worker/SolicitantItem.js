@@ -64,6 +64,7 @@ export default function SolicitantItem(props) {
         }}
         onAccept={() => {
           updateDataStatusOnAccept();
+          setOpenUserInteraction(false);
         }}
       />
 
