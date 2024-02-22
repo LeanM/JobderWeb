@@ -59,7 +59,7 @@ export default function ChatUserItem(props) {
     // y setearlo aca completo
     let newData = {
       user: data.user,
-      interaction: { ...data.interaction, interactionState: "MATCH" },
+      interaction: { ...data.interaction, interactionType: "MATCH" },
       chatRoom: { ...data.chatRoom, state: "UNSEEN" },
     };
     setData(newData);
@@ -72,7 +72,7 @@ export default function ChatUserItem(props) {
         data={data}
         onClose={() => setOpenUserInteraction(false)}
         onReject={() => {
-          props.onChange();
+          props.onReject(data?.user?.id);
           onSelect(0);
           setOpenUserInteraction(false);
         }}

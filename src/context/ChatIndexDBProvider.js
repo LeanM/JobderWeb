@@ -31,6 +31,14 @@ export const ChatIndexDBProvider = ({ children }) => {
     return chat;
   };
 
+  const handleDeleteChat = async (userChatId) => {
+    const db = await openDB("user-chats", 1);
+    const tx = db.transaction("chats", "readwrite");
+    const store = tx.objectStore("chats");
+
+    await store.delete(userChatId);
+  };
+
   const openDBtoWrite = async () => {
     const db = await openDB("user-chats", 1);
     const tx = db.transaction("chats", "readwrite");
@@ -192,6 +200,7 @@ export const ChatIndexDBProvider = ({ children }) => {
         verifyMessageQuantity,
         handleRefreshChat,
         obtainChatUserState,
+        handleDeleteChat,
       }}
     >
       {children}

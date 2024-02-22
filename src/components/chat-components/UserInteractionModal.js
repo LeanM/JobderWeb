@@ -7,7 +7,7 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import toast from "react-hot-toast";
 
 export default function UserInteractionModal(props) {
-  const { open, data, onClose, handleAccept, handleReject } = props;
+  const { open, data, onClose } = props;
   const classes = useStyles();
   const [actualData, setActualData] = useState({});
   const axiosPrivate = useAxiosPrivate();
@@ -16,6 +16,57 @@ export default function UserInteractionModal(props) {
     setActualData(data);
     console.log(data);
   }, [data]);
+
+  const handleAccept = () => {
+    let acceptRequest = {
+      clientId: actualData?.user?.id,
+    };
+    toast.promise(
+      axiosPrivate.post("matching/worker/match", JSON.stringify(acceptRequest)),
+      {
+        loading: "Matcheando con el cliente...",
+        success: (response) => {
+          props.onAccept();
+          return <b>Se matcheo con el cliente!</b>;
+        },
+        error: (error) => {
+          return (
+            <span>
+              Ocurrio el siguiente error al matchear con el cliente :{" "}
+              {error?.response?.data}
+            </span>
+          );
+        },
+      }
+    );
+  };
+
+  const handleReject = () => {
+    let cancelRequest = {
+      clientId: actualData?.user?.id,
+    };
+    toast.promise(
+      axiosPrivate.post(
+        "matching/worker/reject",
+        JSON.stringify(cancelRequest)
+      ),
+      {
+        loading: "Rechazando cliente...",
+        success: (response) => {
+          props.onReject();
+          return <b>Se rechazo al cliente!</b>;
+        },
+        error: (error) => {
+          return (
+            <span>
+              Ocurrio el siguiente error al rechazar al cliente :{" "}
+              {error?.response?.data}
+            </span>
+          );
+        },
+      }
+    );
+  };
 
   return (
     <Modal open={open}>

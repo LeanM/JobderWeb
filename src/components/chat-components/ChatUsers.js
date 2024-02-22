@@ -42,7 +42,9 @@ const ChatUsers = forwardRef((props, ref) => {
             <ChatUserItem
               key={chatroomUser.interaction.id}
               onSelect={(userId) => props.onSelect(userId)}
-              onChange={() => {}}
+              onReject={(userId) => {
+                props.onDelete(userId);
+              }}
               chatroomUserData={chatroomUser}
               actualRecipientId={actualRecipientId}
             />
