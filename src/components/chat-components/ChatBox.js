@@ -127,6 +127,8 @@ const ChatBox = forwardRef((props, ref) => {
       }
     });
 
+    setLastMessageDate(previousDate);
+
     return addedDisplay;
   };
 

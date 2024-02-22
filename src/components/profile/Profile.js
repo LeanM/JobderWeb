@@ -272,14 +272,15 @@ const useStyles = createUseStyles({
     alignItems: "start",
   },
   topSection: {
-    width: "80%",
+    width: "90%",
     height: "2rem",
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "start",
     gap: "1rem",
-    padding: "2rem",
+    marginBottom: "2rem",
+    marginTop: "2rem",
   },
   userImageContainer: {
     width: "7rem",

@@ -99,7 +99,7 @@ export default function InfoModal(props) {
               }}
               onChange={onChange}
             ></input>
-            <div style={{ width: "60%", height: "7rem" }}>
+            <div style={{ width: "25rem", height: "15rem" }}>
               <AddressSelection
                 isSearching={isSearching}
                 onSelectAddress={(address) => onSelectAddress(address)}
@@ -190,21 +190,23 @@ const useStyles = createUseStyles({
     alignItems: "center",
     color: colors.primaryDark,
     gap: "0.3rem",
+    marginBottom: "2rem",
   },
   body: {
-    width: "100%",
-    height: "60%",
+    width: "95%",
     display: "flex",
     position: "relative",
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
     gap: "1rem",
+    overflowY: "scroll",
+    marginBottom: "2rem",
   },
 
   bottom: {
     width: "100%",
-    height: "8%",
+    height: "15%",
     backgroundColor: colors.primary,
     borderBottomLeftRadius: "5px",
     borderBottomRightRadius: "5px",

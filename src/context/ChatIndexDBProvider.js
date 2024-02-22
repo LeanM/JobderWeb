@@ -125,6 +125,15 @@ export const ChatIndexDBProvider = ({ children }) => {
     });
   };
 
+  const handleUpdateChatRoomStatus = async (userChatId, newStatus) => {
+    const store = await openDBtoWrite();
+    const chat = await store.get(userChatId);
+    if (chat) {
+      let updatedChatRoom = { ...chat, userChatStatus: newStatus };
+      store.put(updatedChatRoom);
+    }
+  };
+
   const handleMessageSent = async (userChatId, message) => {
     const store = await openDBtoWrite();
     const chat = await store.get(userChatId);
@@ -201,6 +210,7 @@ export const ChatIndexDBProvider = ({ children }) => {
         handleRefreshChat,
         obtainChatUserState,
         handleDeleteChat,
+        handleUpdateChatRoomStatus,
       }}
     >
       {children}

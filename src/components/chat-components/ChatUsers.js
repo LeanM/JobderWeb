@@ -45,6 +45,7 @@ const ChatUsers = forwardRef((props, ref) => {
               onReject={(userId) => {
                 props.onDelete(userId);
               }}
+              onAccept={(userChatRoom) => props.onUpdate(userChatRoom)}
               chatroomUserData={chatroomUser}
               actualRecipientId={actualRecipientId}
             />

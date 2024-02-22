@@ -24,6 +24,7 @@ export default function ChatScreen() {
     verifyMessageQuantity,
     handleRefreshChat,
     handleDeleteChat,
+    handleUpdateChatRoomStatus,
   } = useContext(ChatIndexDBContext);
   const { auth } = useAuth();
   const [chatRoomUsers, setChatRoomUsers] = useState([]);
@@ -247,6 +248,20 @@ export default function ChatScreen() {
     handleDeleteChat(userId);
   };
 
+  const updateUserChat = (userChatRoom) => {
+    let updateChatRoomUsers = [];
+    chatRoomUsers.map((chatRoomUser) => {
+      if (chatRoomUser?.user?.id === userChatRoom?.user?.id)
+        updateChatRoomUsers.push(userChatRoom);
+      else updateChatRoomUsers.push(chatRoomUser);
+    });
+    setChatRoomUsers(updateChatRoomUsers);
+    handleUpdateChatRoomStatus(
+      userChatRoom?.user?.id,
+      userChatRoom?.chatRoom?.state
+    );
+  };
+
   return (
     <>
       <Nav />
@@ -256,6 +271,7 @@ export default function ChatScreen() {
             ref={chatUsersRef}
             onSelect={(userId) => onSelectUserChat(userId)}
             onDelete={(userId) => deleteUserChat(userId)}
+            onUpdate={(userChatRoom) => updateUserChat(userChatRoom)}
             actualRecipientId={actualRecipientId}
             chatRoomUsers={chatRoomUsers}
           />

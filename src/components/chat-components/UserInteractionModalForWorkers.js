@@ -6,15 +6,14 @@ import { MDBIcon } from "mdb-react-ui-kit";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import toast from "react-hot-toast";
 
-export default function UserInteractionModal(props) {
-  const { open, data, onClose } = props;
+export default function UserInteractionModalForWorkers(props) {
+  const { open, data, onClose, onReject, onAccept } = props;
   const classes = useStyles();
   const [actualData, setActualData] = useState({});
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     setActualData(data);
-    console.log(data);
   }, [data]);
 
   const handleAccept = () => {
@@ -26,7 +25,7 @@ export default function UserInteractionModal(props) {
       {
         loading: "Matcheando con el cliente...",
         success: (response) => {
-          props.onAccept();
+          onAccept();
           return <b>Se matcheo con el cliente!</b>;
         },
         error: (error) => {
@@ -53,13 +52,40 @@ export default function UserInteractionModal(props) {
       {
         loading: "Rechazando cliente...",
         success: (response) => {
-          props.onReject();
+          onReject();
           return <b>Se rechazo al cliente!</b>;
         },
         error: (error) => {
           return (
             <span>
               Ocurrio el siguiente error al rechazar al cliente :{" "}
+              {error?.response?.data}
+            </span>
+          );
+        },
+      }
+    );
+  };
+
+  const handleCancelMatch = () => {
+    let cancelRequest = {
+      clientId: actualData?.user?.id,
+    };
+    toast.promise(
+      axiosPrivate.post(
+        "matching/worker/cancelMatch",
+        JSON.stringify(cancelRequest)
+      ),
+      {
+        loading: "Cancelando match...",
+        success: (response) => {
+          onReject();
+          return <b>Se cancelo el match con el cliente!</b>;
+        },
+        error: (error) => {
+          return (
+            <span>
+              Ocurrio el siguiente error al cancelar el match con el cliente :{" "}
               {error?.response?.data}
             </span>
           );
@@ -119,10 +145,19 @@ export default function UserInteractionModal(props) {
           <div className={classes.bottomInner}>
             {actualData?.interaction?.interactionType === "CLIENT_LIKE" ? (
               <button
-                className={classes.closeButton}
+                className={classes.acceptButton}
                 onClick={() => handleAccept()}
               >
-                Aceptar
+                <span
+                  style={{
+                    fontSize: "0.8rem",
+                    fontWeight: "500",
+                    color: colors.price,
+                  }}
+                >
+                  Aceptar
+                </span>
+                <MDBIcon style={{ color: colors.price }} icon="check" />
               </button>
             ) : (
               <></>
@@ -133,10 +168,41 @@ export default function UserInteractionModal(props) {
             </button>
             {actualData?.interaction?.interactionType === "CLIENT_LIKE" ? (
               <button
-                className={classes.closeButton}
+                className={classes.rejectButton}
                 onClick={() => handleReject()}
               >
-                Rechazar
+                <span
+                  style={{
+                    fontSize: "0.8rem",
+                    fontWeight: "500",
+                    color: colors.notificationLight,
+                  }}
+                >
+                  Rechazar
+                </span>
+                <MDBIcon
+                  style={{ color: colors.notificationLight }}
+                  icon="times-circle"
+                />
+              </button>
+            ) : actualData?.interaction?.interactionType === "MATCH" ? (
+              <button
+                className={classes.cancelMatchButton}
+                onClick={() => handleCancelMatch()}
+              >
+                <span
+                  style={{
+                    fontSize: "0.7rem",
+                    fontWeight: "500",
+                    color: colors.notificationLight,
+                  }}
+                >
+                  Cancelar Match
+                </span>
+                <MDBIcon
+                  icon="ban"
+                  style={{ color: colors.notificationLight }}
+                />
               </button>
             ) : (
               <></>
@@ -246,7 +312,8 @@ const useStyles = createUseStyles({
     width: "100%",
     height: "100%",
     display: "flex",
-    justifyContent: "center",
+    position: "relative",
+    justifyContent: "space-evenly",
     alignItems: "center",
   },
   upperCloseButton: {
@@ -267,7 +334,7 @@ const useStyles = createUseStyles({
     },
   },
   closeButton: {
-    width: "12rem",
+    width: "8rem",
     height: "3rem",
     border: `solid 1px ${colors.secondary}`,
     borderRadius: "20px",
@@ -279,6 +346,58 @@ const useStyles = createUseStyles({
     "&:hover": {
       color: colors.primary,
       backgroundColor: colors.textSecondary,
+    },
+  },
+  acceptButton: {
+    width: "5rem",
+    height: "3rem",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    border: `solid 1px ${colors.transparent}`,
+    borderRadius: "100px",
+    backgroundColor: colors.primary,
+
+    transition: "border 0.2s",
+
+    "&:hover": {
+      border: `solid 1px ${colors.price}`,
+    },
+  },
+  rejectButton: {
+    width: "5rem",
+    height: "3rem",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    border: `solid 1px ${colors.transparent}`,
+    borderRadius: "100px",
+    backgroundColor: colors.primary,
+
+    transition: "border 0.2s",
+
+    "&:hover": {
+      border: `solid 1px ${colors.notificationLight}`,
+    },
+  },
+  cancelMatchButton: {
+    width: "7rem",
+    height: "3rem",
+    position: "absolute",
+    right: "0",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    border: `solid 1px ${colors.transparent}`,
+    borderRadius: "100px",
+    backgroundColor: colors.primary,
+
+    transition: "border 0.2s",
+
+    "&:hover": {
+      border: `solid 1px ${colors.notificationLight}`,
     },
   },
 });

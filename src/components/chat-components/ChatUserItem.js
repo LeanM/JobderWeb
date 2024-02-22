@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import Avatar from "react-avatar";
 import { Tooltip, Whisper } from "rsuite";
-import UserInteractionModal from "./UserInteractionModal";
+import UserInteractionModal from "./UserInteractionModalForWorkers";
+import UserInteractionModalForWorkers from "./UserInteractionModalForWorkers";
+import UserInteractionModalForClients from "./UserInteractionModalForClients";
 
 export default function ChatUserItem(props) {
-  const { actualRecipientId, chatroomUserData, onSelect } = props;
+  const { actualRecipientId, chatroomUserData, onSelect, onAccept } = props;
   const { auth } = useAuth();
   const [style, setStyle] = useState({});
   const [data, setData] = useState(chatroomUserData);
@@ -17,13 +19,17 @@ export default function ChatUserItem(props) {
   const [openUserInteraction, setOpenUserInteraction] = useState(false);
 
   useEffect(() => {
+    setData(chatroomUserData);
+  }, [chatroomUserData]);
+
+  useEffect(() => {
     if (
-      data.chatRoom.state === "UNSEEN" &&
-      actualRecipientId !== data.user.id
+      data?.chatRoom?.state === "UNSEEN" &&
+      actualRecipientId !== data?.user?.id
     ) {
       setNotificationShow(true);
       setNewChatShow(false);
-    } else if (data.chatRoom.state === "NEW") {
+    } else if (data?.chatRoom?.state === "NEW") {
       setNewChatShow(true);
     }
   }, [data]);
@@ -59,27 +65,46 @@ export default function ChatUserItem(props) {
     // y setearlo aca completo
     let newData = {
       user: data.user,
-      interaction: { ...data.interaction, interactionType: "MATCH" },
+      interaction: {
+        ...data.interaction,
+        interactionType: "MATCH",
+      },
       chatRoom: { ...data.chatRoom, state: "UNSEEN" },
     };
-    setData(newData);
+    onAccept(newData);
   };
 
   return (
     <>
-      <UserInteractionModal
-        open={openUserInteraction}
-        data={data}
-        onClose={() => setOpenUserInteraction(false)}
-        onReject={() => {
-          props.onReject(data?.user?.id);
-          onSelect(0);
-          setOpenUserInteraction(false);
-        }}
-        onAccept={() => {
-          updateDataStatusOnAccept();
-        }}
-      />
+      {auth?.role === "CLIENT" ? (
+        <UserInteractionModalForClients
+          open={openUserInteraction}
+          data={data}
+          onClose={() => setOpenUserInteraction(false)}
+          onReject={() => {
+            props.onReject(data?.user?.id);
+            onSelect(0);
+            setOpenUserInteraction(false);
+          }}
+        />
+      ) : auth?.role === "WORKER" ? (
+        <UserInteractionModalForWorkers
+          open={openUserInteraction}
+          data={data}
+          onClose={() => setOpenUserInteraction(false)}
+          onReject={() => {
+            props.onReject(data?.user?.id);
+            onSelect(0);
+            setOpenUserInteraction(false);
+          }}
+          onAccept={() => {
+            updateDataStatusOnAccept();
+          }}
+        />
+      ) : (
+        <></>
+      )}
+
       <div
         onClick={() => handleSelectChatUser()}
         style={style}
