@@ -140,7 +140,7 @@ const useStyles = createUseStyles({
     border: `solid 1px ${colors.primary}`,
     borderRadius: "5px",
     boxShadow: "0 0 5px black",
-    fontFamily: "Poppins",
+    fontFamily: "Montserrat",
 
     "@media screen and (max-width: 800px)": {
       width: "95%",

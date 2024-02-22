@@ -2,10 +2,9 @@ import { createUseStyles } from "react-jss";
 import { colors } from "../../assets/colors";
 import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
-import DesitionModal from "./DesitionModal";
-import { on } from "rsuite/esm/DOMHelper";
 import Avatar from "react-avatar";
 import { Tooltip, Whisper } from "rsuite";
+import UserInteractionModal from "./UserInteractionModal";
 
 export default function ChatUserItem(props) {
   const { actualRecipientId, chatroomUserData, onSelect } = props;
@@ -15,7 +14,7 @@ export default function ChatUserItem(props) {
   const [notificationShow, setNotificationShow] = useState(false);
   const [newChatShow, setNewChatShow] = useState(false);
   const classes = useStyles();
-  const [openDesitionModal, setOpenDesitionModal] = useState(false);
+  const [openUserInteraction, setOpenUserInteraction] = useState(false);
 
   useEffect(() => {
     if (
@@ -48,7 +47,7 @@ export default function ChatUserItem(props) {
   const handleSelectChatUser = () => {
     if (auth?.role === "WORKER" && data?.chatRoom?.state === "NEW") {
       //si es worker y el chatroom es nuevo mostrar modal para aceptar o rechazar
-      setOpenDesitionModal(true);
+      setOpenUserInteraction(true);
     } else {
       //sino onSelect
       onSelect(data?.user?.id);
@@ -60,7 +59,7 @@ export default function ChatUserItem(props) {
     // y setearlo aca completo
     let newData = {
       user: data.user,
-      interaction: data.interaction,
+      interaction: { ...data.interaction, interactionState: "MATCH" },
       chatRoom: { ...data.chatRoom, state: "UNSEEN" },
     };
     setData(newData);
@@ -68,19 +67,18 @@ export default function ChatUserItem(props) {
 
   return (
     <>
-      <DesitionModal
-        clientData={chatroomUserData}
-        open={openDesitionModal}
+      <UserInteractionModal
+        open={openUserInteraction}
+        data={data}
+        onClose={() => setOpenUserInteraction(false)}
         onReject={() => {
           props.onChange();
           onSelect(0);
-          setOpenDesitionModal(false);
+          setOpenUserInteraction(false);
         }}
         onAccept={() => {
           updateDataStatusOnAccept();
-          setOpenDesitionModal(false);
         }}
-        onClose={() => setOpenDesitionModal(false)}
       />
       <div
         onClick={() => handleSelectChatUser()}
@@ -106,9 +104,14 @@ export default function ChatUserItem(props) {
               </Tooltip>
             }
           >
-            <div className={classes.imageContainer} onClick={() => {}}>
+            <div
+              className={classes.imageContainer}
+              onClick={() => {
+                setOpenUserInteraction(true);
+              }}
+            >
               <Avatar
-                size="92%"
+                size="100%"
                 name={data?.user?.name}
                 maxInitials={2}
                 round={true}
@@ -134,7 +137,12 @@ export default function ChatUserItem(props) {
               </Tooltip>
             }
           >
-            <div className={classes.imageContainer} onClick={() => {}}>
+            <div
+              className={classes.imageContainer}
+              onClick={() => {
+                setOpenUserInteraction(true);
+              }}
+            >
               <img className={classes.image} src={data?.user?.picture} />
             </div>
           </Whisper>

@@ -92,6 +92,7 @@ export default function ClientLanding(props) {
       workerId: workerId,
       interactionType: interactionType,
       clientProblemDescription: problemDescription,
+      clientUrgency: importance,
     };
 
     interactWithWorker(interactionInfo)
