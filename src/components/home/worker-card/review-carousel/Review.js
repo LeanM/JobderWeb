@@ -63,35 +63,42 @@ export default function Review(props) {
           </span>
         </div>
       </div>
-      <div className={classes.reviewResponseContainer}>
-        {!reviewData?.worker?.picture ? (
-          <div className={classes.responseImageContainer}>
-            <Avatar
-              size="100%"
-              name={reviewData?.worker?.name}
-              maxInitials={2}
-              round={true}
-            />
-          </div>
-        ) : (
-          <div className={classes.responseImageContainer}>
-            <img className={classes.image} src={reviewData?.worker?.picture} />
-          </div>
-        )}
-        <span
-          style={{
-            width: "80%",
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
-            textAlign: "left",
-            fontSize: "0.7rem",
-            fontWeight: "200",
-          }}
-        >
-          "{reviewData?.reviewResponse?.content}"
-        </span>
-      </div>
+      {reviewData?.reviewResponse ? (
+        <div className={classes.reviewResponseContainer}>
+          {!reviewData?.worker?.picture ? (
+            <div className={classes.responseImageContainer}>
+              <Avatar
+                size="100%"
+                name={reviewData?.worker?.name}
+                maxInitials={2}
+                round={true}
+              />
+            </div>
+          ) : (
+            <div className={classes.responseImageContainer}>
+              <img
+                className={classes.image}
+                src={reviewData?.worker?.picture}
+              />
+            </div>
+          )}
+          <span
+            style={{
+              width: "80%",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+              textAlign: "left",
+              fontSize: "0.7rem",
+              fontWeight: "200",
+            }}
+          >
+            "{reviewData?.reviewResponse?.content}"
+          </span>
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

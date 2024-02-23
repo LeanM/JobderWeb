@@ -23,7 +23,6 @@ const ChatUsersForWorker = forwardRef((props, ref) => {
   }));
 
   useEffect(() => {
-    console.log(chatRoomUsers);
     distributeUsers();
   }, [chatRoomUsers]);
 

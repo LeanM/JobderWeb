@@ -63,6 +63,7 @@ export default function ClientLanding(props) {
 
     fetchWorkersLogged(searchInfo)
       .then((response) => {
+        console.log(response.data);
         setWorkers(response.data);
         setLoading(false);
       })
@@ -180,7 +181,7 @@ export default function ClientLanding(props) {
             {workers.map((worker) => {
               return (
                 <WorkerCard
-                  key={worker.worker.id}
+                  key={worker?.user?.id}
                   workerData={worker}
                   onInteract={(workerId, interactionType) => {
                     handleInteraction(workerId, interactionType);

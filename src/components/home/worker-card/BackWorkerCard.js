@@ -7,7 +7,7 @@ import useAuth from "../../../hooks/useAuth";
 export default function BackWorkerCard(props) {
   const { auth } = useAuth();
   const classes = useStyles();
-  const { workerData, onGoogleLogin } = props;
+  const { workerData, onGoogleLogin, infoOnly } = props;
 
   return (
     <div className={classes.backContainer}>
@@ -15,21 +15,21 @@ export default function BackWorkerCard(props) {
         <div className={classes.infoBlock}>
           <p className={classes.infoLabel}>Descripcion</p>
           <span className={classes.infoText}>
-            "{workerData.worker.description}"
+            "{workerData?.user?.description}"
           </span>
         </div>
         <div className={classes.infoBlock}>
           <p className={classes.infoLabel}>Horarios</p>
           <span className={classes.infoText}>
-            {workerData.worker.workingHours}
+            {workerData?.user?.workingHours}
           </span>
         </div>
       </div>
       <div className={classes.reviewContainer}>
         <span className={classes.reviewTitle}>Opiniones del trabajador</span>
         <div className={classes.reviewCarousel}>
-          <ReviewCarousel workerData={workerData} />
-          {workerData?.worker?.totalReviews > 0 ? (
+          <ReviewCarousel worker={workerData?.user} />
+          {workerData?.user?.totalReviews > 0 ? (
             <button className={classes.opinionButton}>
               Ver todas las opiniones!
             </button>
@@ -38,33 +38,37 @@ export default function BackWorkerCard(props) {
           )}
         </div>
       </div>
-      <div className={classes.buttonContainer}>
-        {auth?.accessToken ? (
-          <div className={classes.loginContainer}>
-            <button
-              onClick={() => {
-                props.onInteract(workerData.worker.id, "CLIENT_LIKE");
-              }}
-              className={classes.contactButton}
-            >
-              Contactalo!
-            </button>
-          </div>
-        ) : (
-          <div className={classes.loginContainer}>
-            <p className={classes.loginInfoText}>
-              Para comunicarte debes iniciar sesion!
-            </p>
-            <button
-              onClick={() => onGoogleLogin()}
-              className={classes.loginButton}
-            >
-              <MDBIcon fab icon="google"></MDBIcon>
-              <p>Inicia sesion!</p>
-            </button>
-          </div>
-        )}
-      </div>
+      {infoOnly ? (
+        <></>
+      ) : (
+        <div className={classes.buttonContainer}>
+          {auth?.accessToken ? (
+            <div className={classes.loginContainer}>
+              <button
+                onClick={() => {
+                  props.onInteract(workerData?.user?.id, "CLIENT_LIKE");
+                }}
+                className={classes.contactButton}
+              >
+                Contactalo!
+              </button>
+            </div>
+          ) : (
+            <div className={classes.loginContainer}>
+              <p className={classes.loginInfoText}>
+                Para comunicarte debes iniciar sesion!
+              </p>
+              <button
+                onClick={() => onGoogleLogin()}
+                className={classes.loginButton}
+              >
+                <MDBIcon fab icon="google"></MDBIcon>
+                <p>Inicia sesion!</p>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

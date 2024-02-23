@@ -9,7 +9,7 @@ import BackWorkerCard from "./BackWorkerCard";
 
 export default function WorkerCard(props) {
   const navigate = useNavigate();
-  const { workerData, onInteract, onGoogleLogin } = props;
+  const { workerData, onInteract, onGoogleLogin, infoOnly } = props;
   const classes = useStyles();
   const [isFlipped, setIsFlipped] = useState(false);
   return (
@@ -29,9 +29,13 @@ export default function WorkerCard(props) {
         containerStyle={{ width: "100%", height: "100%", borderRadius: "10px" }}
         isFlipped={isFlipped}
       >
-        <FrontWorkerCard workerData={workerData} />
+        <FrontWorkerCard
+          infoOnly={infoOnly ? infoOnly : false}
+          workerData={workerData}
+        />
         <BackWorkerCard
           workerData={workerData}
+          infoOnly={infoOnly ? infoOnly : false}
           onInteract={(workerId, interactionType) =>
             onInteract(workerId, interactionType)
           }

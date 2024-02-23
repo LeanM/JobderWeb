@@ -144,21 +144,43 @@ export default function Nav(props) {
         </div>
         <div className={classes.navBarLowList}>
           {auth?.role === "WORKER" ? (
-            <></>
-          ) : (
             <div
               className={classes.navBarListItem}
               style={navButtonStyle}
               onClick={() => {
-                navigate("/");
+                navigate("/reviews");
               }}
             >
               <div className={classes.navBarListItemTextContainer}>
-                <p className={classes.navBarListItemText}>Busqueda</p>
+                <p className={classes.navBarListItemText}>Opiniones</p>
               </div>
             </div>
+          ) : (
+            <>
+              <div
+                className={classes.navBarListItem}
+                style={navButtonStyle}
+                onClick={() => {
+                  navigate("/");
+                }}
+              >
+                <div className={classes.navBarListItemTextContainer}>
+                  <p className={classes.navBarListItemText}>Busqueda</p>
+                </div>
+              </div>
+              <div
+                className={classes.navBarListItem}
+                style={navButtonStyle}
+                onClick={() => {
+                  navigate("/history");
+                }}
+              >
+                <div className={classes.navBarListItemTextContainer}>
+                  <p className={classes.navBarListItemText}>Historial</p>
+                </div>
+              </div>
+            </>
           )}
-
           <div
             className={classes.navBarListItem}
             onClick={() => {
@@ -249,12 +271,11 @@ const useStyles = createUseStyles({
     alignItems: "center",
   },
   navBarListItem: {
-    width: "5rem",
+    minWidth: "6rem",
     height: "70%",
     display: "flex",
     fontSize: "1rem",
-    fontFamily: "Poppins",
-    fontWeight: "300",
+    fontWeight: "700",
     marginTop: "auto",
     marginBottom: "auto",
     justifyContent: "center",

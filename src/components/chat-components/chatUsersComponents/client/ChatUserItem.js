@@ -7,7 +7,7 @@ import { Tooltip, Whisper } from "rsuite";
 import UserInteractionModalForClients from "./UserInteractionModalForClients";
 
 export default function ChatUserItem(props) {
-  const { actualRecipientId, chatroomUserData, onSelect, onAccept } = props;
+  const { actualRecipientId, chatroomUserData, onSelect } = props;
   const { auth } = useAuth();
   const [style, setStyle] = useState({});
   const [data, setData] = useState(chatroomUserData);
@@ -60,7 +60,6 @@ export default function ChatUserItem(props) {
         onClose={() => setOpenUserInteraction(false)}
         onReject={() => {
           props.onReject(data?.user?.id);
-          onSelect(0);
           setOpenUserInteraction(false);
         }}
       />

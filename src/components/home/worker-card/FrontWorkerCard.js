@@ -4,25 +4,22 @@ import { colors } from "../../../assets/colors";
 import Avatar from "react-avatar";
 
 export default function FrontWorkerCard(props) {
-  const { workerData } = props;
+  const { workerData, infoOnly } = props;
   const classes = useStyles();
   return (
     <div className={classes.frontContainer}>
-      {!workerData?.worker?.picture ? (
+      {!workerData?.user?.picture ? (
         <div className={classes.imageContainer}>
           <Avatar
             size="100%"
-            name={workerData?.worker?.name}
+            name={workerData?.user?.name}
             maxInitials={2}
             round={true}
           />
         </div>
       ) : (
         <div className={classes.imageContainer}>
-          <img
-            className={classes.image}
-            src={workerData?.worker?.picture}
-          ></img>
+          <img className={classes.image} src={workerData?.user?.picture}></img>
         </div>
       )}
 
@@ -35,22 +32,28 @@ export default function FrontWorkerCard(props) {
             marginBottom: "1rem",
           }}
         >
-          {workerData.worker.name}
+          {workerData?.user?.name}
         </span>
         <div className={classes.dataItem}>
           <div className={classes.dataItemIconContainer}>
             <MDBIcon icon="info" style={{}}></MDBIcon>
           </div>
-          <span className={classes.dataItemTextContainer}>
-            {workerData?.distanceInKm}Km de distancia
-          </span>
+          {workerData?.distanceInKm ? (
+            <span className={classes.dataItemTextContainer}>
+              {workerData?.distanceInKm}Km de distancia
+            </span>
+          ) : (
+            <span className={classes.dataItemTextContainer}>
+              {workerData?.user?.address}
+            </span>
+          )}
         </div>
         <div className={classes.dataItem}>
           <div className={classes.dataItemIconContainer}>
             <MDBIcon style={{ color: "yellow" }} icon="star"></MDBIcon>
           </div>
           <span className={classes.dataItemTextContainer}>
-            {workerData?.worker?.averageRating}
+            {workerData?.user?.averageRating}
           </span>
         </div>
         <div className={classes.dataItem}>
@@ -58,11 +61,11 @@ export default function FrontWorkerCard(props) {
             <MDBIcon style={{ color: "orange" }} icon="medal"></MDBIcon>
           </div>
           <span className={classes.dataItemTextContainer}>
-            {workerData?.worker?.worksFinished}+ trabajos realizados
+            {workerData?.user?.worksFinished}+ trabajos realizados
           </span>
         </div>
         <div className={classes.statusContainer}>
-          {workerData?.worker?.availabilityStatus === "AVAILABLE" ? (
+          {workerData?.user?.availabilityStatus === "AVAILABLE" ? (
             <>
               <div
                 className={classes.statusIcon}
@@ -70,7 +73,7 @@ export default function FrontWorkerCard(props) {
               ></div>
               <span className={classes.statusText}>Hoy disponible!</span>
             </>
-          ) : workerData?.worker?.availabilityStatus === "MODERATED" ? (
+          ) : workerData?.user?.availabilityStatus === "MODERATED" ? (
             <>
               <div
                 className={classes.statusIcon}

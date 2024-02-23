@@ -11,10 +11,11 @@ import UserInteractionModalForClients from "./UserInteractionModalForClients";
 const ChatUsers = forwardRef((props, ref) => {
   const { chatRoomUsers, actualRecipientId } = props;
   const axiosPrivate = useAxiosPrivate();
-  const [matchesCompletedUsers, setMatchesCompletedUsers] = useState([]);
+  const [matchedUsers, setMatchedUsers] = useState([]);
+  const [onSolicitudeUsers, setOnSolicitudeUsers] = useState([]);
   const [selectionItemsArray, setSelectionItemsArray] = useState([
     { id: 1, itemName: "Matches", itemCode: "MATCHES" },
-    { id: 2, itemName: "Matches Completados", itemCode: "COMPLETED" },
+    { id: 2, itemName: "Solicitados", itemCode: "SOLICITUDES" },
   ]);
   const [actualTabSelection, setActualTabSelection] = useState("MATCHES");
 
@@ -25,14 +26,23 @@ const ChatUsers = forwardRef((props, ref) => {
   }));
 
   useEffect(() => {
-    fetchMatchesCompletedUsers();
-  }, []);
+    distributeUsers();
+  }, [chatRoomUsers]);
 
-  const fetchMatchesCompletedUsers = () => {
-    axiosPrivate
-      .post("/matching/client/matchesCompletedWorkers")
-      .then((response) => setMatchesCompletedUsers(response.data))
-      .catch((error) => console.log(error));
+  const distributeUsers = () => {
+    let matchedUsersData = [];
+    let solicitudeUsersData = [];
+
+    chatRoomUsers.map((chatRoomUser) => {
+      if (chatRoomUser?.interaction?.interactionType === "CLIENT_LIKE")
+        solicitudeUsersData.push(chatRoomUser);
+      else if (chatRoomUser?.interaction?.interactionType === "MATCH") {
+        matchedUsersData.push(chatRoomUser);
+      }
+    });
+
+    setMatchedUsers(matchedUsersData);
+    setOnSolicitudeUsers(solicitudeUsersData);
   };
 
   const handleChangeTabSelection = (selection) => {
@@ -71,13 +81,22 @@ const ChatUsers = forwardRef((props, ref) => {
         />
       </div>
       <div className={classes.chatUsersSubContainer}>
-        {actualTabSelection === "COMPLETED"
-          ? matchesCompletedUsers.map((matchCompletedUser) => {
+        {actualTabSelection === "SOLICITUDES"
+          ? onSolicitudeUsers.map((onSolicitudeUser) => {
               return (
-                <MatchCompletedItem matchCompletedData={matchCompletedUser} />
+                <ChatUserItem
+                  key={onSolicitudeUser.interaction.id}
+                  onSelect={(userId) => props.onSelect(userId)}
+                  onReject={(userId) => {
+                    props.onSelect(0);
+                    props.onDelete(userId);
+                  }}
+                  chatroomUserData={onSolicitudeUser}
+                  actualRecipientId={actualRecipientId}
+                />
               );
             })
-          : chatRoomUsers.map((chatroomUser) => {
+          : matchedUsers.map((chatroomUser) => {
               return (
                 <ChatUserItem
                   key={chatroomUser.interaction.id}
@@ -85,7 +104,6 @@ const ChatUsers = forwardRef((props, ref) => {
                   onReject={(userId) => {
                     props.onDelete(userId);
                   }}
-                  onAccept={(userChatRoom) => props.onUpdate(userChatRoom)}
                   chatroomUserData={chatroomUser}
                   actualRecipientId={actualRecipientId}
                 />

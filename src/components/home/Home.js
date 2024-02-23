@@ -103,6 +103,7 @@ export default function Home() {
             </span>
             <textarea
               className={classes.inputText}
+              style={{ resize: "none" }}
               type="text"
               rows="5"
               placeholder="Tengo un problema con..."
