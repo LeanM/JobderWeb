@@ -3,11 +3,30 @@ import { colors } from "../../../assets/colors";
 import ReviewCarousel from "./review-carousel/ReviewCarousel";
 import { MDBIcon } from "mdb-react-ui-kit";
 import useAuth from "../../../hooks/useAuth";
+import { useState, useEffect } from "react";
+import { fetchWorkerReviewsExample } from "../../../connection/requests";
 
 export default function BackWorkerCard(props) {
   const { auth } = useAuth();
   const classes = useStyles();
   const { workerData, onGoogleLogin, infoOnly } = props;
+  const [workerReviews, setWorkerReviews] = useState([]);
+
+  useEffect(() => {
+    getReviews();
+  }, [workerData]);
+
+  const getReviews = () => {
+    if (workerData?.user?.totalReviews > 0)
+      fetchWorkerReviewsExample(workerData?.user?.id)
+        .then((response) => {
+          setWorkerReviews(response.data);
+        })
+        .catch((error) => console.log(error));
+    else {
+      setWorkerReviews([]);
+    }
+  };
 
   return (
     <div className={classes.backContainer}>
@@ -28,7 +47,7 @@ export default function BackWorkerCard(props) {
       <div className={classes.reviewContainer}>
         <span className={classes.reviewTitle}>Opiniones del trabajador</span>
         <div className={classes.reviewCarousel}>
-          <ReviewCarousel worker={workerData?.user} />
+          <ReviewCarousel reviews={workerReviews} />
           {workerData?.user?.totalReviews > 0 ? (
             <button className={classes.opinionButton}>
               Ver todas las opiniones!

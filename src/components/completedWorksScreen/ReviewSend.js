@@ -3,16 +3,14 @@ import { colors } from "../../assets/colors";
 import { useEffect, useState } from "react";
 import { Rating } from "@mui/material";
 import toast from "react-hot-toast";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 export default function ReviewSend(props) {
-  const { workerData } = props;
+  const { workerData, onSend } = props;
   const [ratingValue, setRatingValue] = useState(1);
   const [textValue, setTextValue] = useState("");
+  const axiosPrivate = useAxiosPrivate();
   const classes = useStyles();
-
-  useEffect(() => {
-    console.log(ratingValue);
-  }, [ratingValue]);
 
   const handleSendReview = () => {
     let review = {
@@ -20,6 +18,22 @@ export default function ReviewSend(props) {
       content: textValue,
       rating: ratingValue,
     };
+    toast.promise(postReview(review), {
+      loading: "Enviando opinion...",
+      success: (response) => {
+        onSend();
+        setTextValue("");
+        setRatingValue(1);
+        return <b>Se envio la opinion correctamente!</b>;
+      },
+      error: (error) => {
+        return <b>Hubo un problema al enviar la opinion!</b>;
+      },
+    });
+  };
+
+  const postReview = async (review) => {
+    return axiosPrivate.post("/review/add/review", JSON.stringify(review));
   };
 
   return (
@@ -48,6 +62,7 @@ export default function ReviewSend(props) {
             border: "solid 1px",
             borderColor: colors.secondary,
           }}
+          value={textValue}
           placeholder="Describe como fue tu experiencia con el trabajador..."
           onChange={(e) => setTextValue(e.target.value)}
         ></textarea>

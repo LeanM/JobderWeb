@@ -6,6 +6,7 @@ import Nav from "../pagewrappers/Nav";
 import CompletedCarousel from "./completedCarouselComponents/CompletedCarousel";
 import WorkerCard from "../home/worker-card/WorkerCard";
 import ReviewSend from "./ReviewSend";
+import InteractionInfo from "./InteractionInfo";
 
 export default function Completed() {
   const axiosPrivate = useAxiosPrivate();
@@ -19,10 +20,6 @@ export default function Completed() {
   useEffect(() => {
     fetchMatchesCompletedUsers();
   }, []);
-
-  useEffect(() => {
-    console.log(selectedUserInteraction);
-  }, [selectedUserInteraction]);
 
   const fetchMatchesCompletedUsers = () => {
     axiosPrivate
@@ -51,27 +48,53 @@ export default function Completed() {
           <div className={classes.completedUserInteractionInfoContainer}>
             {selectedUserInteraction ? (
               <>
-                <div className={classes.workerCardInfoContainer}>
-                  <WorkerCard
-                    infoOnly={true}
-                    workerData={selectedUserInteraction}
-                  />
-                </div>
-                <div className={classes.interactionInfoContainer}>
-                  <span>
-                    {
-                      selectedUserInteraction?.interaction
-                        ?.clientProblemDescription
-                    }
-                  </span>
-                  <span>{selectedUserInteraction?.interaction?.closedAt}</span>
-                </div>
-                <div className={classes.dataContainer}>
-                  <div className={classes.addReviewContainer}>
-                    <ReviewSend workerData={selectedUserInteraction?.user} />
+                <div className={classes.infoContainerRow}>
+                  <div className={classes.workerCardInfoContainer}>
+                    <WorkerCard
+                      infoOnly={true}
+                      workerData={selectedUserInteraction}
+                    />
+                  </div>
+                  <div className={classes.interactionInfoContainer}>
+                    <InteractionInfo
+                      interactionData={selectedUserInteraction?.interaction}
+                    />
+                    <span
+                      style={{
+                        color: colors.textSecondary,
+                        textAlign: "center",
+                      }}
+                    >
+                      Tienes otro problema y te gusto el trabajo de{" "}
+                      {selectedUserInteraction?.user?.name}?
+                    </span>
+                    <button
+                      style={{
+                        width: "10rem",
+                        height: "2.5rem",
+                        backgroundColor: colors.primary,
+                        borderRadius: "5px",
+                        color: colors.textSecondary,
+                        border: "solid 1px " + colors.secondary,
+                      }}
+                    >
+                      Volver a contactar!
+                    </button>
                   </div>
                 </div>
-                <button>Volver a contactar!</button>
+                <div className={classes.infoContainerRow}>
+                  <div className={classes.dataContainer}>
+                    <div className={classes.addReviewContainer}>
+                      <ReviewSend
+                        workerData={selectedUserInteraction?.user}
+                        onSend={() => {
+                          fetchMatchesCompletedUsers();
+                          setSelectedUserInteraction(null);
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
               </>
             ) : (
               <></>
@@ -106,18 +129,26 @@ const useStyles = createUseStyles({
   },
   completedCarouselContainer: {
     width: "50%",
-    height: "7rem",
+    height: "12rem",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
   },
   completedUserInteractionInfoContainer: {
-    height: "80vh",
     width: "100%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    flexDirection: "column",
     marginTop: "4rem",
+    gap: "5rem",
+  },
+  infoContainerRow: {
+    width: "100%",
+    minHeight: "50vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   workerCardInfoContainer: {
     width: "30%",
@@ -127,14 +158,12 @@ const useStyles = createUseStyles({
     alignItems: "center",
   },
   interactionInfoContainer: {
-    width: "30%",
-    height: "50%",
+    width: "25%",
     display: "flex",
     justifyContent: "center",
     flexDirection: "column",
     alignItems: "center",
-    backgroundColor: colors.textSecondary,
-    borderRadius: "10px",
+    gap: "2rem",
   },
   dataContainer: {
     width: "30%",

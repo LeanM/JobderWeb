@@ -58,8 +58,7 @@ export default function Review(props) {
               textAlign: "left",
             }}
           >
-            "{reviewData?.review?.content}" aaaaaaa a a a a aaaaaaaa a a asd asd
-            as das das dasd as
+            "{reviewData?.review?.content}"
           </span>
         </div>
       </div>

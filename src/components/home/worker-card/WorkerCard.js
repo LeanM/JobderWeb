@@ -1,7 +1,7 @@
 import { createUseStyles } from "react-jss";
 import { colors } from "../../../assets/colors";
 import ReactCardFlip from "react-card-flip";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FrontWorkerCard from "./FrontWorkerCard";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -11,7 +11,13 @@ export default function WorkerCard(props) {
   const navigate = useNavigate();
   const { workerData, onInteract, onGoogleLogin, infoOnly } = props;
   const classes = useStyles();
+  const [actualWorkerData, setActualWorkerData] = useState(workerData);
   const [isFlipped, setIsFlipped] = useState(false);
+
+  useEffect(() => {
+    setActualWorkerData(workerData);
+  }, [workerData]);
+
   return (
     <motion.div
       layout
@@ -31,10 +37,10 @@ export default function WorkerCard(props) {
       >
         <FrontWorkerCard
           infoOnly={infoOnly ? infoOnly : false}
-          workerData={workerData}
+          workerData={actualWorkerData}
         />
         <BackWorkerCard
-          workerData={workerData}
+          workerData={actualWorkerData}
           infoOnly={infoOnly ? infoOnly : false}
           onInteract={(workerId, interactionType) =>
             onInteract(workerId, interactionType)

@@ -12,18 +12,22 @@ export default function ReviewCarousel(props) {
   });
   const [slidesToShow, setSlidesToShow] = useState(1);
   const [draggable, setDraggable] = useState(false);
-  const [reviews, setReviews] = useState([]);
 
-  const { worker } = props;
+  const { reviews } = props;
+  const [actualReviews, setActualReviews] = useState([]);
 
   const sliderRef = useRef(null);
   const classes = useStyles();
 
   useEffect(() => {
+    console.log(reviews);
+    setActualReviews(reviews);
+  }, [reviews]);
+
+  useEffect(() => {
     const handleResize = () => {
       setViewportSize({ width: window.innerWidth, height: window.innerHeight });
     };
-    getReviews();
     // Agregar un event listener para manejar cambios en el tamaño de la ventana
     window.addEventListener("resize", handleResize);
 
@@ -42,15 +46,6 @@ export default function ReviewCarousel(props) {
     */
     if (viewportSize.width < 800) setDraggable(true);
   }, [viewportSize]);
-
-  const getReviews = async () => {
-    if (worker?.totalReviews > 0)
-      fetchWorkerReviewsExample(worker?.id)
-        .then((response) => {
-          setReviews(response.data);
-        })
-        .catch((error) => console.log(error));
-  };
 
   let settings = {
     dots: false,
@@ -76,8 +71,8 @@ export default function ReviewCarousel(props) {
         swipeToSlide={true}
         draggable={draggable}
       >
-        {reviews?.length > 0 ? (
-          reviews.map((review) => {
+        {actualReviews?.length > 0 ? (
+          actualReviews.map((review) => {
             return <Review key={review.id} reviewData={review} />;
           })
         ) : (
