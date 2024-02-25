@@ -12,6 +12,7 @@ import useAuth from "../../../hooks/useAuth";
 import { useGoogleLogin } from "@react-oauth/google";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import toast from "react-hot-toast";
+import ReactLoading from "react-loading";
 
 export default function ClientLanding(props) {
   const { auth, resetSearchParameters, loginGoogle } = useAuth();
@@ -19,19 +20,42 @@ export default function ClientLanding(props) {
   const navigate = useNavigate();
   const location = useLocation();
   const { geoLocation } = useGeoLocation();
+
   const workerCategory = location.state?.workerCategory;
   const importance = location.state?.importance;
   const problemDescription = location.state?.problemDescription;
+
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isSearching, setIsSearching] = useState(true);
+  const [canSearch, setCanSearch] = useState(true);
+  const [actualInitialPage, setActualInitialPage] = useState(0);
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
+    initialiceSearch();
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop + 1 >=
+      document.documentElement.scrollHeight
+    ) {
+      if (canSearch) initialiceSearch();
+    }
+  };
+
+  const initialiceSearch = () => {
     if (workerCategory && importance) {
+      setCanSearch(false);
+      setIsSearching(true);
       if (auth?.accessToken) searchWorkersLogged();
       else searchWorkersNotLogged();
     } else navigate("/");
-  }, []);
+  };
 
   const searchWorkersNotLogged = () => {
     let searchInfo = {
@@ -40,14 +64,21 @@ export default function ClientLanding(props) {
       longitude: geoLocation?.longitude,
       availabilityStatus: importance,
       minimumDistanceInKm: 50,
+      initialPage: actualInitialPage,
     };
     if (!searchInfo.latitude || !searchInfo.longitude) {
       navigate("/");
     } else {
       fetchWorkersUnlogged(searchInfo)
         .then((response) => {
-          setWorkers(response.data);
-          setLoading(false);
+          const newWorkers = response.data?.workerSearchData;
+          if (newWorkers?.length !== 0) {
+            setWorkers([...workers, ...newWorkers]);
+            setActualInitialPage(response.data?.paginationData?.newInitialPage);
+            setLoading(false);
+            setIsSearching(false);
+            setCanSearch(true);
+          }
         })
         .catch((error) => navigate("/"));
     }
@@ -59,13 +90,17 @@ export default function ClientLanding(props) {
       clientProblemDescription: problemDescription,
       availabilityStatus: importance,
       minimumDistanceInKm: 50,
+      initialPage: actualInitialPage,
     };
 
     fetchWorkersLogged(searchInfo)
       .then((response) => {
-        console.log(response.data);
-        setWorkers(response.data);
+        const newWorkers = response.data?.workerSearchData;
+        setWorkers([...workers, ...newWorkers]);
+        setActualInitialPage(response.data?.paginationData?.newInitialPage);
         setLoading(false);
+        setIsSearching(false);
+        setCanSearch(true);
       })
       .catch((error) => {
         if (error?.response?.status === 401)
@@ -191,6 +226,18 @@ export default function ClientLanding(props) {
               );
             })}
           </motion.div>
+          <div className={classes.searchStatus}>
+            {isSearching ? (
+              <ReactLoading
+                type="spinningBubbles"
+                color={colors.secondary}
+                height={"2rem"}
+                width={"3rem"}
+              />
+            ) : (
+              <></>
+            )}
+          </div>
         </div>
       </div>
     </>
@@ -200,7 +247,7 @@ export default function ClientLanding(props) {
 const useStyles = createUseStyles({
   container: {
     width: "100%",
-    minHeight: "200vh",
+    minHeight: "100vh",
     paddingTop: "12rem",
     background: `linear-gradient(${colors.primary},${colors.primary})`,
     fontFamily: "Montserrat",
@@ -211,11 +258,11 @@ const useStyles = createUseStyles({
   },
   subContainer: {
     width: "90%",
-    height: "95%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
+    backgroundColor: colors.primary,
     gap: "2em",
   },
   title: {
@@ -232,12 +279,19 @@ const useStyles = createUseStyles({
   },
   resultsContainer: {
     width: "100%",
-    height: "80%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     flexWrap: "wrap",
     gap: "1rem",
+  },
+  searchStatus: {
+    width: "100%",
+    height: "15rem",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.primary,
   },
   resetSearchButton: {
     width: "15rem",
