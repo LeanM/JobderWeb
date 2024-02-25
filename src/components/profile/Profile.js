@@ -243,7 +243,7 @@ const useStyles = createUseStyles({
   },
   leftBodySection: {
     width: "100%",
-    minHeight: "10rem",
+    minHeight: "60vh",
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",
