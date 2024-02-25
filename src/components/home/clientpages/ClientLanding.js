@@ -1,6 +1,6 @@
 import { createUseStyles } from "react-jss";
 import { colors } from "../../../assets/colors";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import WorkerCard from "../worker-card/WorkerCard";
 import { motion, AnimatePresence } from "framer-motion";
 import Nav from "../../pagewrappers/Nav";
@@ -27,31 +27,33 @@ export default function ClientLanding(props) {
 
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isSearching, setIsSearching] = useState(true);
+  const [isSearchingMoreWorkers, setIsSearchingMoreWorkers] = useState(false);
   const [canSearch, setCanSearch] = useState(true);
   const [actualInitialPage, setActualInitialPage] = useState(0);
   const axiosPrivate = useAxiosPrivate();
 
+  const observer = useRef();
+  const lastWorkerRef = useCallback(
+    (node) => {
+      if (loading || isSearchingMoreWorkers) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && canSearch) {
+          initialiceSearch();
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, isSearchingMoreWorkers, canSearch]
+  );
+
   useEffect(() => {
     initialiceSearch();
-    window.addEventListener("scroll", handleScroll);
-
-    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const handleScroll = () => {
-    if (
-      window.innerHeight + document.documentElement.scrollTop + 1 >=
-      document.documentElement.scrollHeight
-    ) {
-      if (canSearch) initialiceSearch();
-    }
-  };
 
   const initialiceSearch = () => {
     if (workerCategory && importance) {
-      setCanSearch(false);
-      setIsSearching(true);
+      setIsSearchingMoreWorkers(true);
       if (auth?.accessToken) searchWorkersLogged();
       else searchWorkersNotLogged();
     } else navigate("/");
@@ -67,6 +69,7 @@ export default function ClientLanding(props) {
       initialPage: actualInitialPage,
     };
     if (!searchInfo.latitude || !searchInfo.longitude) {
+      toast.error("Debes especificar tu ubicacion para buscar trabajadores!");
       navigate("/");
     } else {
       fetchWorkersUnlogged(searchInfo)
@@ -75,12 +78,17 @@ export default function ClientLanding(props) {
           if (newWorkers?.length !== 0) {
             setWorkers([...workers, ...newWorkers]);
             setActualInitialPage(response.data?.paginationData?.newInitialPage);
-            setLoading(false);
-            setIsSearching(false);
-            setCanSearch(true);
-          }
+          } else setCanSearch(false);
+          setLoading(false);
+          setIsSearchingMoreWorkers(false);
         })
-        .catch((error) => navigate("/"));
+        .catch((error) => {
+          setIsSearchingMoreWorkers(false);
+          setLoading(false);
+          setCanSearch(false);
+          //navigate("/");
+          toast.error(error?.response?.data);
+        });
     }
   };
 
@@ -96,13 +104,16 @@ export default function ClientLanding(props) {
     fetchWorkersLogged(searchInfo)
       .then((response) => {
         const newWorkers = response.data?.workerSearchData;
-        setWorkers([...workers, ...newWorkers]);
-        setActualInitialPage(response.data?.paginationData?.newInitialPage);
+        if (newWorkers?.length !== 0) {
+          setWorkers([...workers, ...newWorkers]);
+          setActualInitialPage(response.data?.paginationData?.newInitialPage);
+        } else setCanSearch(false);
         setLoading(false);
-        setIsSearching(false);
-        setCanSearch(true);
+        setIsSearchingMoreWorkers(false);
       })
       .catch((error) => {
+        setIsSearchingMoreWorkers(false);
+        setLoading(false);
         if (error?.response?.status === 401)
           navigate("/login", {
             state: { from: "/clientLanding" },
@@ -111,8 +122,9 @@ export default function ClientLanding(props) {
 
         if (error?.response?.status === 400) {
           toast.error(error?.response?.data);
-          navigate("/profile");
+          //navigate("/profile");
         }
+        setCanSearch(false);
       });
   };
 
@@ -213,7 +225,7 @@ export default function ClientLanding(props) {
           </button>
 
           <motion.div layout className={classes.resultsContainer}>
-            {workers.map((worker) => {
+            {workers.map((worker, index) => {
               return (
                 <WorkerCard
                   key={worker?.user?.id}
@@ -226,14 +238,19 @@ export default function ClientLanding(props) {
               );
             })}
           </motion.div>
-          <div className={classes.searchStatus}>
-            {isSearching ? (
+          <div className={classes.searchStatus} ref={lastWorkerRef}>
+            {isSearchingMoreWorkers ? (
               <ReactLoading
                 type="spinningBubbles"
                 color={colors.secondary}
                 height={"2rem"}
                 width={"3rem"}
               />
+            ) : !canSearch ? (
+              <span style={{ textAlign: "center", color: colors.secondary }}>
+                No hay mas trabajadores cercanos para esos prametros de
+                busqueda!
+              </span>
             ) : (
               <></>
             )}
@@ -287,10 +304,11 @@ const useStyles = createUseStyles({
   },
   searchStatus: {
     width: "100%",
-    height: "15rem",
+    height: "13vh",
+    marginTop: "25vh",
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "start",
     backgroundColor: colors.primary,
   },
   resetSearchButton: {
