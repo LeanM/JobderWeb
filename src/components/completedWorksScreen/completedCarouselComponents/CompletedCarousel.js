@@ -36,10 +36,12 @@ export default function CompletedCarousel(props) {
     let slidesQuantity = completedUsersInteractions?.length;
     if (slidesQuantity === 1 || slidesQuantity === 2)
       setSlidesToShow(slidesQuantity);
-    else {
-      if (viewportSize.width < 1000) setSlidesToShow(2);
-      else setSlidesToShow(3);
-    }
+  }, [completedUsersInteractions]);
+
+  useEffect(() => {
+    if (viewportSize.width < 1000) setSlidesToShow(2);
+    else setSlidesToShow(3);
+
     if (viewportSize.width < 800) setDraggable(true);
   }, [viewportSize]);
 
@@ -47,7 +49,7 @@ export default function CompletedCarousel(props) {
     dots: false,
     infinite: true,
     speed: 300,
-    slidesToShow: slidesToShow,
+    slidesToShow: 1,
     slidesToScroll: 1,
   };
   return (
