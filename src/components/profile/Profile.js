@@ -63,14 +63,16 @@ export default function Profile() {
             </span>
           </div>
           <div className={classes.leftBodySection}>
-            <button
-              onClick={() => {
-                logOutAuth();
-              }}
-              className={classes.logoutButton}
-            >
-              Cerrar Sesion
-            </button>
+            <div className={classes.leftBodyOptions}>
+              <button
+                onClick={() => {
+                  logOutAuth();
+                }}
+                className={classes.logoutButton}
+              >
+                Cerrar Sesion
+              </button>
+            </div>
           </div>
         </div>
         <div className={classes.subContainer}>
@@ -185,6 +187,17 @@ export default function Profile() {
                     actualValue={userData?.description}
                   />
                 </div>
+                <div className={classes.bodyTitle}>
+                  <span
+                    style={{
+                      fontWeight: "800",
+                      color: colors.secondary,
+                      fontSize: "1.7rem",
+                    }}
+                  >
+                    Tu disponibilidad hoy
+                  </span>
+                </div>
                 <AvailbilityStatus
                   availability={userData?.availabilityStatus}
                 />
@@ -192,16 +205,27 @@ export default function Profile() {
             ) : (
               <></>
             )}
+            <div className={classes.bodyTitle}>
+              <span
+                style={{
+                  fontWeight: "800",
+                  color: colors.secondary,
+                  fontSize: "1.7rem",
+                }}
+              >
+                Contraseña
+              </span>
+            </div>
             <div className={classes.attributeItemContainer}>
               <button
                 style={{
                   fontWeight: "400",
-                  width: "15rem",
+
                   height: "2rem",
                   fontSize: "1rem",
                   color: colors.notificationLight,
                   backgroundColor: colors.primary,
-                  border: "solid 1px " + colors.notificationLight,
+
                   borderRadius: "10px",
                 }}
                 onClick={() => setOpenPasswordModal(true)}
@@ -253,7 +277,7 @@ const useStyles = createUseStyles({
     width: "8rem",
     height: "2rem",
     borderRadius: "10px",
-    fontWeight: "700",
+    fontWeight: "400",
     backgroundColor: colors.primary,
     color: colors.notificationLight,
 
@@ -295,12 +319,18 @@ const useStyles = createUseStyles({
     height: "100%",
   },
   bodySection: {
-    height: "100vh",
     width: "100%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "start",
+  },
+  bodyTitle: {
+    height: "7rem",
+    width: "100%",
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "end",
   },
   attributeItemContainer: {
     width: "70%",

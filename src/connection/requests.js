@@ -36,6 +36,6 @@ export const fetchWorkerReviewsExample = (workerId) => {
   return axios.get("/review/obtain/reviews/example/" + workerId);
 };
 
-export const fetchALLWorkerReviews = (workerId) => {
+export const fetchAllWorkerReviews = (workerId) => {
   return axios.get("/review/obtain/reviews/" + workerId);
 };

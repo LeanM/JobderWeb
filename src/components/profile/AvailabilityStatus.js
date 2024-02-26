@@ -52,7 +52,7 @@ export default function AvailbilityStatus(props) {
 
   return (
     <div className={classes.statusSelectionContainer}>
-      <span style={{ color: colors.secondary, fontWeight: "700" }}>
+      <span style={{ color: colors.textSecondary, fontWeight: "700" }}>
         ¿Quieres cambiar tu grado de disponibilidad hoy?
       </span>
       <span style={{ color: colors.secondary }}>
@@ -81,9 +81,11 @@ export default function AvailbilityStatus(props) {
       >
         <button
           style={{
+            width: "15rem",
+            height: "3rem",
             backgroundColor: colors.primary,
             color: colors.secondary,
-            borderRadius: "5px",
+            borderRadius: "20px",
             border: "solid 1px " + colors.secondary,
             fontWeight: "400",
             fontSize: "1rem",

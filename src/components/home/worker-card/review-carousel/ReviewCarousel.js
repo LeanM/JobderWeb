@@ -71,15 +71,9 @@ export default function ReviewCarousel(props) {
         swipeToSlide={true}
         draggable={draggable}
       >
-        {actualReviews?.length > 0 ? (
-          actualReviews.map((review) => {
-            return <Review key={review.id} reviewData={review} />;
-          })
-        ) : (
-          <span style={{ color: colors.primary }}>
-            El trabajador no posee opiniones!
-          </span>
-        )}
+        {actualReviews.map((review) => {
+          return <Review key={review.id} reviewData={review} />;
+        })}
       </Slider>
       <button
         className={classes.button}

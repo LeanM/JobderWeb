@@ -4,17 +4,27 @@ import ReviewCarousel from "./review-carousel/ReviewCarousel";
 import { MDBIcon } from "mdb-react-ui-kit";
 import useAuth from "../../../hooks/useAuth";
 import { useState, useEffect } from "react";
-import { fetchWorkerReviewsExample } from "../../../connection/requests";
+import {
+  fetchAllWorkerReviews,
+  fetchWorkerReviewsExample,
+} from "../../../connection/requests";
+import ReviewModal from "./review-modal/ReviewModal";
+import toast from "react-hot-toast";
 
 export default function BackWorkerCard(props) {
   const { auth } = useAuth();
   const classes = useStyles();
   const { workerData, onGoogleLogin, infoOnly } = props;
   const [workerReviews, setWorkerReviews] = useState([]);
+  const [openReviewModal, setOpenReviewModal] = useState(false);
 
   useEffect(() => {
     getReviews();
   }, [workerData]);
+
+  useEffect(() => {
+    console.log(openReviewModal);
+  }, [openReviewModal]);
 
   const getReviews = () => {
     if (workerData?.user?.totalReviews > 0)
@@ -28,8 +38,30 @@ export default function BackWorkerCard(props) {
     }
   };
 
+  const setupReviewModalWithAllReviews = () => {
+    if (workerReviews.length !== workerData?.user?.totalReviews) {
+      toast.promise(fetchAllWorkerReviews(workerData?.user?.id), {
+        loading: "Obteniendo todas las opiniones del trabajador...",
+        success: (response) => {
+          setWorkerReviews(response.data);
+          setOpenReviewModal(true);
+
+          return <b>Se obtuvieron las opiniones!</b>;
+        },
+        error: (error) => {},
+      });
+    } else setOpenReviewModal(true);
+  };
+
   return (
     <div className={classes.backContainer}>
+      <ReviewModal
+        open={openReviewModal}
+        onClose={() => {
+          setOpenReviewModal(false);
+        }}
+        reviews={workerReviews}
+      />
       <div className={classes.backInfoContainer}>
         <div className={classes.infoBlock}>
           <p className={classes.infoLabel}>Descripcion</p>
@@ -47,13 +79,20 @@ export default function BackWorkerCard(props) {
       <div className={classes.reviewContainer}>
         <span className={classes.reviewTitle}>Opiniones del trabajador</span>
         <div className={classes.reviewCarousel}>
-          <ReviewCarousel reviews={workerReviews} />
           {workerData?.user?.totalReviews > 0 ? (
-            <button className={classes.opinionButton}>
-              Ver todas las opiniones!
-            </button>
+            <>
+              <ReviewCarousel reviews={workerReviews} />
+              <button
+                className={classes.opinionButton}
+                onClick={() => setupReviewModalWithAllReviews()}
+              >
+                Ver todas las opiniones!
+              </button>
+            </>
           ) : (
-            <></>
+            <span style={{ color: colors.primary, textAlign: "center" }}>
+              El trabajador no posee opiniones!
+            </span>
           )}
         </div>
       </div>

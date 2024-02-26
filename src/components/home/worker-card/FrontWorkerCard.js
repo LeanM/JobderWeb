@@ -53,7 +53,8 @@ export default function FrontWorkerCard(props) {
             <MDBIcon style={{ color: "yellow" }} icon="star"></MDBIcon>
           </div>
           <span className={classes.dataItemTextContainer}>
-            {workerData?.user?.averageRating}
+            {workerData?.user?.averageRating +
+              ` (${workerData?.user?.totalReviews})`}
           </span>
         </div>
         <div className={classes.dataItem}>
@@ -131,10 +132,10 @@ const useStyles = createUseStyles({
     gap: "0.2rem",
   },
   dataItem: {
-    color: colors.white,
+    color: colors.textSecondary,
     width: "100%",
     paddingLeft: "1.5rem",
-    fontWeight: "100",
+    fontWeight: "400",
     fontSize: "1rem",
     display: "flex",
     justifyContent: "flex-start",
@@ -164,6 +165,6 @@ const useStyles = createUseStyles({
     borderRadius: "100em",
   },
   statusText: {
-    color: colors.white,
+    color: colors.textSecondary,
   },
 });
