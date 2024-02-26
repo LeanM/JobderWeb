@@ -10,9 +10,11 @@ import WorkerCategorySelect from "../home/WorkerCategorySelect";
 import { registerSubmission } from "../../connection/requests";
 import toast from "react-hot-toast";
 import useAuth from "../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function WorkerRegistration() {
+  const location = useLocation();
+  const from = location.state?.from || "/";
   const formRef = useRef(null);
   const { setAuth } = useAuth();
   const navigate = useNavigate();
@@ -132,7 +134,7 @@ export default function WorkerRegistration() {
           };
 
           setAuth(authentication);
-          navigate("/");
+          navigate(from);
 
           return <b>Successfuly logged in!</b>;
         },

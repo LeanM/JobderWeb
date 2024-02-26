@@ -65,6 +65,7 @@ export const AuthProvider = ({ children }) => {
         setAuth(authentication);
 
         if (from) navigate(from, { replace: true });
+        else navigate("/");
 
         return <b>Successfuly logged in!</b>;
       },

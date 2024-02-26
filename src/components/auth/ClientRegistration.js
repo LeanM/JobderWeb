@@ -10,9 +10,12 @@ import { registerSubmission } from "../../connection/requests";
 import toast from "react-hot-toast";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export default function ClientRegistration() {
   const formRef = useRef(null);
+  const location = useLocation();
+  const from = location.state?.from || "/";
   const { geoLocation, getAddressSugestions, setGeoLocation } =
     useGeoLocation();
   const navigate = useNavigate();
@@ -113,7 +116,7 @@ export default function ClientRegistration() {
           };
 
           setAuth(authentication);
-          navigate("/");
+          navigate(from);
 
           return <b>Successfuly logged in!</b>;
         },
