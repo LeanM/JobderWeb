@@ -113,7 +113,7 @@ export default function ClientRegistration() {
           };
 
           setAuth(authentication);
-          navigate("/profile");
+          navigate("/");
 
           return <b>Successfuly logged in!</b>;
         },

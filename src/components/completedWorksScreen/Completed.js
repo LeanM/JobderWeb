@@ -7,6 +7,7 @@ import CompletedCarousel from "./completedCarouselComponents/CompletedCarousel";
 import WorkerCard from "../home/worker-card/WorkerCard";
 import ReviewSend from "./ReviewSend";
 import InteractionInfo from "./InteractionInfo";
+import ContactAgain from "./ContactAgain";
 
 export default function Completed() {
   const axiosPrivate = useAxiosPrivate();
@@ -59,27 +60,9 @@ export default function Completed() {
                     <InteractionInfo
                       interactionData={selectedUserInteraction?.interaction}
                     />
-                    <span
-                      style={{
-                        color: colors.textSecondary,
-                        textAlign: "center",
-                      }}
-                    >
-                      Tienes otro problema y te gusto el trabajo de{" "}
-                      {selectedUserInteraction?.user?.name}?
-                    </span>
-                    <button
-                      style={{
-                        width: "10rem",
-                        height: "2.5rem",
-                        backgroundColor: colors.primary,
-                        borderRadius: "5px",
-                        color: colors.textSecondary,
-                        border: "solid 1px " + colors.secondary,
-                      }}
-                    >
-                      Volver a contactar!
-                    </button>
+                    <ContactAgain
+                      userInteractionData={selectedUserInteraction}
+                    />
                   </div>
                 </div>
                 <div className={classes.infoContainerRow}>

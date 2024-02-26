@@ -132,7 +132,7 @@ export default function WorkerRegistration() {
           };
 
           setAuth(authentication);
-          navigate("/profile");
+          navigate("/");
 
           return <b>Successfuly logged in!</b>;
         },

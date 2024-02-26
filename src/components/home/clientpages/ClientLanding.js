@@ -143,15 +143,22 @@ export default function ClientLanding(props) {
       clientUrgency: importance,
     };
 
-    interactWithWorker(interactionInfo)
-      .then((response) => navigate("/chat"))
-      .catch((error) => {
+    toast.promise(interactWithWorker(interactionInfo), {
+      loading: "Contactando al trabajador...",
+      success: (response) => {
+        navigate("/chat");
+
+        return <b>Chatea con el trabajador en la pestaña de "Solicitados"</b>;
+      },
+      error: (error) => {
         if (error?.response?.status === 401)
           navigate("/login", {
             state: { from: "/clientLanding" },
             replace: true,
           });
-      });
+        return <b>Ocurrio un error al comunicarse con el trabajador!</b>;
+      },
+    });
   };
 
   const interactWithWorker = async (interactionInfo) => {
