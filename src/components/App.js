@@ -14,6 +14,7 @@ import Registration from "./auth/Registration.js";
 import WorkerRegistration from "./auth/WorkerRegistration.js";
 import ClientRegistration from "./auth/ClientRegistration.js";
 import Completed from "./completedWorksScreen/Completed.js";
+import SelfReviewsScreen from "./selfReviewsScreen/SelfReviewsScreen.js";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route element={<RequireAuth />}>
             <Route path="/chat" element={<ChatScreen />} />
             <Route path="/history" element={<Completed />} />
+            <Route path="/myreviews" element={<SelfReviewsScreen />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
         </Route>
