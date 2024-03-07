@@ -146,14 +146,16 @@ export default function ChatScreen() {
         verifyMessageQuantity(
           chatroomUser?.user?.id,
           chatroomUser?.chatRoom?.messageQuantity
-        ).then((correctMessageQuantity) => {
-          if (!correctMessageQuantity)
-            getMessages(chatroomUser?.user?.id)
-              .then((response) =>
-                handleRefreshChat(chatroomUser, response.data)
-              )
-              .catch((error) => console.log(error));
-        });
+        )
+          .then((correctMessageQuantity) => {
+            if (!correctMessageQuantity)
+              getMessages(chatroomUser?.user?.id)
+                .then((response) =>
+                  handleRefreshChat(chatroomUser, response.data)
+                )
+                .catch((error) => console.log(error));
+          })
+          .catch((error) => console.log(error));
       }
     });
   };

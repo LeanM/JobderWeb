@@ -149,4 +149,5 @@ const useStyles = createUseStyles({
     alignItems: "center",
     flexDirection: "column",
   },
+  inputText: {},
 });
