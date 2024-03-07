@@ -37,7 +37,6 @@ function LogIn() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     logInAuth(email, pwd);
   };
 

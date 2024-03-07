@@ -10,7 +10,6 @@ const PersistLogin = () => {
   const { auth } = useAuth();
 
   useEffect(() => {
-    console.log("ASD");
     const verifyRefreshToken = async () => {
       try {
         await refresh();

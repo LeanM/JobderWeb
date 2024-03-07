@@ -1,35 +1,32 @@
 import { createUseStyles } from "react-jss";
-import { colors } from "../../../../assets/colors";
+import { colors } from "../../assets/colors";
 import { MDBIcon } from "mdb-react-ui-kit";
 import Avatar from "react-avatar";
 
-export default function ReviewItem(props) {
+export default function ReviewOption(props) {
   const classes = useStyles();
-  const { reviewData } = props;
+  const { data, onSelected } = props;
   return (
-    <div className={classes.container}>
+    <div className={classes.container} onClick={() => onSelected(data)}>
       <div className={classes.subContainer}>
         <div className={classes.topContainer}>
-          {!reviewData?.client?.picture ? (
+          {!data?.client?.picture ? (
             <div className={classes.imageContainer}>
               <Avatar
                 size="100%"
-                name={reviewData?.client?.name}
+                name={data?.client?.name}
                 maxInitials={2}
                 round={true}
               />
             </div>
           ) : (
             <div className={classes.imageContainer}>
-              <img
-                className={classes.image}
-                src={reviewData?.client?.picture}
-              />
+              <img className={classes.image} src={data?.client?.picture} />
             </div>
           )}
 
           <p style={{ color: colors.white, fontWeight: "800" }}>
-            {reviewData?.client?.name}
+            {data?.client?.name}
           </p>
           <div
             style={{
@@ -44,7 +41,7 @@ export default function ReviewItem(props) {
               icon="star"
               style={{ color: "yellow", fontWeight: "200" }}
             />
-            <p>{reviewData?.review?.rating}</p>
+            <p>{data?.review?.rating}</p>
           </div>
         </div>
         <div className={classes.descriptionContainer}>
@@ -55,27 +52,24 @@ export default function ReviewItem(props) {
               textAlign: "left",
             }}
           >
-            "{reviewData?.review?.content}"
+            "{data?.review?.content}"
           </span>
         </div>
       </div>
-      {reviewData?.reviewResponse ? (
+      {data?.reviewResponse ? (
         <div className={classes.reviewResponseContainer}>
-          {!reviewData?.worker?.picture ? (
+          {!data?.worker?.picture ? (
             <div className={classes.responseImageContainer}>
               <Avatar
                 size="100%"
-                name={reviewData?.worker?.name}
+                name={data?.worker?.name}
                 maxInitials={2}
                 round={true}
               />
             </div>
           ) : (
             <div className={classes.responseImageContainer}>
-              <img
-                className={classes.image}
-                src={reviewData?.worker?.picture}
-              />
+              <img className={classes.image} src={data?.worker?.picture} />
             </div>
           )}
           <span
@@ -87,7 +81,7 @@ export default function ReviewItem(props) {
               padding: "10px",
             }}
           >
-            "{reviewData?.reviewResponse?.content}"
+            "{data?.reviewResponse?.content}"
           </span>
         </div>
       ) : (
@@ -99,22 +93,30 @@ export default function ReviewItem(props) {
 
 const useStyles = createUseStyles({
   container: {
-    width: "80%",
+    width: "90%",
     display: "flex",
     justifyContent: "center",
     flexDirection: "column",
     alignItems: "center",
     gap: "0.5rem",
+    cursor: "pointer",
   },
   subContainer: {
     width: "95%",
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primaryDark,
     borderRadius: "20px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     gap: "0.5rem",
+    border: "solid 2px " + colors.transparent,
+
+    transition: "border 0.2s",
+
+    "&:hover": {
+      border: "solid 2px " + colors.secondary,
+    },
   },
   topContainer: {
     width: "95%",

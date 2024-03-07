@@ -5,17 +5,32 @@ const ChatIndexDBContext = createContext({});
 
 export const ChatIndexDBProvider = ({ children }) => {
   useEffect(() => {
-    async function fetchChats() {
-      const db = await openDB("user-chats", 1, {
-        upgrade(db) {
-          const store = db.createObjectStore("chats", {
-            keyPath: "userChatId",
-          });
-        },
-      });
-    }
-    fetchChats();
+    startDB();
   }, []);
+
+  const startDB = async () => {
+    const db = await openDB("user-chats", 1, {
+      upgrade(db) {
+        const store = db.createObjectStore("chats", {
+          keyPath: "userChatId",
+        });
+      },
+    });
+
+    return db;
+  };
+
+  const openDBtoWrite = async () => {
+    const db = await startDB();
+    const tx = db.transaction("chats", "readwrite");
+    return tx.objectStore("chats");
+  };
+
+  const openDBtoRead = async () => {
+    const db = await startDB();
+    const tx = db.transaction("chats", "readonly");
+    return tx.objectStore("chats");
+  };
 
   const cleanUpDeprecatedChatRoomUsers = async (actualChatrooms) => {
     const store = await openDBtoWrite();
@@ -48,18 +63,6 @@ export const ChatIndexDBProvider = ({ children }) => {
   const handleDeleteChat = async (userChatId) => {
     const store = await openDBtoWrite();
     await store.delete(userChatId);
-  };
-
-  const openDBtoWrite = async () => {
-    const db = await openDB("user-chats", 1);
-    const tx = db.transaction("chats", "readwrite");
-    return tx.objectStore("chats");
-  };
-
-  const openDBtoRead = async () => {
-    const db = await openDB("user-chats", 1);
-    const tx = db.transaction("chats", "readonly");
-    return tx.objectStore("chats");
   };
 
   const obtainChatUserState = async (userChatId) => {
